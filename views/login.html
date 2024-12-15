@@ -22,7 +22,7 @@
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    const response = await fetch("/login", {
+    const response = await fetch("/auth/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -34,7 +34,7 @@
 
     if (response.ok) {
         alert("Login Successful!");
-        // Redirect to another page, e.g., dashboard
+        window.location.href = "/dashboard";
     } else {
         alert(result.msg || "An error occurred.");
     }

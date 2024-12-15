@@ -34,7 +34,11 @@ app.get("/signup", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-   res.sendFile(path.join(__dirname, "views", "/login.html"));
+   res.sendFile(path.join(__dirname, "views", "login.html"));
+});
+
+app.get("/dashboard", (req, res) => {
+    res.sendFile(path.join(__dirname, "views", "dashboard.html"));
 });
 
 // Start the damned server
