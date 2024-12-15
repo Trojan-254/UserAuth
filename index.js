@@ -32,8 +32,15 @@ app.get("/signup", (req, res) => {
     res.sendFile(path.join(__dirname, "views", "signup.html"));
 });
 
+app.get("/login", (req, res) => {
+   res.sendFile(path.join(__dirname, "views", "/login.html"));
+});
+
 // Start the damned server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
+    console.log("");
+    console.log("++++++++++++++++++++++++ Hello welcome +++++++++++++++++")
+    console.log(`Server is Up and running listening on port ${PORT}.....`);
+    console.log("Connecting to database.......")
 })
