@@ -100,7 +100,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendVerificationEmail = (email, token) => {
-     const verificationUrl = `http://localhost:3000/verify/${token}`;
+     const verificationUrl = `http://localhost:5000/email-verification/${token}`;
 
      const mailOptions = {
           from: process.env.EMAIL,
@@ -118,39 +118,38 @@ const sendVerificationEmail = (email, token) => {
          });
       };
 
-router.get("/verify-email/:token", async (req, res) => {
-   const { token } = req.params;
 
-   try {
-       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-       const userId = decoded.id;
+// verify email
+router.post("/email-verification/:token", async (req, res) => {
+    const { token } = req.params;
 
-       // Find the user
-       const user = await User.findById(userId);
-       if (!user) {
-           return res.status(400).json({ msg: "Invalid or expired token" });
-       }
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.id;
 
-       // Check if the token matches
-       if (user.verificationToken !== token) {
-           return res.status(400).json({ msg: "Invalid or expired token" });
-       }
+        // Find the user by ID
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(400).send("<h1>Invalid or expired token</h1>");
+        }
 
-       // Mark the user as verified
-       user.verified = true;
-       user.verificationToken = null;
-       await user.save();
+        // Check if the token matches
+        if (user.verificationToken !== token) {
+            return res.status(400).send("<h1>Invalid or expired token</h1>");
+        }
 
-       res.status(200).json({
-           msg: "Email has been verified successfully. You can now login."
-       });
-       return res.redirect("/login");
-   } catch (err) {
-       console.error(err);
-       res.status(500).json({ msg: "Server error" });
-   }
+        // Mark the user as verified
+        user.verified = true;
+        user.verificationToken = null;
+        await user.save();
+
+        // Redirect to the login page
+        return res.redirect("/login");
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send("<h1>Server error</h1>");
+    }
 });
-
 
 
 module.exports = router;
