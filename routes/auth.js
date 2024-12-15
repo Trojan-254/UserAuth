@@ -26,42 +26,16 @@ router.post("/signup", async(req, res) => {
 
        const hashedPassword = await bcrypt.hash(password, 10);
         
-       const transporter = nodemailer.createTransport({
-           service: 'gmail',
-           auth: { 
-              user: process.env.EMAIL,
-              pass: process.env.PASSWORD,
-           },
-        });
-
-        const sendVerificationEmail = (email, token) => {
-             const verificationUrl = `http://localhost:3000/verify/${token}`;
-
-             const mailOptions = {
-                  from: process.env.EMAIL,
-                  to: email,
-                  subject: "Please verify your email address",
-                  html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email address.</p>`,
-             };
-
-             transporter.sendMail(mailOptions, (error, info) => {
-                 if (error) {
-                        console.log("Error sending email:", error);
-                     } else {
-                        console.log("Email sent:", info.response);
-                     }
-                 });
-              };
-
+       
 
              // Create a new User
        user = new User({ username, email, password: hashedPassword });
-       // await user.save();
+       await user.save();
        //console.log("A new user has been succesfully registered...");
 
       // Redirect user to login
       if (req.headers["content-type"] !== "application/json") {
-          return res.redirect("/login");
+          return res.redirect("/verify-email/:token");
       }
 
       const userId = user._id;
@@ -74,7 +48,6 @@ router.post("/signup", async(req, res) => {
 
       // Save token to user model
       user.verificationToken = token;
-      await user.save();
       console.log("A new user has been registered succesfully...");
       res.status(201).json({ msg: "Registration succesfull. Please check you email for verification.!" });
          } catch (err) {
@@ -111,6 +84,34 @@ router.post("/login", async (req, res) => {
 });
 
 
+
+const transporter = nodemailer.createTransport({
+   service: 'gmail',
+   auth: { 
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD,
+   },
+});
+
+const sendVerificationEmail = (email, token) => {
+     const verificationUrl = `http://localhost:3000/verify/${token}`;
+
+     const mailOptions = {
+          from: process.env.EMAIL,
+          to: email,
+          subject: "Please verify your email address",
+          html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email address.</p>`,
+     };
+
+     transporter.sendMail(mailOptions, (error, info) => {
+         if (error) {
+                console.log("Error sending email:", error);
+             } else {
+                console.log("Email sent:", info.response);
+             }
+         });
+      };
+
 router.get("/verify-email/:token", async (req, res) => {
    const { token } = req.params;
 
@@ -137,6 +138,7 @@ router.get("/verify-email/:token", async (req, res) => {
        res.status(200).json({
            msg: "Email has been verified successfully. You can now login."
        });
+       return res.redirect("/login");
    } catch (err) {
        console.error(err);
        res.status(500).json({ msg: "Server error" });
