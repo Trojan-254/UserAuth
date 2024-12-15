@@ -26,7 +26,7 @@ mongoose.connect(process.env.MONGO_URL, {
 app.use("/auth", authRoutes);
 
 app.get('/', (req, res) => {
-    res.send('Welcome to the User Authentication API');
+    res.sendFile(path.join(__dirname, "views", "landing.html"));
 });
 
 app.get("/signup", (req, res) => {

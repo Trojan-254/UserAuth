@@ -2,8 +2,12 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-
+const nodemailer = require("nodemailer");
+const dotenv = require("dotenv");
 const router = express.Router();
+
+dotenv.config();
+
 
 // sign up route
 router.post("/signup", async(req, res) => {
@@ -21,11 +25,41 @@ router.post("/signup", async(req, res) => {
       }
 
        const hashedPassword = await bcrypt.hash(password, 10);
+        
+       const transporter = nodemailer.createTransport({
+           service: 'gmail',
+           auth: { 
+              user: process.env.EMAIL,
+              pass: process.env.PASSWORD,
+           },
+        });
+
+        const sendVerificationEmail = (email, token) => {
+             const verificationUrl = `http://localhost:3000/verify/${token}`;
+
+             const mailOptions = {
+                  from: process.env.EMAIL,
+                  to: email,
+                  subject: "Please verify your email address",
+                  html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email address.</p>`,
+             };
+
+             transporter.sendMail(mailOptions, (error, info) => {
+                 if (error) {
+                        console.log("Error sending email:", error);
+                     } else {
+                        console.log("Email sent:", info.response);
+                     }
+                 });
+              };
+         }
+
+
 
        // Create a new User
        user = new User({ username, email, password: hashedPassword });
-       await user.save();
-       console.log("A new user has been succesfully registered...");
+       // await user.save();
+       //console.log("A new user has been succesfully registered...");
 
       // Redirect user to login
       if (req.headers["content-type"] !== "application/json") {
@@ -39,7 +73,12 @@ router.post("/signup", async(req, res) => {
          process.env.JWT_SECRET,
          { expiresIn: "1h" }
       );
-      res.status(201).json({ token });
+
+      // Save token to user model
+      user.verificationToken = token;
+      await user.save();
+      console.log("A new user has been registered succesfully...");
+      res.status(201).json({ msg: "Registration succesfull. Please check you email for verification.!" });
    } catch (err) {
      res.status(500).json({error: err.message });
    }
@@ -53,7 +92,10 @@ router.post("/login", async (req, res) => {
         // Find user by email
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ msg: "User not found!" });
-
+        // Check id user's email is verified
+        if (!user.verified) {
+           return res.status(400).json({ msg: "Please verify your email before you log in."})
+        }
         // Check password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
@@ -70,6 +112,35 @@ router.post("/login", async (req, res) => {
     }
 });
 
+
+router.post("/verify-email", async (req, res) => {
+   const { token } = req.params;
+
+   try {
+     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+     const userId = decoded.userId;
+
+     // Find the user
+     const user = await User.findById(userId);
+
+     // Check if the token matches
+     if (user.verificationToken !== token) {
+        return res.status(400).json({ msg: "Invalid or expired token "});
+     }
+
+     // Mark the user as verified
+     user.verified = true;
+     user.verificationToken = null;
+     await user.save();
+
+    res.status(200).json({
+       msg: "Email has been verified succesfully. You can now login"
+    });
+   } catch (err) {
+      console.error(err);
+      res.status(500).json({ msg: "Server error" });
+   };
+});
 
 
 module.exports = router;
