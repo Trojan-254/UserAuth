@@ -111,34 +111,38 @@ router.post("/login", async (req, res) => {
 });
 
 
-router.post("/verify-email", async (req, res) => {
+router.get("/verify-email/:token", async (req, res) => {
    const { token } = req.params;
 
    try {
-     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-     const userId = decoded.userId;
+       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+       const userId = decoded.id;
 
-     // Find the user
-     const user = await User.findById(userId);
+       // Find the user
+       const user = await User.findById(userId);
+       if (!user) {
+           return res.status(400).json({ msg: "Invalid or expired token" });
+       }
 
-     // Check if the token matches
-     if (user.verificationToken !== token) {
-        return res.status(400).json({ msg: "Invalid or expired token "});
-     }
+       // Check if the token matches
+       if (user.verificationToken !== token) {
+           return res.status(400).json({ msg: "Invalid or expired token" });
+       }
 
-     // Mark the user as verified
-     user.verified = true;
-     user.verificationToken = null;
-     await user.save();
+       // Mark the user as verified
+       user.verified = true;
+       user.verificationToken = null;
+       await user.save();
 
-    res.status(200).json({
-       msg: "Email has been verified succesfully. You can now login"
-    });
+       res.status(200).json({
+           msg: "Email has been verified successfully. You can now login."
+       });
    } catch (err) {
-      console.error(err);
-      res.status(500).json({ msg: "Server error" });
-   };
+       console.error(err);
+       res.status(500).json({ msg: "Server error" });
+   }
 });
+
 
 
 module.exports = router;
