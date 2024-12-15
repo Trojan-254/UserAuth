@@ -23,22 +23,23 @@ router.post("/signup", async(req, res) => {
            return res.status(400).send("User already exists. Try logging in!");
          }
       }
-
+      
+      // Hash the user password
        const hashedPassword = await bcrypt.hash(password, 10);
         
-       
-
-             // Create a new User
-       user = new User({ username, email, password: hashedPassword });
-       await user.save();
+      // Create and save new User
+       const newUser = new User({ username, email, password: hashedPassword });
+      //  await user.save();
        //console.log("A new user has been succesfully registered...");
 
       // Redirect user to login
-      if (req.headers["content-type"] !== "application/json") {
-          return res.redirect("/verify-email/:token");
-      }
+      // if (req.headers["content-type"] !== "application/json") {
+      //     // Send the verification email
+      //     sendVerificationEmail(email, token);
+      //     return res.status(201).send("Registration succesfull. Please check your email to verify your account.");
+      // }
 
-      const userId = user._id;
+      const userId = newUser._id;
       // Generate JWT
       const token = jwt.sign(
          { id: userId },
@@ -47,7 +48,12 @@ router.post("/signup", async(req, res) => {
       );
 
       // Save token to user model
-      user.verificationToken = token;
+      newUser.verificationToken = token;
+      await newUser.save();
+
+      // Send verification email
+      sendVerificationEmail(email, token);
+      
       console.log("A new user has been registered succesfully...");
       res.status(201).json({ msg: "Registration succesfull. Please check you email for verification.!" });
          } catch (err) {
