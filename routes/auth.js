@@ -32,29 +32,30 @@ router.post("/signup", async(req, res) => {
 });
 
 // Login route
-router.post("/login", async(req, res) => {
-   const { email, password } = req.body;
+router.post("/login", async (req, res) => {
+    const { email, password } = req.body;
 
-   try {
-    // find user
-    const user = await User.findOne({email});
-    if (!user) return res.status(400).json({msg: "User not found!"});
+    try {
+        // Find user by email
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ msg: "User not found!" });
 
-   // check password
-   const isMatch = await bcrypt.compare(password, user.password);
-   if(!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
+        // Check password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
 
-   // generajwtconst token = jwt.sign(
-   const token = jwt.sign(
-         { id: userid },
-         process.env.JWT_SECRET,
-         { expiresIn: "1h" }
-      );
-      res.status(201).json({ token });
-  } catch(err) {
-    res.status(500).json({error: err.message });
-  }
+        // Generate JWT
+        const token = jwt.sign(
+            { id: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
+        res.status(200).json({ token });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
+
 
 
 module.exports = router;
