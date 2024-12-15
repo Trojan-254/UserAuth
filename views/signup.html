@@ -4,6 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
+    <style>
+        body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; 
+    margin: 0;
+    background-color: #f0f0f0; 
+    overflow: hidden; 
+}
+form {
+    padding: 30px;
+    background: #825a8a; 
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+img {
+    width: 120px; 
+    margin-bottom: 20px; 
+}
+input {
+    width: 90%;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow:0 0 10px;
+    text-align: center;
+}
+label {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    width: 90%;
+    text-align: center;
+}
+button {
+    background-color: #44065c; 
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+      
+
+.register a:hover, .password a:hover {
+    text-decoration: underline;
+}
+.form-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 14px;
+}
+    </style>
 </head>
 <body>
     <h1>Sign Up</h1>
@@ -19,6 +80,11 @@
         <input type="password" name="password" placeholder="Enter you password"  id="password" required>
         <br>
         <button type="submit">Sign Up</button>
+         <div class="register">
+                <a href="#">Already have an account? log in here</a>
+                
+             </div>
     </form>
+    
 </body>
 </html>
