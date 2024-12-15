@@ -6,43 +6,39 @@
     <title>Login</title>
 </head>
 <body>
-    <h2>Login</h2>
-    <form action="/login" method="POST" id="loginForm">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
+   <form action="/login" method="POST" id="loginForm">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br><br>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
 
-        <button type="submit">Login</button>
-    </form>
+    <button type="submit">Login</button>
+</form>
+<script>
+    document.getElementById("loginForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-    <script>
-        // Optional: Using JavaScript to submit the form via Fetch (AJAX)
-        document.getElementById("loginForm").addEventListener("submit", async (event) => {
-            event.preventDefault();
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
+    const response = await fetch("/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+    });
 
-            const response = await fetch("/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ username, password })
-            });
+    const result = await response.json();
 
-            const result = await response.json();
-
-            if (response.ok) {
-                // Successful login
-                alert("Login Successful!");
-                // Redirect to another page, e.g., dashboard
-            } else {
-                alert(result.error || "An error occurred.");
-            }
-        });
-    </script>
+    if (response.ok) {
+        alert("Login Successful!");
+        // Redirect to another page, e.g., dashboard
+    } else {
+        alert(result.msg || "An error occurred.");
+    }
+});
+</script>
 </body>
 </html>
