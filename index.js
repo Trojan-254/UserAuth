@@ -7,6 +7,7 @@ const authRoutes = require("./routes/auth");
 const app = express();
 
 // App middlewares
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "views")));
