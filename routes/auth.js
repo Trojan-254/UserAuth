@@ -100,7 +100,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendVerificationEmail = (email, token) => {
-     const verificationUrl = `http://localhost:5000/email-verification/${token}`;
+     const verificationUrl = `http://localhost:5000/auth/email-verification/${token}`;
 
      const mailOptions = {
           from: process.env.EMAIL,
