@@ -52,11 +52,9 @@ router.post("/signup", async(req, res) => {
                      }
                  });
               };
-         }
 
 
-
-       // Create a new User
+             // Create a new User
        user = new User({ username, email, password: hashedPassword });
        // await user.save();
        //console.log("A new user has been succesfully registered...");
@@ -79,7 +77,7 @@ router.post("/signup", async(req, res) => {
       await user.save();
       console.log("A new user has been registered succesfully...");
       res.status(201).json({ msg: "Registration succesfull. Please check you email for verification.!" });
-   } catch (err) {
+         } catch (err) {
      res.status(500).json({error: err.message });
    }
 });
