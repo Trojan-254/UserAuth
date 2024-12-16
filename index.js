@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const authRoutes = require("./routes/auth");
 const profileRoutes = require("./routes/profile");
+const auth = require("./middleware/authMiddleware");
 const app = express();
 const cookieParser = require('cookie-parser');
 
@@ -49,8 +50,13 @@ app.get("/login", (req, res) => {
    res.sendFile(path.join(__dirname, "views", "login.html"));
 });
 
-app.get("/dashboard", (req, res) => {
-    res.sendFile(path.join(__dirname, "views", "dashboard.html"));
+//app.get("/logout", auth, (req, res) => {
+//    res.clearCookie('authToken');
+//    res.redirect('/login');
+//});
+
+app.get("/dashboard", auth, (req, res) => {
+    res.render('dashboard', { username: req.user.name });
 });
 
 // Start the damned server

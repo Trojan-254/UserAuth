@@ -100,8 +100,8 @@ router.post("/login", async (req, res) => {
            sameSite: 'Strict',
            maxAge: 3600000, // Match JWT expiry time (1 hour)
         });
-
-        res.status(200).json({ msg: "Login successful" }); // Optionally, you can just send success message
+        res.render('/dashboard');
+        // res.status(200).json({ msg: "Login successful" }); // Optionally, you can just send success message
     } catch (err) {
         console.error('Failed to login user', err);
         res.status(500).json({ error: err.message });
