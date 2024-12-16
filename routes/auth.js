@@ -66,6 +66,7 @@ router.post("/signup", async(req, res) => {
 });
 
 // Login route
+// Login route
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
@@ -73,10 +74,12 @@ router.post("/login", async (req, res) => {
         // Find user by email
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ msg: "User not found!" });
-        // Check id user's email is verified
+
+        // Check if user's email is verified
         if (!user.verified) {
-           return res.status(400).json({ msg: "Please verify your email before you log in."})
+           return res.status(400).json({ msg: "Please verify your email before you log in." });
         }
+
         // Check password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
@@ -86,26 +89,25 @@ router.post("/login", async (req, res) => {
               id: user._id,
             },
         };
+
         // Generate JWT
-        const token = jwt.sign(
-            { id: user._id },
-            process.env.JWT_SECRET,
-            { expiresIn: "1h" }
-        );
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
         // Send token in an HTTP-only cookie
         res.cookie('authToken', token, {
            httpOnly: true,
-           secure: process.env.NODE_ENV === 'production',
+           secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
            sameSite: 'Strict',
-           maxAge: 36000000,
+           maxAge: 3600000, // Match JWT expiry time (1 hour)
         });
-        res.status(200).json({ token });
+
+        res.status(200).json({ msg: "Login successful" }); // Optionally, you can just send success message
     } catch (err) {
-        console.error('failed to login user', err);
+        console.error('Failed to login user', err);
         res.status(500).json({ error: err.message });
     }
 });
+
 
 // Logout
 router.post('/logout', (req, res) => {
