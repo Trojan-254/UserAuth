@@ -33,6 +33,7 @@
             color: #fff;
             font-size: 1.5rem;
             text-align: center;
+            margin-bottom: 2rem;
         }
 
         .sidebar ul {
@@ -133,22 +134,24 @@
     <div class="sidebar">
         <h2>Dashboard</h2>
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Account Settings</a></li>
-            <li><a href="#">Messages</a></li>
-            <li><a href="#">Notifications</a></li>
-            <li><a href="#">Log Out</a></li>
+            <li><a href="/profile/user-profile/">Profile</a></li>
+            <li><a href="/settings">Account Settings</a></li>
+            <li><a href="/orders">Your Orders</a></li>
+            <li><a href="/cart">Your Cart</a></li>
+            <li><a href="/messages">Messages</a></li>
+            <li><a href="/notifications">Notifications</a></li>
+            <li><a href="/logout">Log Out</a></li>
         </ul>
         <div class="footer">
-            <p>&copy; vametech</p>
+            <p>&copy; 2024 Vametech</p>
         </div>
     </div>
 
     <!-- Main Content Area -->
     <div class="content">
         <div class="dashboard-header">
-            <h1>Welcome</h1>
-            <button onclick="window.location.href='/login'">Logout</button>
+            <h1>Welcome, User</h1>
+            <button onclick="window.location.href='/logout'">Logout</button>
         </div>
 
         <!-- Dashboard Cards -->
@@ -156,14 +159,17 @@
             <div class="card">
                 <h3>Your Profile</h3>
                 <p>View and edit your account details.</p>
+                <a href="/user-profile/:token">Go to Profile</a>
             </div>
             <div class="card">
                 <h3>Your Orders</h3>
                 <p>Check your previous orders and their status.</p>
+                <a href="/orders">View Orders</a>
             </div>
             <div class="card">
-                <h3>Messages</h3>
-                <p>View your inbox and any new messages.</p>
+                <h3>Your Cart</h3>
+                <p>Review and manage your shopping cart.</p>
+                <a href="/cart">Go to Cart</a>
             </div>
         </div>
     </div>

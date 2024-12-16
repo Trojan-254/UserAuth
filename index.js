@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const path = require("path");
 const authRoutes = require("./routes/auth");
+const profileRoutes = require("./routes/profile");
 const app = express();
 
 // App middlewares
@@ -24,13 +25,18 @@ mongoose.connect(process.env.MONGO_URL, {
 
 // Routes
 app.use("/auth", authRoutes);
-
+app.use("/profile", profileRoutes);
+app.use("/email-verification/:token", authRoutes);
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, "views", "landing.html"));
 });
 
 app.get("/signup", (req, res) => {
     res.sendFile(path.join(__dirname, "views", "signup.html"));
+});
+
+app.get("/confirmation", (re, res) => {
+   res.sendFile(path.join(__dirname, "views", "confirmation.html"));
 });
 
 app.get("/login", (req, res) => {

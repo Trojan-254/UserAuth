@@ -9,6 +9,7 @@ const router = express.Router();
 dotenv.config();
 
 
+
 // sign up route
 router.post("/signup", async(req, res) => {
    const { username, email, password } = req.body;
@@ -24,6 +25,7 @@ router.post("/signup", async(req, res) => {
          }
       }
       
+
       // Hash the user password
        const hashedPassword = await bcrypt.hash(password, 10);
         
@@ -55,7 +57,8 @@ router.post("/signup", async(req, res) => {
       sendVerificationEmail(email, token);
       
       console.log("A new user has been registered succesfully...");
-      res.status(201).json({ msg: "Registration succesfull. Please check you email for verification.!" });
+      // res.status(201).json({ msg: "Registration succesfull. Please check you email for verification.!" });
+      res.redirect("/confirmation");
          } catch (err) {
      res.status(500).json({error: err.message });
    }
@@ -120,7 +123,7 @@ const sendVerificationEmail = (email, token) => {
 
 
 // verify email
-router.post("/email-verification/:token", async (req, res) => {
+router.get("/email-verification/:token", async (req, res) => {
     const { token } = req.params;
 
     try {
