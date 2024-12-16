@@ -6,8 +6,10 @@ const path = require("path");
 const authRoutes = require("./routes/auth");
 const profileRoutes = require("./routes/profile");
 const app = express();
+const cookieParser = require('cookie-parser');
 
 // App middlewares
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());

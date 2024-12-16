@@ -5,7 +5,8 @@ const bcrypt = require('bcrypt');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const auth = require('../middleware/authMiddleware')
+const auth = require('../middleware/authMiddleware');
+const util = require('util');
 /*
  * @path: 
  *
@@ -15,6 +16,7 @@ router.get('/user-profile', auth, async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');
     res.json(user);
   } catch (err) {
+    console.error('Failed to get user profile: ', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -74,7 +76,7 @@ router.put('/update', auth, async (req, res) => {
       forceLogout: true,
     });
   } catch (err) {
-    console.error(err);
+    console.error('Failed to update user: ', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -99,6 +101,7 @@ router.put('/change-password', auth, async (req, res) => {
 
         res.json({ message: 'Password updated succesfully' }); 
     } catch (err) {
+        console.error('Failed to change user password: ', err);
         res.status(500).json({ error: 'Server error' });
      }
 });

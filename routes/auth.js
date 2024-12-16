@@ -60,6 +60,7 @@ router.post("/signup", async(req, res) => {
       // res.status(201).json({ msg: "Registration succesfull. Please check you email for verification.!" });
       res.redirect("/confirmation");
          } catch (err) {
+     console.error('Failed to register user: ', err);
      res.status(500).json({error: err.message });
    }
 });
@@ -80,19 +81,41 @@ router.post("/login", async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
 
+        const payload = {
+            user: {
+              id: user._id,
+            },
+        };
         // Generate JWT
         const token = jwt.sign(
             { id: user._id },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );
+
+        // Send token in an HTTP-only cookie
+        res.cookie('authToken', token, {
+           httpOnly: true,
+           secure: process.env.NODE_ENV === 'production',
+           sameSite: 'Strict',
+           maxAge: 36000000,
+        });
         res.status(200).json({ token });
     } catch (err) {
+        console.error('failed to login user', err);
         res.status(500).json({ error: err.message });
     }
 });
 
-
+// Logout
+router.post('/logout', (req, res) => {
+   try {
+   res.clearCookie('authToken');
+   res.json({ success: true, message: 'Logged out successfully' });
+   } catch (err) {
+     console.error('Failed to logout user', err);
+   }
+});
 
 const transporter = nodemailer.createTransport({
    service: 'gmail',
