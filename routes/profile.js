@@ -14,12 +14,23 @@ const util = require('util');
 router.get('/user-profile', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
-    res.json(user);
+    if (!user) {
+       return res.status(404).json({ error: 'user not found' });
+    }
+
+    res.render('profile', {
+        username: user.username,
+        email: user.email,
+        verified: user.verified,
+        userId: user._id,
+    });
+    // res.json(user);
   } catch (err) {
     console.error('Failed to get user profile: ', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 
 // Update user profile

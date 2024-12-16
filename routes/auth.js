@@ -112,8 +112,9 @@ router.post("/login", async (req, res) => {
 // Logout
 router.post('/logout', (req, res) => {
    try {
-   res.clearCookie('authToken');
-   res.json({ success: true, message: 'Logged out successfully' });
+      res.clearCookie('authToken');
+      res.redirect('/login');
+      res.json({ success: true, message: 'Logged out successfully' });
    } catch (err) {
      console.error('Failed to logout user', err);
    }

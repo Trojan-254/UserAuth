@@ -1,0 +1,111 @@
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Container for the profile card */
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+}
+
+.profile-card {
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    padding: 30px;
+    text-align: center;
+}
+
+.profile-card h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Style for the profile info */
+.profile-info {
+    margin-bottom: 30px;
+}
+
+.profile-detail {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #666;
+}
+
+.profile-detail strong {
+    font-weight: bold;
+    color: #333;
+}
+
+.profile-detail p {
+    margin-left: 10px;
+    color: #555;
+}
+
+.verified {
+    color: green;
+    font-weight: bold;
+}
+
+.unverified {
+    color: red;
+    font-weight: bold;
+}
+
+/* Buttons */
+.actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.edit-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.logout-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+button:focus {
+    outline: none;
+}
+
+button:active {
+    transform: scale(0.98);
+}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Make sure to link your styles here -->
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-card">
+            <h2>User Profile</h2>
+            <div class="profile-info">
+                <div class="profile-detail">
+                    <strong>Username:</strong>
+                    <p><%= username %></p>
+                </div>
+                <div class="profile-detail">
+                    <strong>Email:</strong>
+                    <p><%= email %></p>
+                </div>
+                <div class="profile-detail">
+                    <strong>Verification Status:</strong>
+                    <p class="<%= verified ? 'verified' : 'unverified' %>">
+                        <%= verified ? 'Verified' : 'Not Verified' %>
+                    </p>
+                </div>
+                <div class="profile-detail">
+                    <strong>User ID:</strong>
+                    <p><%= userId %></p>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="edit-btn">Edit Profile</button>
+                <form action="/logout" method="POST">
+                   <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
