@@ -46,24 +46,35 @@ router.put('/update-user', auth, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Check if email is being updated
+    // Check if the new username already exists
+    if (username && username !== user.username) {
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        return res.status(400).json({ error: 'Username already taken' });
+      }
+      user.username = username;
+    }
+
+    // Check if the new email already exists
     if (email && email !== user.email) {
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
+        return res.status(400).json({ error: 'Email already in use' });
+      }
+
       const token = jwt.sign(
         { id: user._id },
         process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: '1h' }
       );
 
-      // save token to user model
+      // Save token and new email to user model
       user.emailVerificationToken = token;
       user.newEmail = email;
       await user.save();
-      
 
       // Send verification email
       sendVerificationEmail(email, token);
-      
-     
 
       return res.json({
         message: `Verification email sent to ${email}. Please verify.`,
@@ -71,14 +82,10 @@ router.put('/update-user', auth, async (req, res) => {
       });
     }
 
-    // Update username if provided
-    if (username) {
-      user.username = username;
-    }
-
+    // Save updates to the user model
     await user.save();
 
-    // Respond with forceLogout flag
+    // Respond with success message and forceLogout flag
     res.json({
       message: 'Profile updated successfully.',
       forceLogout: true,
