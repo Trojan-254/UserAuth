@@ -71,6 +71,8 @@ router.put('/update-user', auth, async (req, res) => {
       );
 
       console.log('Generated verification token:', token);
+      const currentUser = await User.findById(req.user.id);
+      console.log('Current user before update:', currentUser);
 
       // Set the new email and verification token
       const updateResult = await User.updateOne(
@@ -78,6 +80,7 @@ router.put('/update-user', auth, async (req, res) => {
         {
           $set: {
             newEmail: email,
+            email: email,
             verificationToken: token,
             verified: false, // Reset verified status
           },
@@ -85,7 +88,8 @@ router.put('/update-user', auth, async (req, res) => {
       );
 
       console.log('Update result for email change:', updateResult);
-
+      const updatedUser = await User.findById(req.user.id);
+      console.log('Current user after update', updatedUser);
       // Send verification email
       sendVerificationEmail(email, token);
       console.log('Verification email sent to:', email);
@@ -101,7 +105,7 @@ router.put('/update-user', auth, async (req, res) => {
       console.log('Updating username to:', username);
       const usernameUpdateResult = await User.updateOne(
         { _id: req.user.id },
-        { $set: { username } }
+        { $set: { username: username } }
       );
 
       console.log('Update result for username change:', usernameUpdateResult);
@@ -129,7 +133,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendVerificationEmail = (email, token) => {
-  const verificationUrl = `http://localhost:5000/auth/email-verification/${token}`;
+  const verificationUrl = `http://localhost:5000/auth/updated-email-verification/${token}`;
 
   const mailOptions = {
     from: process.env.EMAIL,

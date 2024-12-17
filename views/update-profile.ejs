@@ -50,7 +50,7 @@
       const email = document.getElementById('email').value;
 
       try {
-        const response = await axios.put('/profile/update', { username, email }, {
+        const response = await axios.put('/profile/update-user', { username, email }, {
           headers: {
             'Content-Type': 'application/json',
           }

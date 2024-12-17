@@ -147,8 +147,7 @@ const sendVerificationEmail = (email, token) => {
          });
       };
 
-
-// verify email
+// Verify email
 router.get("/email-verification/:token", async (req, res) => {
     const { token } = req.params;
 
@@ -169,6 +168,39 @@ router.get("/email-verification/:token", async (req, res) => {
 
         // Mark the user as verified
         user.verified = true;
+        user.verificationToken = null;
+        await user.save();
+
+        // Redirect to the login page
+        return res.redirect("/login");
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send("<h1>Server error</h1>");
+    }
+});
+
+
+
+// verify email
+router.get("/updated-email-verification/:token", async (req, res) => {
+    const { token } = req.params;
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.id;
+        const newEmail = decoded.newEmail;
+
+        // Find the user by ID
+        const user = await User.findById(userId);
+        if (!user || user.verificationToken !== token) {
+            return res.status(400).send("<h1>Invalid or expired token</h1>");
+        }
+
+
+        // Update user email to new email
+        user.email = newEmail;
+        user.verified = true;
+        user.newEmail = null;
         user.verificationToken = null;
         await user.save();
 
