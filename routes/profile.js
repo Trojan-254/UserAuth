@@ -31,10 +31,13 @@ router.get('/user-profile', auth, async (req, res) => {
   }
 });
 
-
+// Get user details for uodating
+router.get('/update', auth, (req, res) => {
+  res.render('update-profile', { user: req.user });  
+});
 
 // Update user profile
-router.put('/update', auth, async (req, res) => {
+router.put('/update-user', auth, async (req, res) => {
   const { username, email } = req.body;
 
   try {
