@@ -53,7 +53,6 @@
         const response = await axios.put('/profile/update', { username, email }, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         });
 
