@@ -62,8 +62,9 @@ router.put('/update-user', auth, async (req, res) => {
         return res.status(400).json({ error: 'Email already in use' });
       }
 
+      // Generate a verification token.
       const token = jwt.sign(
-        { id: user._id },
+        { id: user._id, newEmail: email },
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
       );
