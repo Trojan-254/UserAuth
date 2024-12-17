@@ -141,7 +141,7 @@
 
             if (response.ok) {
                 alert("Login Successful!");
-                window.location.href = "/dashboard";
+                window.location.href = result.redirectUrl;
             } else {
                 alert(result.msg || "An error occurred.");
             }

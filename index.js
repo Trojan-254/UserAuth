@@ -56,7 +56,13 @@ app.get("/login", (req, res) => {
 //});
 
 app.get("/dashboard", auth, (req, res) => {
-    res.render('dashboard', { username: req.user.name });
+     try {
+        console.log('User object', req.user);
+        res.render('dashboard', { username: req.user.username });
+    } catch (error) {
+        console.error('Error rendering dashboard:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 // Start the damned server
