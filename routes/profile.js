@@ -41,18 +41,25 @@ router.put('/update-user', auth, async (req, res) => {
   const { username, email } = req.body;
 
   try {
+    console.log('Update request received for user ID:', req.user.id);
+    console.log('Request body:', req.body);
+
     // Check if the username already exists
     if (username) {
+      console.log('Checking for existing username:', username);
       const existingUser = await User.findOne({ username });
       if (existingUser) {
+        console.log('Username already exists:', username);
         return res.status(400).json({ error: 'Username already taken' });
       }
     }
 
     // Check if the email already exists
     if (email) {
+      console.log('Checking for existing email:', email);
       const existingEmail = await User.findOne({ email });
       if (existingEmail) {
+        console.log('Email already exists:', email);
         return res.status(400).json({ error: 'Email already in use' });
       }
 
@@ -63,20 +70,25 @@ router.put('/update-user', auth, async (req, res) => {
         { expiresIn: '1h' }
       );
 
+      console.log('Generated verification token:', token);
+
       // Set the new email and verification token
-      await User.updateOne(
+      const updateResult = await User.updateOne(
         { _id: req.user.id },
         {
           $set: {
             newEmail: email,
             verificationToken: token,
-            verified: false, // Reset verified status until re-verified
+            verified: false, // Reset verified status
           },
         }
       );
 
-      // Send a verification email
+      console.log('Update result for email change:', updateResult);
+
+      // Send verification email
       sendVerificationEmail(email, token);
+      console.log('Verification email sent to:', email);
 
       return res.json({
         message: `Verification email sent to ${email}. Please verify.`,
@@ -86,21 +98,26 @@ router.put('/update-user', auth, async (req, res) => {
 
     // Update username if provided
     if (username) {
-      await User.updateOne(
+      console.log('Updating username to:', username);
+      const usernameUpdateResult = await User.updateOne(
         { _id: req.user.id },
         { $set: { username } }
       );
+
+      console.log('Update result for username change:', usernameUpdateResult);
     }
 
+    console.log('Profile update completed successfully.');
     return res.json({
       message: 'Profile updated successfully.',
       forceLogout: false,
     });
   } catch (err) {
-    console.error('Failed to update user: ', err);
+    console.error('Error occurred while updating user:', err);
     return res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 
 const transporter = nodemailer.createTransport({
