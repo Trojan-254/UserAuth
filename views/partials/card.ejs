@@ -1,0 +1,16 @@
+<div class="bg-white rounded-xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+  <div class="bg-indigo-100 rounded-full p-4 inline-block mb-4">
+    <!-- Dynamic SVG Icons -->
+    <svg class="h-8 w-8 text-indigo-600" viewBox="0 0 24 24" fill="currentColor">
+      <% if (icon === 'User') { %>
+        <path d="M12 2C8.69 2 6 4.69 6 8c0 3.63 4.14 8.54 5.45 10.14.3.37.85.37 1.15 0C13.86 16.54 18 11.63 18 8c0-3.31-2.69-6-6-6zM12 8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+      <% } else if (icon === 'ShoppingCart') { %>
+        <path d="M7 18c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2V8H7v10zm10-12V4H7v2H3v2h18V6h-4z"/>
+      <% } else if (icon === 'Settings') { %>
+        <path d="M12 6c1.1 0 2 .9 2 2v1h1c1.1 0 2 .9 2 2v6c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2v-6c0-1.1.9-2 2-2h1V8c0-1.1.9-2 2-2z"/>
+      <% } %>
+    </svg>
+  </div>
+  <h3 class="text-xl font-semibold text-indigo-800 mb-2"><%= title %></h3>
+  <p class="text-gray-500 text-sm"><%= description %></p>
+</div>

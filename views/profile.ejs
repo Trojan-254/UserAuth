@@ -31,7 +31,13 @@
                 </div>
             </div>
             <div class="actions">
-                <button class="edit-btn">Edit Profile</button>
+                <form action="/profile/update" method="POST" class="inline-block">
+  <!-- Hidden input to override POST with PUT -->
+  <input type="hidden" name="_method" value="PUT" />
+  <button type="submit" class="edit-btn px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition duration-200">
+    Edit Profile
+  </button>
+</form>
                 <form action="/auth/logout" method="POST">
                    <button type="submit" class="logout-btn">Logout</button>
                 </form>

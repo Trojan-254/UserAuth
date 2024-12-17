@@ -1,166 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <style>
-        /* General Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            display: flex;
-            min-height: 100vh;
-            background: #f4f4f9;
-            color: #333;
-        }
-
-        /* Sidebar Styling */
-        .sidebar {
-            width: 250px;
-            background: #6c63ff;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            padding: 1rem;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-size: 1.8rem;
-        }
-
-        .sidebar a {
-            text-decoration: none;
-            color: #fff;
-            display: block;
-            padding: 0.8rem;
-            border-radius: 5px;
-            margin: 0.3rem 0;
-            transition: background 0.3s ease;
-        }
-
-        .sidebar a:hover {
-            background: #5a55d6;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .welcome-section {
-            background: #fff;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
-        }
-
-        .welcome-section h1 {
-            font-size: 2rem;
-            color: #6c63ff;
-        }
-
-        .section-title {
-            margin: 1rem 0;
-            font-size: 1.5rem;
-            color: #444;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .card {
-            background: #fff;
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card h3 {
-            margin-bottom: 1rem;
-            color: #6c63ff;
-            font-size: 1.3rem;
-        }
-
-        .card p {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            margin-top: auto;
-            font-size: 0.9rem;
-            color: #777;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-50">
+  <div class="flex min-h-screen">
     <!-- Sidebar -->
-    <div class="sidebar">
-        <h2>Dashboard</h2>
-        <a href="#">Home</a>
-        <a href="#">Profile</a>
-        <a href="#">Orders</a>
-        <a href="#">Settings</a>
-        <a href="#">Help</a>
-        <a href="#">Logout</a>
-    </div>
+    <aside class="w-64 bg-indigo-600 text-white p-6 shadow-xl flex flex-col">
+      <div class="flex items-center mb-10">
+        <!-- Dashboard Logo -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-white" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M3 3v18h18V3H3zm2 2h14v14H5V5zm4 2v6H7V7h2zm8 10H7v-2h10v2zm0-4h-4v-2h4v2zm0-4h-4V7h4v2z"/>
+        </svg>
+        <h2 class="text-2xl font-bold">Dashboard</h2>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="space-y-2">
+        <a href="/profile/user-profile" class="flex items-center p-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200">
+          <svg class="h-5 w-5 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.69 2 6 4.69 6 8c0 3.63 4.14 8.54 5.45 10.14.3.37.85.37 1.15 0C13.86 16.54 18 11.63 18 8c0-3.31-2.69-6-6-6zm0 8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+          Profile
+        </a>
+        <a href="#" class="flex items-center p-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200">
+          <svg class="h-5 w-5 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2V8H7v10zm10-12V4H7v2H3v2h18V6h-4z"/></svg>
+          Orders
+        </a>
+        <a href="#" class="flex items-center p-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200">
+          <svg class="h-5 w-5 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 6c1.1 0 2 .9 2 2v1h1c1.1 0 2 .9 2 2v6c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2v-6c0-1.1.9-2 2-2h1V8c0-1.1.9-2 2-2zm0-4c-1.1 0-2 .9-2 2v2h4V4c0-1.1-.9-2-2-2z"/></svg>
+          Settings
+        </a>
+        <a href="#" class="flex items-center p-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200">
+          <svg class="h-5 w-5 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 1 0 20A10 10 0 0 1 12 2zm0 2a8 8 0 1 0 0 16A8 8 0 0 0 12 4zm1 12h-2v2h2v-2zm0-8h-2v6h2V8z"/></svg>
+          Help
+        </a>
+        <form action="/auth/logout" method="POST">
+        <button type="submit" class="flex items-center p-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200">
+       <svg class="h-5 w-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
+       <path d="M13 3h-2v10h2V3zm-1 18c-1.1 0-2-.9-2-2h4c0 1.1-.9"/>
+      </svg>
+         Logout
+       </button>
+       </form>
+
+        <a href="/auth/logout" class="flex items-center p-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200">
+          <svg class="h-5 w-5 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm-1 18c-1.1 0-2-.9-2-2h4c0 1.1-.9 2-2 2z"/></svg>
+          Logout
+        </a>
+      </nav>
+    </aside>
 
     <!-- Main Content -->
-    <div class="main-content">
-        <!-- Welcome Section -->
-        <div class="welcome-section">
-            <h1>Welcome, <%= username %>!</h1>
-            <p>Explore your dashboard to manage your account, view orders, update settings, and much more.</p>
-        </div>
+    <main class="flex-1 p-8">
+      <!-- Welcome Section -->
+      <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+        <h1 class="text-3xl font-semibold text-indigo-600 mb-4">Welcome, <%= username %></h1>
+        <p class="text-gray-600">Your central hub for managing your account and exploring our services.</p>
+      </div>
 
-        <!-- Cards Section -->
-        <h2 class="section-title">What would you like to do?</h2>
-        <div class="cards">
-            <div class="card">
-                <h3>View Profile</h3>
-                <p>Update your personal details and preferences.</p>
-            </div>
-            <div class="card">
-                <h3>Orders</h3>
-                <p>Track your recent orders and purchases.</p>
-            </div>
-            <div class="card">
-                <h3>Settings</h3>
-                <p>Manage account settings and privacy options.</p>
-            </div>
-            <div class="card">
-                <h3>Help & Support</h3>
-                <p>Get assistance and answers to common queries.</p>
-            </div>
-        </div>
+      <!-- Quick Action Cards -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <%- include('partials/card', { title: 'Profile', description: 'Manage personal details', icon: 'User' }) %>
+        <%- include('partials/card', { title: 'Orders', description: 'Track your purchases', icon: 'ShoppingCart' }) %>
+        <%- include('partials/card', { title: 'Settings', description: 'Configure preferences', icon: 'Settings' }) %>
+        <%- include('partials/card', { title: 'Support', description: 'Get instant help', icon: 'Help' }) %>
+      </div>
 
-        <!-- Footer -->
-        <div class="footer">
-            <p>&copy; 2024 Vametech. All rights reserved.</p>
-        </div>
-    </div>
+      <!-- Footer -->
+      <footer class="mt-12 text-center text-gray-500 text-sm">
+        &copy; 2024 Vametech • All Rights Reserved
+      </footer>
+    </main>
+  </div>
 </body>
 </html>
