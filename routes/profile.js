@@ -48,28 +48,22 @@ router.put('/update-user', auth, async (req, res) => {
 
     // Check if email is being updated
     if (email && email !== user.email) {
-      const verificationToken = crypto.randomBytes(32).toString('hex');
-      user.verificationToken = verificationToken;
+      const token = jwt.sign(
+        { id: user._id },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      // save token to user model
+      user.emailVerificationToken = token;
       user.newEmail = email;
       await user.save();
+      
 
       // Send verification email
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.EMAIL,
-          pass: process.env.EMAIL_PASSWORD,
-        },
-      });
-
-      const verificationUrl = `${process.env.BASE_URL}/verify-email/${verificationToken}`;
-      await transporter.sendMail({
-        from: 'no-reply@example.com',
-        to: email,
-        subject: 'Verify your new email address',
-        html: `<p>Click the link below to verify your new email:</p>
-               <a href="${verificationUrl}">${verificationUrl}</a>`,
-      });
+      sendVerificationEmail(email, token);
+      
+     
 
       return res.json({
         message: `Verification email sent to ${email}. Please verify.`,
@@ -95,6 +89,31 @@ router.put('/update-user', auth, async (req, res) => {
   }
 });
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.PASSWORD,
+  },
+});
+
+const sendVerificationEmail = (email, token) => {
+  const verificationUrl = `http://localhost:5000/auth/email-verification/${token}`;
+
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: email,
+    subject: "Please verify your email address",
+    html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email address</p>`
+  };
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log("Error sending mail:", error);
+    } else {
+      console.log("Email sent:", info.response);
+    }
+  });
+};
 
 // Update User password
 router.put('/change-password', auth, async (req, res) => {
