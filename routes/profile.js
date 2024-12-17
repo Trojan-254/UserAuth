@@ -41,61 +41,67 @@ router.put('/update-user', auth, async (req, res) => {
   const { username, email } = req.body;
 
   try {
-    const user = await User.findById(req.user.id);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    // Check if the new username already exists
-    if (username && username !== user.username) {
+    // Check if the username already exists
+    if (username) {
       const existingUser = await User.findOne({ username });
       if (existingUser) {
         return res.status(400).json({ error: 'Username already taken' });
       }
-      user.username = username;
     }
 
-    // Check if the new email already exists
-    if (email && email !== user.email) {
+    // Check if the email already exists
+    if (email) {
       const existingEmail = await User.findOne({ email });
       if (existingEmail) {
         return res.status(400).json({ error: 'Email already in use' });
       }
 
-      // Generate a verification token.
+      // Generate a verification token
       const token = jwt.sign(
-        { id: user._id, newEmail: email },
+        { id: req.user.id, newEmail: email },
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
       );
 
-      // Save token and new email to user model
-      user.emailVerificationToken = token;
-      user.newEmail = email;
-      await user.save();
+      // Set the new email and verification token
+      await User.updateOne(
+        { _id: req.user.id },
+        {
+          $set: {
+            newEmail: email,
+            verificationToken: token,
+            verified: false, // Reset verified status until re-verified
+          },
+        }
+      );
 
-      // Send verification email
+      // Send a verification email
       sendVerificationEmail(email, token);
 
       return res.json({
         message: `Verification email sent to ${email}. Please verify.`,
-        forceLogout: true, // Indicate logout on frontend
+        forceLogout: true,
       });
     }
 
-    // Save updates to the user model
-    await user.save();
+    // Update username if provided
+    if (username) {
+      await User.updateOne(
+        { _id: req.user.id },
+        { $set: { username } }
+      );
+    }
 
-    // Respond with success message and forceLogout flag
-    res.json({
+    return res.json({
       message: 'Profile updated successfully.',
-      forceLogout: true,
+      forceLogout: false,
     });
   } catch (err) {
     console.error('Failed to update user: ', err);
-    res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
