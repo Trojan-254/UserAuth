@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Email confirmation success</title>
     <style>
      :root {
     --bg: yellow;
@@ -293,7 +293,7 @@ p {
         <div class="container">
             <img src="vametech2.png" alt="">
             <h1>🎊 Congrats <%= username %>, Your email has been successfully registered! 😊 🎊</h1><br>
-            <p>Redirecting you to the log in page.</p>
+            <p>Redirecting you to the log in page...</p>
             <div class="loader-container">
                 <div class="loader"></div>
             </div>
@@ -368,6 +368,11 @@ p {
             </div>
         </div>
     </div>
+    <script>
+        setTimeout(() => {
+           window.location.href = '/login';
+        }, 5000);
+    </script>
     </body>
     </html>
   
