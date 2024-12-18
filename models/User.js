@@ -2,10 +2,17 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
-   username: {
+   firstName: {
      type: String,
      required: true,
-     unique: true,
+     trim: true,
+     minlength: 3,
+     maxlength: 50,
+   },
+
+   lastName: {
+     type: String,
+     required: true,
      trim: true,
      minlength: 3,
      maxlength: 50,
@@ -19,16 +26,12 @@ const UserSchema = new mongoose.Schema({
     lowercase: true
    },
 
-   newEmail: {
-    type: String,
-    default: null
-   },
-
    password: {
      type: String,
      required: true
    },
-   verified: {
+
+   emailVerified: {
      type: Boolean,
      default: false
    },
@@ -37,11 +40,7 @@ const UserSchema = new mongoose.Schema({
       type: String
    },
 
-   createdAt: {
-     type: Date,
-     default: Date.now
-   }
-});
+}, { timestamps: true });
 
 // Hash the password before saving
 UserSchema.pre("save", async function(next) {
