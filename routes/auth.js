@@ -178,6 +178,9 @@ router.get("/email-verification/:token", async (req, res) => {
         user.verificationToken = null;
         await user.save();
 
+
+        // Redirect to the login page
+        return res.render("confirm", { username: user.username });
         // Redirect to the success confirmation page
         return res.render("confirm", { username: user.username});
     } catch (err) {

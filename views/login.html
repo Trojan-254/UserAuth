@@ -68,6 +68,16 @@
         .form-group input:focus {
             border-color: #6c63ff;
         }
+        .forgot-password-container {
+           text-align: right; 
+            margin-bottom: 10px; 
+         }
+
+        .forgot-password {
+         color: #6c63ff; 
+          text-decoration: none; 
+          font-size: 14px; 
+         }
 
         .btn {
             display: inline-block;
@@ -115,10 +125,14 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
+           <div class="forgot-password-container">
+            <a href="#" class="forgot-password">Forgot Password?</a>
+           </div>
             <button type="submit" class="btn">Login</button>
         </form>
         <div class="footer">
             <p>Don't have an account? <a href="/signup">Sign up</a></p>
+            
         </div>
     </div>
 
