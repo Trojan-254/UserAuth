@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+       * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            padding: 40px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        .container img {
+            width: 100px; /* Adjust based on your logo size */
+            margin-bottom: 1rem;
+        }
+
+        .message-box h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .message-box p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        strong {
+            color: #007bff;
+        }
+
+        .actions {
+            margin-top: 20px;
+        }
+
+        .actions a {
+            font-size: 14px;
+            color: #007bff;
+            text-decoration: none;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .actions a:hover {
+            text-decoration: underline;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        /* .back-btn:hover {
+            background-color: #0056b3;
+        } */
+        
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <img src="vametak.png" alt="Company Logo"> 
+        <div class="message-box">
+            <h1>Thank You for Registering!</h1>
+            <p>We have sent a verification email to <strong><%= email %></strong>!</p>
+            <p>Please check your inbox and click on the link to confirm your email address.</p>
+            <div class="actions">
+                <a href="mailto:support@example.com">Didn't receive the email? Contact Support</a>
+                <a href="/" class="back-btn">Go to Homepage</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
