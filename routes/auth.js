@@ -12,7 +12,10 @@ dotenv.config();
 
 // sign up route
 router.post("/signup", async(req, res) => {
-   const { username, email, password } = req.body;
+   const { firstName, lastName, email, password1, password2 } = req.body;
+   if (!firstName || !lastName || !email || !password1 || !password2) {
+        return res.status(400).json({ message: "All fields are required." });
+    }
 
    try {
       // Check is user exists
@@ -24,13 +27,16 @@ router.post("/signup", async(req, res) => {
            return res.status(400).send("User already exists. Try logging in!");
          }
       }
-      
 
+      // Check if password1 resembles password2
+      if (password1 !== password2) {
+          return res.status(400).json({ msg: "The first password is not same as the second password" });
+      }
       // Hash the user password
-       const hashedPassword = await bcrypt.hash(password, 10);
+       const hashedPassword = await bcrypt.hash(password1, 10);
         
       // Create and save new User
-       const newUser = new User({ username, email, password: hashedPassword });
+       const newUser = new User({ firstName, lastName, email, password: hashedPassword });
       //  await user.save();
        //console.log("A new user has been succesfully registered...");
 
@@ -43,6 +49,7 @@ router.post("/signup", async(req, res) => {
 
       const userId = newUser._id;
       // Generate JWT
+
       const token = jwt.sign(
          { id: userId },
          process.env.JWT_SECRET,
@@ -76,7 +83,7 @@ router.post("/login", async (req, res) => {
         if (!user) return res.status(400).json({ msg: "User not found!" });
 
         // Check if user's email is verified
-        if (!user.verified) {
+        if (!user.emailVerified) {
            return res.status(400).json({ msg: "Please verify your email before you log in." });
         }
 
@@ -87,7 +94,7 @@ router.post("/login", async (req, res) => {
         const payload = {
             user: {
               id: user._id,
-              username: user.username,
+              firstName: user.firstName,
             },
         };
 
@@ -167,13 +174,19 @@ router.get("/email-verification/:token", async (req, res) => {
         }
 
         // Mark the user as verified
-        user.verified = true;
+        user.emailVerified = true;
         user.verificationToken = null;
         await user.save();
 
         // Redirect to the success confirmation page
         return res.render("confirm", { username: user.username});
     } catch (err) {
+        if (err.name === 'JsonWebTokenError') {
+           return res.status(400).send("Invalid token format");
+        }
+        if (err.name === 'TokenExpiredError') {
+           return res.status(400).send("Token has expired");
+        }
         console.error(err);
         return res.status(500).send("<h1>Server error</h1>");
     }
