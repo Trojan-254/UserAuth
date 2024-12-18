@@ -5,14 +5,20 @@ const UserSchema = new mongoose.Schema({
    username: {
      type: String,
      required: true,
-     unique: true
+     unique: true,
+     trim: true,
+     minlength: 3,
+     maxlength: 50,
    },
 
    email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    trim: true,
+    lowercase: true
    },
+
    newEmail: {
     type: String,
     default: null
@@ -26,9 +32,15 @@ const UserSchema = new mongoose.Schema({
      type: Boolean,
      default: false
    },
+
    verificationToken: {
       type: String
    },
+
+   createdAt: {
+     type: Date,
+     default: Date.now
+   }
 });
 
 // Hash the password before saving

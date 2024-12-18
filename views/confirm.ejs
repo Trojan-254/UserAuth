@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+     :root {
+    --bg: yellow;
+  }
+  html,
+  body {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+    margin: 0; 
+    background-color: #f7fbff; 
+    text-align: center; 
+    font-family: Arial, sans-serif;
+}
+.container {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  margin: 20px; 
+}
+.content-box{
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 500px; 
+  line-height: 1.2;
+}
+
+
+h1 {
+  color: #4a4ae5; 
+  margin: 0;
+  font-size: 2em;
+  animation: popIn 1.5s ease-out;
+  
+ 
+}
+
+
+p {
+  color: #4a4ae5; 
+  margin: 10px 0 0; 
+  font-size: 1.5em;
+  animation: popIn 1.5s ease-out;
+}
+.container img {
+  max-width: 150px;
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+
+.confetti-container {
+    user-select: none;
+    pointer-events: none;
+    z-index: 10;
+  }
+  
+  .confetti {
+    position: fixed;
+    left: 0;
+    right: 0;
+    display: flex;
+  }
+  .confetti .square {
+    width: 1rem;
+    height: 1rem;
+    background-color: var(--bg);
+    transform: rotate(140deg);
+  }
+  .confetti .rectangle {
+    width: 1rem;
+    height: 0.5rem;
+    background-color: var(--bg);
+  }
+  .confetti .hexagram {
+    width: 0;
+    height: 0;
+    border-left: 0.5rem solid transparent;
+    border-right: 0.5rem solid transparent;
+    border-bottom: 1rem solid var(--bg);
+    position: relative;
+  }
+  
+  .confetti .hexagram:after {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 0.5rem solid transparent;
+    border-right: 0.5rem solid transparent;
+    border-top: 1rem solid var(--bg);
+    position: absolute;
+    top: 0.33rem;
+    left: -0.5rem;
+  }
+  .confetti .wavy-line {
+    position: relative;
+  }
+  .confetti .wavy-line::after,
+  .confetti .wavy-line::before {
+    content: "";
+    height: 10px;
+    width: 80px;
+    background-size: 20px 10px;
+    position: absolute;
+    left: -9rem;
+    transform: rotate(90deg);
+  }
+  
+  .confetti .wavy-line::before {
+    background-image: linear-gradient(
+      45deg,
+      transparent,
+      transparent 50%,
+      var(--bg) 50%,
+      transparent 60%
+    );
+    top: 1rem;
+  }
+  .confetti .wavy-line::after {
+    background-image: linear-gradient(
+      -45deg,
+      transparent,
+      transparent 50%,
+      var(--bg) 50%,
+      transparent 60%
+    );
+  }
+  .confetti .pentagram {
+    width: 0rem;
+    height: 0rem;
+    display: block;
+    margin: 0.5rem 0;
+    border-right: 1rem solid transparent;
+    border-bottom: 0.7rem solid var(--bg);
+    border-left: 1rem solid transparent;
+    transform: rotate(35deg);
+    position: relative;
+  }
+  .confetti .pentagram:before {
+    border-bottom: 0.8rem solid var(--bg);
+    border-left: 0.3rem solid transparent;
+    border-right: 0.3rem solid transparent;
+    position: absolute;
+    height: 0;
+    width: 0;
+    top: -0.45rem;
+    left: -0.65rem;
+    display: block;
+    content: "";
+    transform: rotate(-35deg);
+  }
+  .confetti .pentagram:after {
+    position: absolute;
+    display: block;
+    color: var(--bg);
+    top: 0.03rem;
+    left: -1.05rem;
+    width: 0rem;
+    height: 0rem;
+    border-right: 1rem solid transparent;
+    border-bottom: 0.7rem solid var(--bg);
+    border-left: 1rem solid transparent;
+    transform: rotate(-70deg);
+    content: "";
+  }
+  .confetti .dodecagram {
+    background: var(--bg);
+    width: 8px;
+    height: 8px;
+    position: relative;
+  }
+  
+  .confetti .dodecagram:before {
+    content: "";
+    height: 8px;
+    width: 8px;
+    background: var(--bg);
+    transform: rotate(30deg);
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .confetti .dodecagram:after {
+    content: "";
+    height: 8px;
+    width: 8px;
+    background: var(--bg);
+    transform: rotate(60deg);
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .confetti .hexagram {
+    width: 0;
+    height: 0;
+    border-left: 0.5rem solid transparent;
+    border-right: 0.5rem solid transparent;
+    border-bottom: 1rem solid var(--bg);
+    position: relative;
+  }
+  
+  .confetti .hexagram:after {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 0.5rem solid transparent;
+    border-right: 0.5rem solid transparent;
+    border-top: 1rem solid var(--bg);
+    position: absolute;
+    top: 0.33rem;
+    left: -0.5rem;
+  }
+  
+  
+  .confetti i {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 0.2rem;
+    animation-name: confetti;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-duration: calc(60s / var(--speed));
+  }
+  
+  .confetti i:nth-child(even) {
+    transform: rotate(90deg);
+  }
+  
+  @keyframes confetti {
+    0% {
+      transform: translateY(-100vh);
+    }
+  
+    100% {
+      transform: translateY(100vh);
+    }
+  }
+  @keyframes popIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #FFF;
+  border-bottom-color: #FF3D00;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+  @keyframes rotation {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+  } 
+   </style>
+</head>
+<body>
+    <div class="content-box">
+        <div class="container">
+            <img src="vametech2.png" alt="">
+            <h1>🎊 Congrats <%= username %>, Your email has been successfully registered! 😊 🎊</h1><br>
+            <p>Redirecting you to the log in page.</p>
+            <div class="loader-container">
+                <div class="loader"></div>
+            </div>
+        </div>
+       
+        <div class="confetti-container">
+            <div class="confetti">
+              <i style="--speed: 10; --bg: yellow" class="square"></i>
+              <i style="--speed: 18; --bg: white" class="pentagram"></i>
+              <i style="--speed: 29; --bg: green" class="rectangle"></i>
+              <i style="--speed: 17; --bg: blue" class="hexagram"></i>
+              <i style="--speed: 33; --bg: red" class="pentagram"></i>
+              <i style="--speed: 26; --bg: yellow" class="dodecagram"></i>
+              <i style="--speed: 24; --bg: pink" class="wavy-line"> </i>
+              <i style="--speed: 5; --bg: blue" class="wavy-line"></i>
+              <i style="--speed: 40; --bg: white" class="square"></i>
+              <i style="--speed: 17; --bg: green" class="rectangle"></i>
+              <i style="--speed: 25; --bg: white" class="square"></i>
+              <i style="--speed: 18; --bg: green" class="rectangle"></i>
+              <i style="--speed: 15; --bg: yellow" class="wavy-line"> </i>
+              <i style="--speed: 32; --bg: yellow" class="pentagram"></i>
+              <i style="--speed: 25; --bg: white" class="square"></i>
+              <i style="--speed: 18; --bg: green" class="rectangle"></i>
+              <i style="--speed: 37; --bg: yellow" class="dodecagram"></i>
+              <i style="--speed: 23; --bg: pink" class="wavy-line"></i>
+              <i style="--speed: 37; --bg: red" class="dodecagram"></i>
+              <i style="--speed: 37; --bg: pink" class="wavy-line"></i>
+              <i style="--speed: 36; --bg: white" class="hexagram"></i>
+              <i style="--speed: 32; --bg: green" class="wavy-line"></i>
+              <i style="--speed: 32; --bg: yellow" class="pentagram"></i>
+              <i style="--speed: 29; --bg: white" class="square"></i>
+              <i style="--speed: 18; --bg: green" class="rectangle"></i>
+              <i style="--speed: 37; --bg: red" class="dodecagram"></i>
+              <i style="--speed: 23; --bg: pink" class="wavy-line"> </i>
+              <i style="--speed: 30; --bg: pink" class="rectangle"></i>
+              <i style="--speed: 30; --bg: red" class="square"></i>
+              <i style="--speed: 18; --bg: red" class="pentagram"></i>
+              <i style="--speed: 19; --bg: green" class="rectangle"></i>
+              <i style="--speed: 16; --bg: blue" class="hexagram"></i>
+              <i style="--speed: 23; --bg: red" class="pentagram"></i>
+              <i style="--speed: 34; --bg: yellow" class="dodecagram"></i>
+              <i style="--speed: 39; --bg: pink" class="wavy-line"></i>
+              <i style="--speed: 40; --bg: purple" class="square"></i>
+              <i style="--speed: 21; --bg: green" class="rectangle"></i>
+              <i style="--speed: 14; --bg: white" class="square"></i>
+              <i style="--speed: 38; --bg: green" class="rectangle"></i>
+              <i style="--speed: 19; --bg: red" class="dodecagram"></i>
+              <i style="--speed: 29; --bg: pink" class="wavy-line"> </i>
+              <i style="--speed: 21; --bg: white" class="hexagram"></i>
+              <i style="--speed: 17; --bg: purple" class="wavy-line"></i>
+              <i style="--speed: 32; --bg: yellow" class="pentagram"></i>
+              <i style="--speed: 23; --bg: white" class="square"></i>
+              <i style="--speed: 18; --bg: green" class="rectangle"></i>
+              <i style="--speed: 37; --bg: red" class="dodecagram"></i>
+              <i style="--speed: 48; --bg: pink" class="wavy-line"> </i>
+              <i style="--speed: 38; --bg: pink" class="rectangle"></i>
+              <i style="--speed: 13; --bg: red" class="pentagram"></i>
+              <i style="--speed: 49; --bg: yellow" class="dodecagram"></i>
+              <i style="--speed: 19; --bg: cyan" class="wavy-line"></i>
+              <i style="--speed: 15; --bg: steelblue" class="square"></i>
+              <i style="--speed: 10; --bg: yellow" class="square"></i>
+              <i style="--speed: 18; --bg: white" class="pentagram"></i>
+              <i style="--speed: 29; --bg: green" class="rectangle"></i>
+              <i style="--speed: 17; --bg: blue" class="hexagram"></i>
+              <i style="--speed: 33; --bg: red" class="pentagram"></i>
+              <i style="--speed: 26; --bg: yellow" class="dodecagram"></i>
+              <i style="--speed: 24; --bg: pink" class="wavy-line"> </i>
+              <i style="--speed: 5; --bg: white" class="wavy-line"></i>
+              <i style="--speed: 40; --bg: purple" class="square"></i>
+             
+              
+            </div>
+        </div>
+    </div>
+    </body>
+    </html>
+  
+    

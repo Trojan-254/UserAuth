@@ -103,9 +103,10 @@ router.put('/update-user', auth, async (req, res) => {
     // Update username if provided
     if (username) {
       console.log('Updating username to:', username);
-      const usernameUpdateResult = await User.updateOne(
-        { _id: req.user.id },
-        { $set: { username: username } }
+      const usernameUpdateResult = await User.findByIdAndupdate(
+        req.user.id,
+        { $set: { username: username } },
+        { new: true }
       );
 
       console.log('Update result for username change:', usernameUpdateResult);
