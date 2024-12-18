@@ -172,7 +172,7 @@ router.get("/email-verification/:token", async (req, res) => {
         await user.save();
 
         // Redirect to the login page
-        return res.redirect('/login');
+        return res.render("confirm", { username: user.username });
     } catch (err) {
         console.error(err);
         return res.status(500).send("<h1>Server error</h1>");
