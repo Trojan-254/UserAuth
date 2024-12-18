@@ -14,10 +14,12 @@
                 <div class="profile-detail">
                     <strong>Username:</strong>
                     <p><%= username %></p>
+                   <a href="#">Update</a>
                 </div>
                 <div class="profile-detail">
                     <strong>Email:</strong>
                     <p><%= email %></p>
+                    <a href="#">Update</a>
                 </div>
                 <div class="profile-detail">
                     <strong>Verification Status:</strong>
@@ -31,11 +33,7 @@
                 </div>
             </div>
             <div class="actions">
-                <button>
-                <a href="/profile/update" class="edit-btn px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition duration-200">
-  Edit Profile
-</a></button>
-                
+                <button>  
                 <form action="/auth/logout" method="POST">
                    <button type="submit" class="logout-btn">Logout</button>
                 </form>
