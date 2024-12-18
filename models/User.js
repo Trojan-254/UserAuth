@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 
 const UserSchema = new mongoose.Schema({
    firstName: {
@@ -26,6 +27,22 @@ const UserSchema = new mongoose.Schema({
     lowercase: true
    },
 
+   newEmail: {
+     type: String,
+     default: null
+   },
+
+   emailUpdateToken: {
+      type: String,
+      default: null
+   },
+
+   emailUpdateExpires: {
+      type: Date,
+      default: null
+   },
+
+
    password: {
      type: String,
      required: true
@@ -40,11 +57,11 @@ const UserSchema = new mongoose.Schema({
       type: String
    },
 
-   resetToken: {
+   resetPasswordToken: {
      type: String
    },
 
-   resetTokenExpiry: {
+   resetPasswordExpires: {
      type: Date
    }
 
@@ -61,6 +78,16 @@ UserSchema.pre("save", async function(next) {
    next();
 });
 
+// Methos to generate reset token
+UserSchema.methods.generatePasswordResetToken = function() {
+   this.resetPasswordToken = crypto.randomBytes(20).toString('hex');
+   this.resetPasswordExpires = Date.now() + 3600000;
+}
 
+// Methos to generate email update tokem
+UserSchema.methods.generateEmailUpdateToken = function() {
+   this.emailUpdateToken = crypto.randomBytes(20).toString('hex');
+   this.emailUpdateExpires = Date.now() + 3600000;
+}
 // export user model
 module.exports = mongoose.model("User", UserSchema);

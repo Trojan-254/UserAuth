@@ -5,6 +5,7 @@ const User = require("../models/User");
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 const router = express.Router();
+const crypto = require("crypto");
 
 dotenv.config();
 
@@ -192,35 +193,107 @@ router.get("/email-verification/:token", async (req, res) => {
 });
 
 
+// Email update request route
+router.get('/update-email', async (req, res) => {
+   res.render('update-email');
+});
+
+router.post('/update-email', async (req, res) => {
+    const { currentPassword, newEmail } = req.body;
+
+   try {
+     const user = await User.findById(req.header._id);
+
+    // Verify current password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if(!isMatch) {
+      return res.render('update-email', {
+        error: 'Incorrect current password'
+     });
+    }
+
+    // Check if new email already exists
+    const existingUser = await User.findOne({ email: newEmail });
+    if (existingUser) {
+       return res.render('update-email', {
+         error: 'Email is already in use by another account'
+       });
+    }
+
+    // Generate email update token
+    user.newEmail = newEmail;
+    user.generateEmailUpdateToken();
+    await user.save();
+
+    // create email verification URL
+    const verifyURL = `http://${req.headers.host}/verify-email-update/${user.emailUpdateToken}`;
+
+    // Send verification email
+    await transporter.sendMail({
+      to: newEmail,
+      from: process.env.EMAIL,
+      subject: 'Verify Email Update',
+      html: `
+        <p>You requested to update your email address</p>
+        <p>Click this link to verify your new email:</p>
+        <a href="${verifyURL}">${verifyURL}</a>
+        <p>This link will expire in 1 hour.</p>
+      `
+    });
+
+   // render success page
+   res.render('update-email', { 
+      message: 'A verification link has been sent to your new email address.' 
+    });
+   } catch(err) {
+     console.error(err);
+     res.render('update-email', {
+       error: 'An error occured, please try again.'
+     });
+   }
+});
 
 // verify email
-router.get("/updated-email-verification/:token", async (req, res) => {
+router.get("/verify-email-update/:token", async (req, res) => {
     const { token } = req.params;
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.id;
-        const newEmail = decoded.newEmail;
+      const user = await User.findOne({
+        emailUpdateToken: token,
+        emailUpdateExpires: { $gt: Date.now() }
+     });
 
-        // Find the user by ID
-        const user = await User.findById(userId);
-        if (!user || user.verificationToken !== token) {
-            return res.status(400).send("<h1>Invalid or expired token</h1>");
-        }
+     if (!user) {
+       return res.render('error', {
+         message: 'Email update token is invalid or has expired.'
+       });
+     }
 
+    // Update email
+    user.email = user.newEmail;
+    user.newEmail = null;
+    user.emailUpdateToken = null;
+    user.emailUpdateExpires = null;
 
-        // Update user email to new email
-        user.email = newEmail;
-        user.verified = true;
-        user.newEmail = null;
-        user.verificationToken = null;
-        await user.save();
+    await user.save(); 
 
-        // Redirect to the success confirmation page
-        return res.render("confirm", { username: user.username});
+   // Send confirmation email to old email address
+    await transporter.sendMail({
+      to: user.email,
+      from: process.env.EMAIL_USER,
+      subject: 'Email Address Updated',
+      html: '<p>Your email address has been successfully updated.</p>'
+    });
+    
+    // Redirect to profile or dashboard
+    res.render('login', { 
+      message: 'Email address updated successfully. Please log in.' 
+    });
     } catch (err) {
         console.error(err);
-        return res.status(500).send("<h1>Server error</h1>");
+        res.status('error', {
+           message: 'An error occure. Please try again.'
+        });
     }
 });
 
@@ -234,20 +307,26 @@ router.post('/new-password/:token', async (req, res) => {
 
     try {
        const user = await User.findOne({
-          resetToken: token,
-          resetTokenExpiry: { $gt: Date.now() }
+          resetPasswordToken: token,
+          resetPasswordExpires: { $gt: Date.now() }
        });
 
     if (!user) return res.status(400).json({ message: 'Invalid or expired token'});
 
-   // Update password
-   user.password = password;
-   user.resetToken = undefined;
-   user.resetToken = undefined;
+   // Hash the new password
+   const salt =  await bcrypt.genSalt(10);
+   user.password = await bcrypt.hash(password, salt);
+
+   // Clear and reset token
+   user.resetPasswordToken = undefined;
+   user.resetPasswordExpires = undefined;
+
+   // Save the updated user
    await user.save();
 
-   res.json({ message: 'Password updated. Please log in. '});
-    } catch(err) {
+   res.redirect('/login');
+   } catch(err) {
+        console.log(err);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
@@ -257,20 +336,16 @@ router.get('/reset-password/:token', async (req, res) => {
     const { token } = req.params;
     try {
       const user = await User.findOne({
-         resetToken: token,
-         resetTokenExpiry: { $gt: Date.now() }
+         resetPasswordToken: token,
+         resetPasswordExpires: { $gt: Date.now() }
       });
 
       if (!user) return res.status(400).json({ message: 'Invalid or expired token'});
 
-      // Clear the password and token for security
-      user.password = null;
-      user.resetToken = undefined;
-      user.resetTokenExpiry = undefined;
-      await user.save();
-
-      res.redirect(`/new-password/${token}`);
+      // Render reset password form
+      res.render('reset-password', { token: req.params.token });
     } catch (err) {
+      console.log(err);
       res.status(500).json({ message: "Internal server error"});
     }
 });
@@ -284,21 +359,20 @@ router.post('/forgot-password', async (req, res) => {
         if (!user) return res.status(400).json({ message: 'User not found' });
 
         // Generate reset token
-        const resetToken = crypto.randomBytes(32).toString('hex');
-        user.resetToken = resetToken;
-        user.resetTokenExpiry = Date.now() + 3600000;
+        user.generatePasswordResetToken();
         await user.save();
 
        // Send reset email
-       const resetLink = `http://localhost:5000/reset-password/${resetToken}`;
+       const resetLink = `http://localhost:5000/auth/reset-password/${user.resetPasswordToken}`;
        await transporter.sendMail ({
            to: user.email,
            subject: 'Password Reset Request',
            html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`
        });
 
-       res.json({ message: 'Password reset link has been sent to your email.'});
+       res.render('success-password', { email });
     } catch (err) {
+       console.log(err);
        res.status(500).json({ message: 'Internal Server Error' });
     }
 });

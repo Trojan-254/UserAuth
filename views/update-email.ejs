@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Email</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6c63ff, #92a3fd);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            padding: 2rem;
+        }
+
+        .container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #6c63ff;
+        }
+
+        p {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        p.error {
+            color: red;
+            font-weight: bold;
+        }
+
+        p.success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #6c63ff;
+        }
+
+        button {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            background-color: #6c63ff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #5a55d6;
+        }
+
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .footer a {
+            color: #6c63ff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Update Email Address</h2>
+        
+        <% if (locals.error) { %>
+            <p class="error"><%= error %></p>
+        <% } %>
+        
+        <% if (locals.message) { %>
+            <p class="success"><%= message %></p>
+        <% } %>
+        
+        <form action="/auth/update-email" method="POST">
+            <div class="form-group">
+                <label for="currentPassword">Current Password:</label>
+                <input type="password" id="currentPassword" name="currentPassword" required>
+            </div>
+            <div class="form-group">
+                <label for="newEmail">New Email:</label>
+                <input type="email" id="newEmail" name="newEmail" required>
+            </div>
+            <button type="submit">Update Email</button>
+        </form>
+
+        <div class="footer">
+            <p><a href="/" style="color: #6c63ff;">Back to Home</a></p>
+        </div>
+    </div>
+</body>
+</html>
+
