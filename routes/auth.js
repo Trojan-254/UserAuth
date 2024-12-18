@@ -202,7 +202,7 @@ router.post('/update-email', async (req, res) => {
     const { currentPassword, newEmail } = req.body;
 
    try {
-     const user = await User.findById(req.header._id);
+     const user = await User.findById(req.user._id);
 
     // Verify current password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
