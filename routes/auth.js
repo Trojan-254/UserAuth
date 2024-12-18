@@ -271,7 +271,7 @@ router.get('/reset-password/:token', async (req, res) => {
 
       res.redirect(`/new-password/${token}`);
     } catch (err) {
-      res.status(500).
+      res.status(500).json({ message: "Internal server error"});
     }
 });
 
