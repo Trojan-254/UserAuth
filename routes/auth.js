@@ -36,16 +36,12 @@ router.post("/signup", async(req, res) => {
        const hashedPassword = await bcrypt.hash(password1, 10);
         
       // Create and save new User
-       const newUser = new User({ firstName, lastName, email, password: hashedPassword });
-      //  await user.save();
-       //console.log("A new user has been succesfully registered...");
-
-      // Redirect user to login
-      // if (req.headers["content-type"] !== "application/json") {
-      //     // Send the verification email
-      //     sendVerificationEmail(email, token);
-      //     return res.status(201).send("Registration succesfull. Please check your email to verify your account.");
-      // }
+       const newUser = new User({
+           firstName,
+           lastName,
+           email,
+           password: hashedPassword
+       });
 
       const userId = newUser._id;
       // Generate JWT
