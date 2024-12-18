@@ -19,9 +19,10 @@ router.get('/user-profile', auth, async (req, res) => {
     }
 
     res.render('profile', {
-        username: user.username,
+        firstname: user.firstName,
+        lastname: user.lastName,
         email: user.email,
-        verified: user.verified,
+        verified: user.emailVerified,
         userId: user._id,
     });
     // res.json(user);
