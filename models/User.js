@@ -18,6 +18,21 @@ const UserSchema = new mongoose.Schema({
      maxlength: 50,
    },
 
+   role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+   },
+
+   addresses: [{
+    street: String,
+    city: String,
+    state: String,
+    zipCode: String,
+    country: String,
+    isDefault: Boolean
+   }],
+
    email: {
     type: String,
     required: true,
