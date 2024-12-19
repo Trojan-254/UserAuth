@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const auth = require("../middleware/authMiddleware");
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 const router = express.Router();
@@ -198,11 +199,20 @@ router.get('/update-email', async (req, res) => {
    res.render('update-email');
 });
 
-router.post('/update-email', async (req, res) => {
+router.post('/update-email', auth, async (req, res) => {
     const { currentPassword, newEmail } = req.body;
 
    try {
-     const user = await User.findById(req.user._id);
+     console.log('User ID from token: ', req.user.id)
+     const user = await User.findById(req.user.id);
+
+    if (!user) {
+      console.error('No user found with ID:', req.user.id);
+      return res.status(404).json({ 
+        error: 'User not found', 
+        details: 'No user exists with the provided ID' 
+      });
+    }
 
     // Verify current password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
