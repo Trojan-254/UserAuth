@@ -3,213 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - Zetu Cart</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
+        .gradient-bg {
+            background: linear-gradient(135deg, #f9a826, #ff6b6b);
         }
-
-        body {
-            background: linear-gradient(135deg, #6c63ff, #92a3fd);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
+        .gradient-text {
+            background: linear-gradient(45deg, #f9a826, #ff6b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-
-        .container {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            color: #333;
-        }
-
-        .container h1 {
-            margin-bottom: 1.5rem;
-            font-size: 1.8rem;
-            color: #6c63ff;
-        }
-
-       .container img {
-            width: 100px; /* Adjust based on your logo size */
-            margin-bottom: 1rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #555;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus {
-            border-color: #6c63ff;
-        }
-        .forgot-password-container {
-           text-align: right; 
-            margin-bottom: 10px; 
-         }
-
-        .forgot-password {
-         color: #6c63ff; 
-          text-decoration: none; 
-          font-size: 14px; 
-         }
-
-        .btn {
-            display: inline-block;
-            width: 100%;
-            padding: 0.8rem;
-            font-size: 1rem;
-            color: #fff;
-            background: #6c63ff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .btn:hover {
-            background: #5a55d6;
-        }
-
-        .footer {
-            margin-top: 1rem;
-            font-size: 0.85rem;
-            color: #777;
-        }
-
-        .footer a {
-            color: #6c63ff;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-content h2 {
-            color: #6c63ff;
-            margin-bottom: 1rem;
-        }
-
-        .modal-content input {
-            width: 100%;
-            padding: 0.8rem;
-            margin-bottom: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .modal-content button {
-            padding: 0.8rem;
-            width: 100%;
-            border: none;
-            background: #6c63ff;
-            color: white;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .modal-content button:hover {
-            background: #5a55d6;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #333;
-            cursor: pointer;
-        }
-
-        .close-btn:hover {
-            color: red;
-        }
-
     </style>
 </head>
-<body>
-    <div class="container">
-        <img src="vametak.png" alt="Company Logo">
-        <h1>Welcome Back</h1>
-        <form action="/auth/login" method="POST" id="loginForm">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center">
+                    <span class="text-2xl font-bold gradient-text">ZetuCart</span>
+                </a>
             </div>
-             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+        </div>
+    </nav>
+
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full bg-white rounded-lg shadow-xl p-8">
+            <div class="text-center mb-8">
+                <!-- Replace with your actual logo -->
+                <img class="mx-auto h-16 w-auto mb-4" src="/api/placeholder/64/64" alt="Zetu Cart Logo">
+                <h2 class="text-3xl font-bold gradient-text">Welcome Back</h2>
+                <p class="mt-2 text-gray-600">Sign in to your account</p>
             </div>
-           <div class="forgot-password-container">
-            <a href="#" class="forgot-password" id="forgotPasswordLink">Forgot Password?</a>
-           </div>
-            <button type="submit" class="btn">Login</button>
-        </form>
-        <div class="footer">
-            <p>Don't have an account? <a href="/signup">Sign up</a></p>
-            
+
+            <form class="space-y-6" action="/auth/login" method="POST" id="loginForm">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">
+                        Email address
+                    </label>
+                    <input id="email" name="email" type="email" required 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500">
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">
+                        Password
+                    </label>
+                    <input id="password" name="password" type="password" required 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500">
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember_me" name="remember_me" type="checkbox" 
+                            class="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded">
+                        <label for="remember_me" class="ml-2 block text-sm text-gray-700">
+                            Remember me
+                        </label>
+                    </div>
+
+                    <a href="#" class="text-sm text-orange-500 hover:text-orange-600" id="forgotPasswordLink">
+                        Forgot password?
+                    </a>
+                </div>
+
+                <button type="submit" 
+                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white gradient-bg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                    Sign in
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Don't have an account? 
+                    <a href="/signup" class="font-medium text-orange-500 hover:text-orange-600">
+                        Sign up
+                    </a>
+                </p>
+            </div>
         </div>
     </div>
 
     <!-- Modal for Forgot Password -->
-    <div id="forgotPasswordModal" class="modal">
-        <div class="modal-content">
-            <button class="close-btn" id="closeModal">&times;</button>
-            <h2>Reset Password</h2>
+    <div id="forgotPasswordModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden items-center justify-center">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-700" id="closeModal">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            
+            <h2 class="text-2xl font-bold gradient-text mb-6">Reset Password</h2>
             <form action="/auth/forgot-password" method="POST">
-                <input type="email" name="email" placeholder="Enter your email" required>
-                <button type="submit">Send Reset Link</button>
+                <div class="mb-4">
+                    <label for="reset-email" class="block text-sm font-medium text-gray-700 mb-2">
+                        Email address
+                    </label>
+                    <input type="email" id="reset-email" name="email" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500">
+                </div>
+                <button type="submit" 
+                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white gradient-bg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                    Send Reset Link
+                </button>
             </form>
         </div>
     </div>
@@ -218,43 +115,49 @@
         const forgotPasswordLink = document.getElementById("forgotPasswordLink");
         const forgotPasswordModal = document.getElementById("forgotPasswordModal");
         const closeModal = document.getElementById("closeModal");
+
         document.getElementById("loginForm").addEventListener("submit", async (event) => {
             event.preventDefault();
 
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-            const response = await fetch("/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email, password })
-            });
+            try {
+                const response = await fetch("/auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email, password })
+                });
 
-            const result = await response.json();
+                const result = await response.json();
 
-            if (response.ok) {
-                alert("Login Successful!");
-                window.location.href = result.redirectUrl;
-            } else {
-                alert(result.msg || "An error occurred.");
+                if (response.ok) {
+                    window.location.href = result.redirectUrl || "/";
+                } else {
+                    alert(result.msg || "An error occurred during login.");
+                }
+            } catch (error) {
+                alert("An error occurred. Please try again.");
             }
         });
-       
 
         forgotPasswordLink.addEventListener("click", (e) => {
             e.preventDefault();
-            forgotPasswordModal.style.display = "flex";
+            forgotPasswordModal.classList.remove("hidden");
+            forgotPasswordModal.classList.add("flex");
         });
 
         closeModal.addEventListener("click", () => {
-            forgotPasswordModal.style.display = "none";
+            forgotPasswordModal.classList.remove("flex");
+            forgotPasswordModal.classList.add("hidden");
         });
 
-        window.addEventListener("click", (e) => {
+        forgotPasswordModal.addEventListener("click", (e) => {
             if (e.target === forgotPasswordModal) {
-                forgotPasswordModal.style.display = "none";
+                forgotPasswordModal.classList.remove("flex");
+                forgotPasswordModal.classList.add("hidden");
             }
         });
     </script>

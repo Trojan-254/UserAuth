@@ -1,0 +1,204 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zetu Cart - Your Premier Shopping Destination</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hero-pattern {
+            background-color: #ffffff;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f9a826' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, #f9a826, #ff6b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+    </style>
+</head>
+<body class="font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center">
+                        <span class="text-2xl font-bold gradient-text">ZetuCart</span>
+                    </a>
+                </div>
+        
+    <div class="hidden md:block">
+     <div class="ml-10 flex items-baseline space-x-4">
+        <a href="#" class="text-gray-800 hover:text-orange-500 px-3 py-2">Home</a>
+        <a href="#categories" class="text-gray-800 hover:text-orange-500 px-3 py-2">Categories</a>
+        <a href="#features" class="text-gray-800 hover:text-orange-500 px-3 py-2">Features</a>
+        <a href="#deals" class="text-gray-800 hover:text-orange-500 px-3 py-2">Deals</a>
+        <a href="/login" class="text-gray-800 hover:text-orange-500 px-3 py-2">Login</a>
+        <a href="/signup" class="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition">
+            Sign Up
+        </a>
+    </div>
+</div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-pattern pt-24 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 mb-8 md:mb-0">
+                    <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                        Shop Smart, <span class="gradient-text">Shop Zetu</span>
+                    </h1>
+                    <p class="text-gray-600 text-lg mb-8">
+                        Discover Kenya's premier online shopping destination. Quality products, amazing deals, and fast delivery across the country.
+                    </p>
+                    <div class="flex space-x-4">
+                        <button class="bg-orange-500 text-white px-8 py-3 rounded-full hover:bg-orange-600 transition">
+                            Start Shopping
+                        </button>
+                        <button class="border-2 border-orange-500 text-orange-500 px-8 py-3 rounded-full hover:bg-orange-50 transition">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="./images/zetu1.jpg" alt="Shopping Experience" class="rounded-lg shadow-xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Why Choose Zetu Cart?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-truck text-2xl text-orange-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Fast Delivery</h3>
+                    <p class="text-gray-600">Next-day delivery available in major cities across Kenya</p>
+                </div>
+                <div class="p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-2xl text-orange-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Secure Payments</h3>
+                    <p class="text-gray-600">Multiple payment options including M-Pesa integration</p>
+                </div>
+                <div class="p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-undo text-2xl text-orange-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Easy Returns</h3>
+                    <p class="text-gray-600">Hassle-free returns within 7 days of purchase</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Popular Categories</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <% const categories = ['Electronics', 'Fashion', 'Home & Living', 'Beauty']; %>
+                <% categories.forEach(category => { %>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
+                        <img src="./images/prod22.png" alt="<%= category %>" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold mb-2"><%= category %></h3>
+                            <a href="#" class="text-orange-500 hover:text-orange-600">Shop Now →</a>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deals Section -->
+    <section id="deals" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Hot Deals</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <% const deals = [
+                    { title: 'Flash Sale', discount: '50% OFF', ends: '24 Hours Left' },
+                    { title: 'Clearance', discount: '30% OFF', ends: '3 Days Left' },
+                    { title: 'Bundle Deal', discount: 'Buy 2 Get 1', ends: 'Limited Time' }
+                ]; %>
+                <% deals.forEach(deal => { %>
+                    <div class="bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg p-6 text-white">
+                        <h3 class="text-2xl font-bold mb-2"><%= deal.title %></h3>
+                        <p class="text-4xl font-bold mb-4"><%= deal.discount %></p>
+                        <p class="mb-4"><%= deal.ends %></p>
+                        <button class="bg-white text-orange-500 px-6 py-2 rounded-full hover:bg-gray-100 transition">
+                            Shop Now
+                        </button>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-3xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-6">Stay Updated</h2>
+            <p class="text-gray-600 mb-8">Subscribe to our newsletter for exclusive deals and updates</p>
+            <form class="flex flex-col md:flex-row gap-4 justify-center">
+                <input type="email" placeholder="Enter your email" class="px-6 py-3 rounded-full border focus:outline-none focus:ring-2 focus:ring-orange-500 md:w-96">
+                <button class="bg-orange-500 text-white px-8 py-3 rounded-full hover:bg-orange-600 transition">
+                    Subscribe
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">ZetuCart</h3>
+                    <p class="text-gray-400">Your trusted shopping companion in Kenya</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">FAQs</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Customer Service</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Shipping Info</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Returns</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Order Status</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Connect With Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 ZetuCart. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</body>
+</html>

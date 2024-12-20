@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const authRoutes = require("./routes/auth");
 const profileRoutes = require("./routes/profile");
+const productRoutes = require("./routes/product");
+const errorHandler = require("./middleware/errorMiddleware");
 const auth = require("./middleware/authMiddleware");
 const app = express();
 const cookieParser = require('cookie-parser');
@@ -17,6 +19,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "views")));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Error handling middleware
+app.use(errorHandler);
+
 //app.use(express.static('public'));
 app.use(methodOverride('_method'));
 app.use(express.urlencoded({extended: true}));
@@ -37,9 +43,10 @@ mongoose.connect(process.env.MONGO_URL, {
 // Routes
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);
+app.use("/products", productRoutes);
 app.use("/email-verification/:token", authRoutes);
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, "views", "landing.html"));
+    res.render('landing');
 });
 
 app.get("/signup", (req, res) => {

@@ -3,232 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <title>Sign Up</title>
+    <title>Sign Up - Zetu Cart</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
+        .gradient-bg {
+            background: linear-gradient(135deg, #f9a826, #ff6b6b);
         }
-
-        body {
-            background: linear-gradient(135deg, #6c63ff, #92a3fd);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-        }
-
-        .container {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
-            color: #333;
-            height: auto;
-        }
-
-        .container img {
-            width: 100px;
-            margin-bottom: 1rem;
-        }
-
-        .container h1 {
-            margin-bottom: 1.5rem;
-            font-size: 1.8rem;
-            color: #6c63ff;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-            text-align: left;
-            position: relative;
-        }
-
-        .name-group {
-            display: flex;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-
-        .name-field {
-            flex: 1;
-        }
-
-        .name-field input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        .name-field input:focus {
-            border-color: #6c63ff;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #555;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.8rem 2.5rem 0.8rem 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus {
-            border-color: #6c63ff;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            top: 70%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #777;
-        }
-
-        .toggle-password i {
-            font-size: 18px;
-        }
-
-        .password-instructions {
-            margin-top: 5px;
-            font-size: 12px;
-            color: #777;
-            line-height: 1.5;
-        }
-
-        .password-instructions strong {
-            color: #555;
-        }
-
-        .btn {
-            display: inline-block;
-            width: 100%;
-            padding: 0.8rem;
-            font-size: 1rem;
-            color: #fff;
-            background: #6c63ff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .btn:hover {
-            background: #5a55d6;
-        }
-
-        .footer {
-            margin-top: 1rem;
-            font-size: 0.85rem;
-            color: #777;
-        }
-
-        .footer a {
-            color: #6c63ff;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
+        .gradient-text {
+            background: linear-gradient(45deg, #f9a826, #ff6b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <img src="vametak.png" alt="Company Logo"> 
-        <h1>Create an Account</h1>
-        <form action="/auth/signup" method="POST" id="signupForm">
-            <div class="form-group name-group">
-                <div class="name-field">
-                    <label for="fname">First Name</label>
-                    <input type="text" id="fname" name="firstName" required>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center">
+                    <span class="text-2xl font-bold gradient-text">ZetuCart</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl w-full bg-white rounded-lg shadow-xl p-8">
+            <div class="text-center mb-8">
+                <!-- Replace with your actual logo -->
+                <img class="mx-auto h-16 w-auto mb-4" src="/api/placeholder/64/64" alt="Zetu Cart Logo">
+                <h2 class="text-3xl font-bold gradient-text">Create Your Account</h2>
+                <p class="mt-2 text-gray-600">Join the Zetu Cart community today</p>
+            </div>
+
+            <form class="space-y-6" action="/auth/signup" method="POST" id="signupForm">
+                <!-- Name Fields -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="fname" class="block text-sm font-medium text-gray-700">
+                            First Name
+                        </label>
+                        <input id="fname" name="firstName" type="text" required 
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500">
+                    </div>
+                    <div>
+                        <label for="lname" class="block text-sm font-medium text-gray-700">
+                            Last Name
+                        </label>
+                        <input id="lname" name="lastName" type="text" required 
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500">
+                    </div>
                 </div>
-                <div class="name-field">
-                    <label for="lname">Last Name</label>
-                    <input type="text" id="lname" name="lastName" required>
+
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">
+                        Email address
+                    </label>
+                    <input id="email" name="email" type="email" required 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500">
                 </div>
+
+                <!-- Password Field -->
+                <div class="relative">
+                    <label for="password" class="block text-sm font-medium text-gray-700">
+                        Password
+                    </label>
+                    <div class="relative">
+                        <input id="password" name="password1" type="password" required 
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" 
+                            onclick="togglePassword('password', this)">
+                            <i class="fa-solid fa-eye text-gray-400 hover:text-gray-600"></i>
+                        </button>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">
+                        Must be at least 8 characters with 1 uppercase letter and 1 special character
+                    </p>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div class="relative">
+                    <label for="confirm-password" class="block text-sm font-medium text-gray-700">
+                        Confirm Password
+                    </label>
+                    <div class="relative">
+                        <input id="confirm-password" name="password2" type="password" required 
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" 
+                            onclick="togglePassword('confirm-password', this)">
+                            <i class="fa-solid fa-eye text-gray-400 hover:text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" 
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white gradient-bg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                    Create Account
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Already have an account? 
+                    <a href="/login" class="font-medium text-orange-500 hover:text-orange-600">
+                        Sign in
+                    </a>
+                </p>
             </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password1" required>
-                <span class="toggle-password" onclick="togglePassword('password', this)">
-                    <i class="fa-solid fa-eye"></i>
-                </span>
-            </div>
-            <p class="password-instructions">
-                Your password should be at least 8 characters long with at least one uppercase letter and one special character.
-            </p>
-            <div class="form-group">
-                <label for="confirm-password">Password Confirmation</label>
-                <input type="password" id="confirm-password" name="password2" required>
-                <span class="toggle-password" onclick="togglePassword('confirm-password', this)">
-                    <i class="fa-solid fa-eye"></i>
-                </span>
-            </div>
-            <button type="submit" class="btn">Sign Up</button>
-        </form>
-        <div class="footer">
-            <p>Already have an account? <a href="/login">Log in here</a></p>
         </div>
     </div>
 
     <script>
-        // Ensure password fields are hidden and eye icon is closed when page loads
-        window.addEventListener('DOMContentLoaded', (event) => {
-            const passwordFields = ['password1', 'password2'];
-            passwordFields.forEach(fieldId => {
-                const passwordField = document.getElementById(fieldId);
-                const iconElement = document.querySelector(`#${fieldId} + .toggle-password i`);
-                if (passwordField && iconElement) {
-                    passwordField.type = 'password'; // Set default to password type
-                    iconElement.classList.remove('fa-eye');
-                    iconElement.classList.add('fa-eye-slash');
-                }
-            });
-        });
-
-        // Toggle password visibility
-        function togglePassword(fieldId, icon) {
+        function togglePassword(fieldId, button) {
             const passwordField = document.getElementById(fieldId);
-            const iconElement = icon.querySelector("i");
+            const icon = button.querySelector('i');
 
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                iconElement.classList.remove("fa-eye-slash");
-                iconElement.classList.add("fa-eye");
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
             } else {
-                passwordField.type = "password";
-                iconElement.classList.remove("fa-eye");
-                iconElement.classList.add("fa-eye-slash");
+                passwordField.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
             }
         }
+
+        document.getElementById('signupForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            // Basic validation
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            // Password strength validation
+            const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
+            if (!passwordRegex.test(password)) {
+                alert('Password must be at least 8 characters long with 1 uppercase letter and 1 special character');
+                return;
+            }
+
+            const formData = {
+                firstName: document.getElementById('fname').value,
+                lastName: document.getElementById('lname').value,
+                email: document.getElementById('email').value,
+                password: password
+            };
+
+            try {
+                const response = await fetch('/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    window.location.href = result.redirectUrl || '/login';
+                } else {
+                    alert(result.msg || 'An error occurred during signup.');
+                }
+            } catch (error) {
+                alert('An error occurred. Please try again.');
+            }
+        });
     </script>
 </body>
 </html>
