@@ -1,9 +1,21 @@
 // Product routes
+const multer = require('multer');
 const express = require('express');
 const router = express.Router();
 const { Product } = require('../models/Product');
 const auth = require('../middleware/authMiddleware');
 const admin = require('../middleware/adminMiddleware');
+const { body, validationResult } = require('express-validator');
+
+// File uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cd(null, 'uploads/'),
+    filename: (req, res, cb) => {
+       cb(null, `${Date.now()}-${file.originalname}`)
+    }
+});
+
+const upload = multer({ storage });
 
 // Get all products with filtering and pagination
 router.get('/', async(req, res) => {
@@ -47,35 +59,83 @@ router.get('/', async(req, res) => {
 });
 
 
+// Fetch product details
+router.get('/:id', async (req, res) => {
+    try {
+       const product = await Product.findById(req.params.id);
+       if (!product) return res.status(404).send('Product not found');
+       res.render('/products/show', { product });
+    } catch(error) {
+       console.error(error);
+       res.status(500).send('Error fetching product');
+    }
+})
+
 // Create a new Product. Only admins can do this shit
 router.get('/create-new', (req, res)=> {
     res.render('products/create');
 });
-router.post('/create-new', [auth, admin], async (req, res) => {
+
+router.post('/create-new', auth, upload.fields([
+    { name: 'mainImage', maxCount: 1 },
+    { name: 'additionalImages', maxCount: 3 }
+]), async (req, res) => {
     try {
-      const product = new Product(req.body);
+      const {
+        name,
+        category,
+        price,
+        salePrice,
+        stock,
+        description,
+        sku,
+        weight
+      } = req.body;
+      const mainImage = req.files['mainImage']?.[0]?.path;
+      const additionalImages = req.files['additionalImages']?.map(file => file.path);
+
+      const product = new Product({
+         name,
+         category,
+         price,
+         salePrice,
+         stock,
+         description,
+         mainImage,
+         additionalImages,
+         sku,
+         weight
+      });
       await product.save();
-      res.redirect('products');
-    } catch(error) {
-    res.status(400).json({  message: error.message });
+      res.status(201).json({
+        success: true,
+        message: 'Product created succesfully',
+        redirect: '/products'
+      });
+    } catch(err) {
+       res.status(400).json({
+         success: false,
+         message: error.message
+       });
     }
 });
 
-// Update the product. priviledges to the admin
-router.put('/update-product/:id', [auth, admin], async (req, res) => {
-    try{
-      const product = await Product.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true, runValidators: true }
-      );
 
-      if (!product) return res.status(404).json({ message: 'Product not found' });
-      res.json(product);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-});
+
+// PUT /products/:id - Update a product
+router.put('/:id', auth, upload.fields([{ name: 'mainImage' }, { name: 'additionalImages' }]), async (req, res) => {
+    try {
+        const updates = req.body;
+
+        if (req.files['mainImage']) updates.mainImage = req.files['mainImage'][0].path;
+        if (req.files['additionalImages']) updates.additionalImages = req.files['additionalImages'].map(file => file.path);
+
+        const product = await Product.findByIdAndUpdate(req.params.id, updates, { new: true });
+        if (!product) return res.status(404).send('Product not found');
+        res.redirect(`/products/${product._id}`);
+    } catch (err) {
+        res.status(500).send('Error updating product');
+    
 
 
 // Delete product (admin only)
