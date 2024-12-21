@@ -100,6 +100,18 @@
                     </div>
                 </div>
 
+                <!-- Role Selection -->
+                <div>
+                    <label for="role" class="block text-sm font-medium text-gray-700">
+                        I am a
+                    </label>
+                    <select id="role" name="role" required 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500">
+                        <option value="buyer">Buyer</option>
+                        <option value="seller">Seller</option>
+                    </select>
+                </div>
+
                 <button type="submit" 
                     class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white gradient-bg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
                     Create Account
@@ -156,7 +168,8 @@
                 firstName: document.getElementById('fname').value,
                 lastName: document.getElementById('lname').value,
                 email: document.getElementById('email').value,
-                password: password
+                password: password,
+                role: document.getElementById('role').value // Added role field
             };
 
             try {

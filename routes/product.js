@@ -1,8 +1,10 @@
 // Product routes
+const mongoose = require('mongoose');
 const multer = require('multer');
 const express = require('express');
 const router = express.Router();
 const { Product } = require('../models/Product');
+const { Category } = require('../models/Category');
 const auth = require('../middleware/authMiddleware');
 const admin = require('../middleware/adminMiddleware');
 const { body, validationResult } = require('express-validator');
@@ -10,7 +12,7 @@ const { body, validationResult } = require('express-validator');
 // File uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'uploads/'),
-    filename: (req, res, cb) => {
+    filename: (req, file, cb) => {
        cb(null, `${Date.now()}-${file.originalname}`)
     }
 });
@@ -69,11 +71,29 @@ router.get('//:id', async (req, res) => {
        console.error(error);
        res.status(500).send('Error fetching product');
     }
-})
+});
+
+//Route to fetch categories
+router.get('/categories', async (req, res) => {
+  try {
+    const categories = await Category.find();
+    res.json(categories);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch categories' });
+  }
+});
+ 
 
 // Create a new Product. Only admins can do this shit
-router.get('/create-new', (req, res)=> {
-    res.render('products/create');
+router.get('/create-new', async (req, res) => {
+    try {
+        const parentCategories = await Category.find({ parentCategory: null }).select('_id name').lean();
+        res.render('products/create', { parentCategories });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error loading categories');
+    }
 });
 
 router.post('/create-new', upload.fields([
@@ -83,7 +103,8 @@ router.post('/create-new', upload.fields([
     try {
       const {
         name,
-        category,
+        parentCategory,
+        childCategory,
         price,
         salePrice,
         stock,
@@ -91,12 +112,14 @@ router.post('/create-new', upload.fields([
         sku,
         weight
       } = req.body;
+
       const mainImage = req.files['mainImage']?.[0]?.path;
       const additionalImages = req.files['additionalImages']?.map(file => file.path);
 
       const product = new Product({
          name,
-         category,
+         parentCategory: parentCategory._id,
+         childCategory: childCategory._id,
          price,
          salePrice,
          stock,
@@ -112,7 +135,7 @@ router.post('/create-new', upload.fields([
         message: 'Product created succesfully',
         redirect: '/products'
       });
-    } catch(err) {
+    } catch(error) {
        res.status(400).json({
          success: false,
          message: error.message

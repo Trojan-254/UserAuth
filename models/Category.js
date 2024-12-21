@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
+const User = require('../models/User');
 
 const CategorySchema = new mongoose.Schema({
   name: {
@@ -7,7 +9,20 @@ const CategorySchema = new mongoose.Schema({
     unique: true,
     trim: true
   },
-  description: String,
+  description: {
+    type: String,
+    maxlength: 500,
+    trim: true
+  },
+  slug: {
+   type: String,
+   unique: true,
+   lowercase: true,
+   trim: true,
+   required: true,
+   set: (value) => slugify(value)
+  },
+
   parentCategory: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',
@@ -16,9 +31,32 @@ const CategorySchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
-  }
+  },
+  deletedAt: {
+    type: Date,
+    default: null
+  },
+  createdBy: {
+   type: mongoose.Schema.Types.ObjectId,
+   ref: 'User',
+   required: true
+  },
+  updatedBy: {
+   type: mongoose.Schema.Types.ObjectId,
+   ref: 'User'
+  },
+  categoryAttributes: [{
+   attributeName: {
+     type: String,
+     required: true
+   },
+   attributeValue: {
+     type: String,
+     required: true
+   }
+  }]
 }, { timestamps: true });
 
-
 // export the module
-module.exports = mongoose.model("Category", CategorySchema);
+const Category = mongoose.model("Category", CategorySchema);
+module.exports = { Category };

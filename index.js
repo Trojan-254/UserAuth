@@ -8,9 +8,12 @@ const profileRoutes = require("./routes/profile");
 const productRoutes = require("./routes/product");
 const errorHandler = require("./middleware/errorMiddleware");
 const auth = require("./middleware/authMiddleware");
+const exphbs = require('express-handlebars');
 const app = express();
 const cookieParser = require('cookie-parser');
 const methodOverride = require('method-override');
+
+
 
 // App middlewares
 app.use(cookieParser());
@@ -23,11 +26,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Error handling middleware
 app.use(errorHandler);
 
+// Handle bars
+app.engine('handlebars', exphbs.engine({
+    defaultLayout: 'main',
+    helpers: {
+        eq: function (a, b) { return a === b; }
+    }
+}));
+
 //app.use(express.static('public'));
 app.use(methodOverride('_method'));
 app.use(express.urlencoded({extended: true}));
 // EJS Template engine
-app.set('view engine', 'ejs');
+app.set('view engine', 'ejs', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 
 // Mongodb connection
@@ -75,6 +86,9 @@ app.get("/dashboard", auth, (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+
+
 
 // Start the damned server
 const PORT = process.env.PORT || 3000;

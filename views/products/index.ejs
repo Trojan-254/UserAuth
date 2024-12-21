@@ -3,176 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product List</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
-
-        header {
-            background-color: #333;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 2rem;
-            color: #333;
-        }
-
-        form {
-            max-width: 1000px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        form div {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"], input[type="number"], select {
-            width: 100%;
-            padding: 8px;
-            font-size: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .product-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .product-card {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .product-card h2 {
-            font-size: 1.5rem;
-            color: #333;
-        }
-
-        .product-card p {
-            color: #666;
-            font-size: 1rem;
-            margin-bottom: 10px;
-        }
-
-        .product-card .price {
-            font-size: 1.2rem;
-            color: #28a745;
-            font-weight: bold;
-        }
-
-        .pagination {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .pagination a {
-            padding: 10px 20px;
-            margin: 0 5px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-
-        .pagination a:hover {
-            background-color: #0056b3;
-        }
-
-        .pagination span {
-            font-size: 1rem;
-            color: #333;
-            margin: 0 10px;
-        }
-    </style>
+    <title>Products | Zetu Cart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body>
-
-    <header>
-        <h1>Product List</h1>
-    </header>
-
-    <form action="/products" method="GET">
-        <div>
-            <label for="category">Category:</label>
-            <input type="text" id="category" name="category" value="<%= category || '' %>">
-        </div>
-        <div>
-            <label for="minPrice">Min Price:</label>
-            <input type="number" id="minPrice" name="minPrice" value="<%= minPrice || '' %>">
-        </div>
-        <div>
-            <label for="maxPrice">Max Price:</label>
-            <input type="number" id="maxPrice" name="maxPrice" value="<%= maxPrice || '' %>">
-        </div>
-        <div>
-            <label for="sort">Sort By:</label>
-            <select name="sort" id="sort">
-                <option value="">None</option>
-                <option value="price:asc" <%= sort === 'price:asc' ? 'selected' : '' %>>Price (Low to High)</option>
-                <option value="price:desc" <%= sort === 'price:desc' ? 'selected' : '' %>>Price (High to Low)</option>
-            </select>
-        </div>
-        <button type="submit">Filter</button>
-    </form>
-
-    <div class="product-list">
-        <% products.forEach(product => { %>
-            <div class="product-card">
-                <h2><%= product.name %></h2>
-                <p><%= product.description %></p>
-                <p class="price">$<%= product.price %></p>
-                <p>Category: <%= product.category ? product.category.name : 'No category' %></p>
+<body class="bg-gray-50">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gradient-to-b from-orange-600 to-orange-700 text-white p-6 shadow-xl flex flex-col">
+            <div class="flex items-center mb-10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <h2 class="text-2xl font-bold">Zetu Cart</h2>
             </div>
-        <% }) %>
-    </div>
 
-    <div class="pagination">
-        <% if (currentPage > 1) { %>
-            <a href="/products?page=<%= currentPage - 1 %>&category=<%= category %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>">Previous</a>
-        <% } %>
-        <span>Page <%= currentPage %> of <%= totalPages %></span>
-        <% if (currentPage < totalPages) { %>
-            <a href="/products?page=<%= currentPage + 1 %>&category=<%= category %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>">Next</a>
-        <% } %>
-    </div>
+            <!-- Filter Section -->
+            <form action="/products" method="GET" class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Categories</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="category" value="electronics" class="text-orange-500">
+                            <span>Electronics</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="category" value="fashion" class="text-orange-500">
+                            <span>Fashion</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="category" value="home" class="text-orange-500">
+                            <span>Home & Living</span>
+                        </label>
+                    </div>
+                </div>
 
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Price Range</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm">Min Price (KES)</label>
+                            <input type="number" name="minPrice" value="<%= minPrice || '' %>" 
+                                   class="w-full bg-white/10 rounded-lg p-2 mt-1">
+                        </div>
+                        <div>
+                            <label class="text-sm">Max Price (KES)</label>
+                            <input type="number" name="maxPrice" value="<%= maxPrice || '' %>" 
+                                   class="w-full bg-white/10 rounded-lg p-2 mt-1">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-white text-orange-600 py-2 rounded-lg hover:bg-orange-50 transition-colors">
+                    Apply Filters
+                </button>
+            </form>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <!-- Top Navigation -->
+            <div class="flex justify-between items-center mb-8">
+                <div class="flex-1">
+                    <div class="relative max-w-md">
+                        <input type="text" placeholder="Search products..." 
+                               class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-orange-500">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <div class="relative">
+                        <select name="sort" class="appearance-none bg-white border border-gray-200 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:border-orange-500">
+                            <option value="">Sort By</option>
+                            <option value="price:asc" <%= sort === 'price:asc' ? 'selected' : '' %>>Price: Low to High</option>
+                            <option value="price:desc" <%= sort === 'price:desc' ? 'selected' : '' %>>Price: High to Low</option>
+                            <option value="newest">Newest First</option>
+                            <option value="popular">Most Popular</option>
+                        </select>
+                        <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400"></i>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="p-2 rounded-lg border border-gray-200 hover:border-orange-500 transition-colors">
+                            <i class="fas fa-th-large text-gray-600"></i>
+                        </button>
+                        <button class="p-2 rounded-lg border border-gray-200 hover:border-orange-500 transition-colors">
+                            <i class="fas fa-list text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <% products.forEach(product => { %>
+                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                        <div class="relative">
+                            <img src="/api/placeholder/300/300" alt="<%= product.name %>" class="w-full h-48 object-cover">
+                            <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center hover:text-orange-500 transition-colors">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <div class="text-sm text-orange-500 mb-1"><%= product.category ? product.category.name : 'No category' %></div>
+                            <h3 class="font-semibold text-gray-800 mb-2"><%= product.name %></h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2"><%= product.description %></p>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="text-lg font-bold text-gray-800">KES <%= product.price %></span>
+                                    <% if (product.originalPrice) { %>
+                                        <span class="text-sm text-gray-400 line-through ml-2">KES <%= product.originalPrice %></span>
+                                    <% } %>
+                                </div>
+                                <button class="p-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition-colors">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-center items-center space-x-4 mt-12">
+                <% if (currentPage > 1) { %>
+                    <a href="/products?page=<%= currentPage - 1 %>&category=<%= category %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>" 
+                       class="px-4 py-2 rounded-lg border border-gray-200 hover:border-orange-500 transition-colors">
+                        <i class="fas fa-chevron-left mr-2"></i> Previous
+                    </a>
+                <% } %>
+                
+                <div class="flex items-center space-x-2">
+                    <% for(let i = 1; i <= totalPages; i++) { %>
+                        <a href="/products?page=<%= i %>&category=<%= category %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>"
+                           class="w-10 h-10 flex items-center justify-center rounded-lg <%= currentPage === i ? 'bg-orange-500 text-white' : 'border border-gray-200 hover:border-orange-500' %>">
+                            <%= i %>
+                        </a>
+                    <% } %>
+                </div>
+
+                <% if (currentPage < totalPages) { %>
+                    <a href="/products?page=<%= currentPage + 1 %>&category=<%= category %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>"
+                       class="px-4 py-2 rounded-lg border border-gray-200 hover:border-orange-500 transition-colors">
+                        Next <i class="fas fa-chevron-right ml-2"></i>
+                    </a>
+                <% } %>
+            </div>
+
+            <!-- Footer -->
+            <footer class="mt-12 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 Zetu Cart • All Rights Reserved</p>
+                <div class="mt-2">
+                    <a href="/privacy" class="hover:text-orange-500">Privacy Policy</a> • 
+                    <a href="/terms" class="hover:text-orange-500">Terms of Service</a> • 
+                    <a href="/contact" class="hover:text-orange-500">Contact Us</a>
+                </div>
+            </footer>
+        </main>
+    </div>
 </body>
 </html>

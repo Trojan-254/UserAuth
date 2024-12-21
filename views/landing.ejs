@@ -39,9 +39,12 @@
         <a href="#features" class="text-gray-800 hover:text-orange-500 px-3 py-2">Features</a>
         <a href="#deals" class="text-gray-800 hover:text-orange-500 px-3 py-2">Deals</a>
         <a href="/login" class="text-gray-800 hover:text-orange-500 px-3 py-2">Login</a>
-        <a href="/signup" class="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition">
-            Sign Up
-        </a>
+        <!-- Sign Up Button -->
+        <a 
+    href="/signup" 
+    class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-full font-medium text-center shadow-md hover:from-yellow-500 hover:to-orange-600 focus:ring-2 focus:ring-yellow-300 focus:outline-none transition duration-300 ease-in-out">
+    Sign Up
+</a>
     </div>
 </div>
     </nav>
@@ -104,47 +107,79 @@
     </section>
 
     <!-- Categories Section -->
-    <section id="categories" class="py-16 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12">Popular Categories</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <% const categories = ['Electronics', 'Fashion', 'Home & Living', 'Beauty']; %>
-                <% categories.forEach(category => { %>
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
-                        <img src="./images/prod22.png" alt="<%= category %>" class="w-full h-48 object-cover">
-                        <div class="p-4">
-                            <h3 class="text-lg font-semibold mb-2"><%= category %></h3>
-                            <a href="#" class="text-orange-500 hover:text-orange-600">Shop Now →</a>
-                        </div>
+    <!-- Categories Section -->
+<section id="categories" class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">Popular Categories</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <% const categories = [
+                { name: 'Electronics', image: './images/electronics.jpeg' },
+                { name: 'Fashion', image: './images/prod22.png' },
+                { name: 'Home & Living', image: './images/home.jpeg' },
+                { name: 'Beauty', image: './images/beauty.jpeg' },
+            ]; %>
+            <% categories.forEach(category => { %>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
+                    <img src="<%= category.image %>" alt="<%= category.name %>" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold mb-2"><%= category.name %></h3>
+                        <a href="/products" class="text-orange-500 hover:text-orange-600">Shop Now →</a>
                     </div>
-                <% }); %>
-            </div>
+                </div>
+            <% }); %>
         </div>
-    </section>
+    </div>
+</section>
+
 
     <!-- Deals Section -->
     <section id="deals" class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12">Hot Deals</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <% const deals = [
-                    { title: 'Flash Sale', discount: '50% OFF', ends: '24 Hours Left' },
-                    { title: 'Clearance', discount: '30% OFF', ends: '3 Days Left' },
-                    { title: 'Bundle Deal', discount: 'Buy 2 Get 1', ends: 'Limited Time' }
-                ]; %>
-                <% deals.forEach(deal => { %>
-                    <div class="bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg p-6 text-white">
-                        <h3 class="text-2xl font-bold mb-2"><%= deal.title %></h3>
-                        <p class="text-4xl font-bold mb-4"><%= deal.discount %></p>
-                        <p class="mb-4"><%= deal.ends %></p>
-                        <button class="bg-white text-orange-500 px-6 py-2 rounded-full hover:bg-gray-100 transition">
-                            Shop Now
-                        </button>
-                    </div>
-                <% }); %>
-            </div>
+    <div class="max-w-7xl mx-auto px-4">
+        <!-- Section Title -->
+        <h2 class="text-3xl font-bold text-center mb-12">Hot Deals</h2>
+
+        <!-- Deals Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <% const deals = [
+                { 
+                    title: 'Flash Sale', 
+                    discount: '50% OFF', 
+                    ends: '24 Hours Left', 
+                    buttonLabel: 'Shop Now',
+                    bgGradient: 'from-orange-500 to-red-500'
+                },
+                { 
+                    title: 'Clearance', 
+                    discount: '30% OFF', 
+                    ends: '3 Days Left', 
+                    buttonLabel: 'Explore Deals',
+                    bgGradient: 'from-blue-500 to-teal-500'
+                },
+                { 
+                    title: 'Bundle Deal', 
+                    discount: 'Buy 2 Get 1', 
+                    ends: 'Limited Time', 
+                    buttonLabel: 'Get This Deal',
+                    bgGradient: 'from-purple-500 to-pink-500'
+                }
+            ]; %>
+
+            <% deals.forEach(deal => { %>
+                <!-- Single Deal Card -->
+                <div class="bg-gradient-to-r <%= deal.bgGradient %> rounded-lg p-6 text-white shadow-lg hover:shadow-xl transition">
+                    <h3 class="text-2xl font-bold mb-2"><%= deal.title %></h3>
+                    <p class="text-4xl font-bold mb-4"><%= deal.discount %></p>
+                    <p class="mb-4 text-sm"><%= deal.ends %></p>
+                    <button 
+                        class="bg-white text-orange-500 px-6 py-2 rounded-full hover:bg-gray-100 transition font-semibold">
+                        <%= deal.buttonLabel %>
+                    </button>
+                </div>
+            <% }); %>
         </div>
-    </section>
+    </div>
+</section>
+
 
     <!-- Newsletter Section -->
     <section class="py-16 bg-gray-50">

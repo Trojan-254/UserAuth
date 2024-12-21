@@ -16,24 +16,38 @@ const ProductSchema = new mongoose.Schema({
         required: true,
         min: 0
     },
-    category: {
+    salePrice: {
+       type: Number
+    },
+    parentCategory: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: true
     },
-    images: [{
-        url: String,
-        altText: String
-    }],
+    childCategory: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
+      required: true
+    },
+    mainImage: {
+      type: String,
+      required: true
+    },
+    additionalImages: {
+      type: [String]
+    },
+    sku: {
+     type: String,
+     unique: true
+    },
+    weight: {
+      type: Number
+    },
     stock: {
         type: Number,
         required: true,
         min: 0
     },
-    specifications: [{
-        name: String,
-        value: String
-    }],
     isActive: {
         type: Boolean,
         default: true

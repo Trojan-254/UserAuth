@@ -3,47 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <link rel="stylesheet" href="/styles.css"> <!-- Make sure to link your styles here -->
+    <title>Profile | Zetu Cart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="profile-container">
-        <div class="profile-card">
-            <h2>User Profile</h2>
-            <div class="profile-info">
-                <div class="profile-detail">
-                    <strong>Firstname:</strong>
-                    <p><%= firstname %></p>
+<body class="bg-gray-50">
+    <div class="flex min-h-screen">
+        <!-- Sidebar (Same as dashboard) -->
+        <aside class="w-64 bg-gradient-to-b from-orange-600 to-orange-700 text-white p-6 shadow-xl flex flex-col">
+            <div class="flex items-center mb-10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <h2 class="text-2xl font-bold">Zetu Cart</h2>
+            </div>
 
+            <!-- Navigation Links -->
+            <nav class="space-y-2">
+                <a href="/dashboard" class="flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+                    <i class="fas fa-home w-5 mr-3"></i>
+                    Dashboard
+                </a>
+                <a href="/profile" class="flex items-center p-3 rounded-lg bg-orange-500 transition-colors duration-200">
+                    <i class="fas fa-user w-5 mr-3"></i>
+                    Profile
+                </a>
+                <a href="/orders" class="flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+                    <i class="fas fa-shopping-bag w-5 mr-3"></i>
+                    Orders
+                </a>
+                <!-- Other navigation items -->
+            </nav>
+
+            <!-- Logout Button -->
+            <form action="/auth/logout" method="POST" class="mt-auto">
+                <button type="submit" class="w-full flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+                    <i class="fas fa-sign-out-alt w-5 mr-3"></i>
+                    Logout
+                </button>
+            </form>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <!-- Top Navigation Bar -->
+            <nav class="bg-white p-4 rounded-xl shadow-sm mb-8 flex justify-between items-center">
+                <h1 class="text-2xl font-semibold text-gray-800">My Profile</h1>
+                <div class="flex items-center space-x-4">
+                    <a href="/notifications" class="relative">
+                        <i class="fas fa-bell text-gray-600 text-xl"></i>
+                        <span class="absolute -top-2 -right-2 bg-orange-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">2</span>
+                    </a>
                 </div>
-                <div class="profile-detail">
-                    <strong>Lastname:</strong>
-                    <p><%= lastname %></p>
+            </nav>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Profile Information -->
+                <div class="md:col-span-2">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-semibold">Personal Information</h2>
+                            <button class="text-orange-500 hover:text-orange-600">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-sm text-gray-500">First Name</label>
+                                    <p class="text-gray-800 font-medium"><%= firstname %></p>
+                                </div>
+                                <div>
+                                    <label class="text-sm text-gray-500">Last Name</label>
+                                    <p class="text-gray-800 font-medium"><%= lastname %></p>
+                                </div>
+                                <div>
+                                    <label class="text-sm text-gray-500">Email</label>
+                                    <div class="flex items-center">
+                                        <p class="text-gray-800 font-medium"><%= email %></p>
+                                        <% if (verified) { %>
+                                            <span class="ml-2 text-green-500"><i class="fas fa-check-circle"></i></span>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-sm text-gray-500">Phone Number</label>
+                                    <p class="text-gray-800 font-medium">+254 712 827 803</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-sm text-gray-500">Account Status</label>
+                                    <p class="text-gray-800 font-medium">
+                                        <span class="<%= verified ? 'text-green-500' : 'text-orange-500' %>">
+                                            <%= verified ? 'Verified Account' : 'Pending Verification' %>
+                                        </span>
+                                    </p>
+                                </div>
+                                <div>
+                                    <label class="text-sm text-gray-500">Member Since</label>
+                                    <p class="text-gray-800 font-medium">December 2024</p>
+                                </div>
+                                <div>
+                                    <label class="text-sm text-gray-500">User ID</label>
+                                    <p class="text-gray-500 text-sm"><%= userId %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Security -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 mt-6">
+                        <h2 class="text-xl font-semibold mb-6">Account Security</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 border rounded-lg">
+                                <div>
+                                    <h3 class="font-medium">Password</h3>
+                                    <p class="text-sm text-gray-500">Last changed 30 days ago</p>
+                                </div>
+                                <a href="/auth/change-password" class="text-orange-500 hover:text-orange-600">Change</a>
+                            </div>
+                            <div class="flex items-center justify-between p-4 border rounded-lg">
+                                <div>
+                                    <h3 class="font-medium">Two-Factor Authentication</h3>
+                                    <p class="text-sm text-gray-500">Enhance your account security</p>
+                                </div>
+                                <button class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Enable</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="profile-detail">
-                    <strong>Email:</strong>
-                    <p><%= email %></p>
-                    <a href="/auth/update-email">Update</a>
-                </div>
-                <div class="profile-detail">
-                    <strong>Verification Status:</strong>
-                    <p class="<%= verified ? 'verified' : 'unverified' %>">
-                        <%= verified ? 'Verified' : 'Not Verified' %>
-                    </p>
-                </div>
-                <div class="profile-detail">
-                    <strong>User ID:</strong>
-                    <p><%= userId %></p>
+                <!-- Right Column -->
+                <div class="space-y-6">
+                    <!-- Profile Stats -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-xl font-semibold mb-6">Account Overview</h2>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500">Total Orders</span>
+                                <span class="font-medium">24</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500">Wishlist Items</span>
+                                <span class="font-medium">15</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500">Reviews Given</span>
+                                <span class="font-medium">8</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500">Reward Points</span>
+                                <span class="font-medium text-orange-500">2,450</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Linked Accounts -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-xl font-semibold mb-6">Linked Accounts</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="fab fa-google text-xl text-gray-600 w-8"></i>
+                                    <span>Google</span>
+                                </div>
+                                <button class="text-orange-500 hover:text-orange-600">Link</button>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="fab fa-facebook text-xl text-gray-600 w-8"></i>
+                                    <span>Facebook</span>
+                                </div>
+                                <button class="text-orange-500 hover:text-orange-600">Link</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Account -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-xl font-semibold text-red-600 mb-4">Delete Account</h2>
+                        <p class="text-gray-500 text-sm mb-4">Once you delete your account, there is no going back. Please be certain.</p>
+                        <button class="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete Account</button>
+                    </div>
                 </div>
             </div>
-            <div class="actions">
-                <button>  
-                <form action="/auth/logout" method="POST">
-                   <button type="submit" class="logout-btn">Logout</button>
-                </form>
-            </div>
-        </div>
+
+            <!-- Footer -->
+            <footer class="mt-12 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 Zetu Cart • All Rights Reserved</p>
+                <div class="mt-2">
+                    <a href="/privacy" class="hover:text-orange-500">Privacy Policy</a> • 
+                    <a href="/terms" class="hover:text-orange-500">Terms of Service</a> • 
+                    <a href="/contact" class="hover:text-orange-500">Contact Us</a>
+                </div>
+            </footer>
+        </main>
     </div>
 </body>
 </html>
