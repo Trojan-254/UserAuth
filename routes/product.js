@@ -9,7 +9,7 @@ const { body, validationResult } = require('express-validator');
 
 // File uploads
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => cd(null, 'uploads/'),
+    destination: (req, file, cb) => cb(null, 'uploads/'),
     filename: (req, res, cb) => {
        cb(null, `${Date.now()}-${file.originalname}`)
     }
@@ -60,7 +60,7 @@ router.get('/', async(req, res) => {
 
 
 // Fetch product details
-router.get('/:id', async (req, res) => {
+router.get('//:id', async (req, res) => {
     try {
        const product = await Product.findById(req.params.id);
        if (!product) return res.status(404).send('Product not found');
@@ -76,7 +76,7 @@ router.get('/create-new', (req, res)=> {
     res.render('products/create');
 });
 
-router.post('/create-new', auth, upload.fields([
+router.post('/create-new', upload.fields([
     { name: 'mainImage', maxCount: 1 },
     { name: 'additionalImages', maxCount: 3 }
 ]), async (req, res) => {
@@ -135,7 +135,8 @@ router.put('/:id', auth, upload.fields([{ name: 'mainImage' }, { name: 'addition
         res.redirect(`/products/${product._id}`);
     } catch (err) {
         res.status(500).send('Error updating product');
-    
+    }
+});
 
 
 // Delete product (admin only)
