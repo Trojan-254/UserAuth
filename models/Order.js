@@ -22,18 +22,21 @@ const OrderSchema = new mongoose.Schema({
       required: true
     }
   }],
-  total: {
+  totalAmount: {
     type: Number,
     required: true
   },
   shippingAddress: {
-    street: String,
+    firstName: String,
+    lastName: String,
+    phone: String,
+    email: String,
+    address: String,
     city: String,
-    state: String,
-    zipCode: String,
-    country: String
+    county: String,
+    postalCode: String
   },
-  status: {
+  orderStatus: {
     type: String,
     enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
     default: 'pending'
@@ -42,7 +45,13 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'completed', 'failed'],
     default: 'pending'
-  }
+  },
+  mpesaDetails: {
+    checkoutRequestId: String,
+    merchantRequestID: String,
+    mpesaReceiptNumber: String,
+    phoneNumber: String
+  },
 }, { timestamps: true });
 
 // module export

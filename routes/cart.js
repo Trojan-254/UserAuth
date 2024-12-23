@@ -1,61 +1,79 @@
 const express = require('express');
 const router = express.Router();
-const { Product } = require('../models');
-const auth = require('../middleware/auth');
-const admin = require('../middleware/admin');
+const { Product } = require('../models/Product');
+const auth = require('../middleware/authMiddleware');
+const Cart = require('../models/Cart');
 
 // Get user Cart
-router.get('/', auth, async (req, res) => {
+router.get('/my-cart', auth, async (req, res) => {
   try {
-    let cart = await Cart.findOne({ user: req.user._id })
+    console.log("User data", req.user);
+    let cart = await Cart.findOne({ user: req.user.id })
       .populate('items.product');
-    
+
+    console.log("Cart found: ", cart);
     if (!cart) {
-      cart = new Cart({ user: req.user._id, items: [] });
+      console.log("No cart found, creating new cart", req.user.id);
+      cart = new Cart({ user: req.user.id, items: [] });
       await cart.save();
     }
-    
-    res.json(cart);
+    res.render('cart/view', { cart });
   } catch (error) {
+    console.error("Cart error:", error);
     res.status(500).json({ message: error.message });
   }
 });
 
 // Add item to cart
-cartRouter.post('/items', auth, async (req, res) => {
+router.post('/add', auth, async (req, res) => {
+  console.log("Add to cart request body:", req.body);
   try {
-    const { productId, quantity } = req.body;
-    
-    const product = await Product.findById(productId);
-    if (!product) return res.status(404).json({ message: 'Product not found' });
-    
-    let cart = await Cart.findOne({ user: req.user._id });
+    const { productId, quantity, price } = req.body;
+    let cart = await Cart.findOne({ user: req.user.id });
+    console.log("Existing cart:", cart); // Log existing cart
     if (!cart) {
-      cart = new Cart({ user: req.user._id, items: [] });
+       console.log("Creating new cart");
+       cart = new Cart({ user: req.user.id, items: [] });
     }
-    
-    const itemIndex = cart.items.findIndex(item => 
-      item.product.toString() === productId
+
+    const existingItem = cart.items.find(item => 
+        item.product.toString() === productId
     );
-    
-    if (itemIndex > -1) {
-      cart.items[itemIndex].quantity += quantity;
+    if (existingItem) {
+       console.log("Updating existing item");
+       existingItem.quantity += parseInt(quantity);
     } else {
+      console.log("Adding new item");
       cart.items.push({
         product: productId,
-        quantity,
-        price: product.price
-      });
+        quantity: parseInt(quantity),
+        price: parseFloat(price)
+     });
     }
-    
-    cart.total = cart.items.reduce((total, item) => 
-      total + (item.price * item.quantity), 0
-    );
-    
+
+   console.log("Cart before save:", cart); // Log cart before saving
     await cart.save();
-    res.json(cart);
+    console.log("Cart saved successfully");
+   
+   res.redirect('/cart');
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Add to cart error:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+// Remove from Cart
+router.delete('/remove/:productId', auth, async (req, res) => {
+  try {
+    const cart = await Cart.findOne({ user: req.user.id });
+    cart.items = cart.items.filter(item => 
+      item.product.toString() !== req.params.productId
+    );
+    await cart.save();
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false });
   }
 });
 

@@ -6,6 +6,8 @@ const path = require("path");
 const authRoutes = require("./routes/auth");
 const profileRoutes = require("./routes/profile");
 const productRoutes = require("./routes/product");
+const checkoutRoutes = require("./routes/checkout");
+const cartRoutes = require("./routes/cart");
 const errorHandler = require("./middleware/errorMiddleware");
 const auth = require("./middleware/authMiddleware");
 const exphbs = require('express-handlebars');
@@ -22,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "views")));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Error handling middleware
 app.use(errorHandler);
@@ -55,6 +58,8 @@ mongoose.connect(process.env.MONGO_URL, {
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);
 app.use("/products", productRoutes);
+app.use("/cart", cartRoutes);
+app.use("/checkout", checkoutRoutes);
 app.use("/email-verification/:token", authRoutes);
 app.get('/', (req, res) => {
     res.render('landing');

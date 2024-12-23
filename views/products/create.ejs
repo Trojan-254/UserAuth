@@ -56,24 +56,10 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2" for="category">
-                            Parent Category *
-                        </label>
-                        <select id="parentcategory" name="parentCategoryName" required
-                                class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-orange-500">
-                                <option value="">Select Category</option>
-                               {{#each parentCategories}}
-                                  
-                                  <option value="{{_id}}">{{name}}</option>
-                               {{/each}}
-                        </select>
-                        <label class="block text-sm font-medium text-gray-700 mt-4 mb-2">
-                            Child Category *
-                        </label>
-                        <select id="childCategory" name="childCategoryName" required
-                                 class="w-full px-4 py-2 rounded-lg border border-gray-300">
-                                 <option value="">Select Child Category</option>
-                        </select>
+                        <!-- Replace the category selection part of your form with this: -->
+<div>
+    
+</div>
                     </div>
                 </div>
 
@@ -221,51 +207,7 @@
                     reader.readAsDataURL(input.files[i]);
                 }
             }
-        }
-
-        // Fetch categories dynamically for the child dropdown.
-        document.addEventListener('DOMContentLoaded', function() {
-    const parentSelect = document.getElementById('parentcategory');
-    const childSelect = document.getElementById('childCategory');
-    
-    parentSelect.addEventListener('change', async function() {
-        const selectedParentId = this.value;
-        childSelect.innerHTML = '<option value="">Select Child Category</option>';
-        
-        if (!selectedParentId) {
-            childSelect.disabled = true;
-            return;
-        }
-        
-        try {
-            const response = await fetch(`/categories/${selectedParentId}/children`);
-            if (!response.ok) throw new Error('Failed to fetch child categories');
-            
-            const childCategories = await response.json();
-            
-            childSelect.disabled = false;
-            if (childCategories.length === 0) {
-                childSelect.innerHTML = '<option value="">No child categories available</option>';
-                childSelect.disabled = true;
-                return;
-            }
-
-            childCategories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category._id;
-                option.textContent = category.name;
-                childSelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Error fetching child categories:', error);
-            childSelect.innerHTML = '<option value="">Error loading categories</option>';
-            childSelect.disabled = true;
-        }
-    });
-    
-    // Initialize child select as disabled
-    childSelect.disabled = true;
-});
+        } 
     </script>
 </body>
 </html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Zetu Cart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm">
+            <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <a href="/" class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            <span class="ml-2 text-xl font-bold text-gray-800">Zetu Cart</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Checkout Form -->
+                <div class="flex-grow">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-6">Shipping Information</h2>
+                        
+                        <form id="checkoutForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">First Name</label>
+                                    <input type="text" name="firstName" required
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Last Name</label>
+                                    <input type="text" name="lastName" required
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Phone Number (M-Pesa)</label>
+                                    <input type="tel" name="phone" required pattern="^254[0-9]{9}$" placeholder="254712345678"
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                    <p class="mt-1 text-sm text-gray-500">Format: 254XXXXXXXXX</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                                    <input type="email" name="email" required
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700">Address</label>
+                                    <input type="text" name="address" required
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">City</label>
+                                    <input type="text" name="city" required
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">County</label>
+                                    <select name="county" required
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                        <option value="">Select County</option>
+                                        <option value="Nairobi">Nairobi</option>
+                                        <option value="Mombasa">Mombasa</option>
+                                        <option value="Kisumu">Kisumu</option>
+                                        <option value="Transnzoia">Kitale</option>
+                                        <!-- Add other counties -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Postal Code</label>
+                                    <input type="text" name="postalCode" required
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                </div>
+                            </div>
+
+                            <div class="mt-6">
+                                <button id="confirmShipping" type="button" class="w-full bg-orange-500 text-white py-3 px-4 rounded-lg hover:bg-orange-600 transition-colors flex items-center justify-center">
+                                    Confirm shipping details
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                   <!-- Order Summary -->
+                <div class="lg:w-96">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-6">Order Summary</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700">Subtotal</span>
+                                <span class="font-semibold text-gray-900">KSh 3,000</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700">Shipping</span>
+                                <span class="font-semibold text-gray-900">KSh 500</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700">Tax</span>
+                                <span class="font-semibold text-gray-900">KSh 300</span>
+                            </div>
+                            <hr class="border-gray-300">
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-semibold text-gray-900">Total</span>
+                                <span class="text-lg font-semibold text-orange-500">KSh 3,800</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <button id="placeOrder" type="button" class="w-full bg-gray-800 text-white py-3 px-4 rounded-lg hover:bg-gray-900 transition-colors">
+                                Place Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="text-center text-sm text-gray-500">
+                © 2024 Zetu Cart. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+       <script>
+    const confirmShippingBtn = document.getElementById('confirmShipping');
+    const placeOrderBtn = document.getElementById('placeOrder');
+    const checkoutForm = document.getElementById('checkoutForm');
+
+    // Function to validate shipping details
+    const validateShippingDetails = () => {
+        const requiredFields = [
+            'firstName',
+            'lastName',
+            'phone',
+            'email',
+            'address',
+            'city',
+            'county',
+            'postalCode'
+        ];
+
+        let isValid = true;
+        requiredFields.forEach(fieldName => {
+            const field = checkoutForm.querySelector(`[name="${fieldName}"]`);
+            if (!field || !field.value.trim()) {
+                isValid = false;
+                field.classList.add('border-red-500');
+            } else {
+                field.classList.remove('border-red-500');
+            }
+        });
+
+        return isValid;
+    };
+
+    // Confirm Shipping Button
+    confirmShippingBtn.addEventListener('click', function () {
+        if (validateShippingDetails()) {
+            alert('Shipping details confirmed!');
+            // Enable Place Order button
+            placeOrderBtn.disabled = false;
+            placeOrderBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+            placeOrderBtn.classList.add('bg-gray-800', 'text-white', 'hover:bg-gray-900');
+        } else {
+            alert('Please fill in all required shipping details.');
+        }
+    });
+
+    // Place Order Button
+    placeOrderBtn.addEventListener('click', async function () {
+        try {
+            // Collect form data
+            const formData = new FormData(checkoutForm);
+            const data = Object.fromEntries(formData.entries());
+
+            // Send the data to the backend
+            const response = await fetch('/checkout/process', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('Order placed successfully! Redirecting to payment...');
+                // Redirect to ZetuPay payment page
+                window.location.href = result.redirectUrl;
+            } else {
+                alert('Error placing the order: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error placing order:', error);
+            alert('An unexpected error occurred. Please try again.');
+        }
+    });
+</script>
+
+
+</body>
+</html>
+

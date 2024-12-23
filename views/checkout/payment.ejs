@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment | ZetuPay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .payment-option {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .payment-option:hover {
+            border-color: #fb923c;
+            background-color: #fff7ed;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .payment-option input:checked + .radio-content {
+            border-color: #ea580c;
+            background-color: #fff7ed;
+        }
+        
+        .payment-option input:checked + .radio-content .check-icon {
+            display: block;
+        }
+        
+        .modal {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal.show {
+            display: flex;
+            opacity: 1;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .shimmer {
+            background: linear-gradient(90deg, #fb923c 0%, #fed7aa 50%, #fb923c 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-orange-50 to-gray-50 min-h-screen">
+    <div class="max-w-3xl mx-auto px-4 py-12">
+        <!-- Logo -->
+        <div class="flex justify-center mb-8">
+            <div class="bg-white p-4 rounded-xl shadow-lg transform hover:scale-105 transition-transform">
+                <div class="text-3xl font-bold flex items-center">
+                    <span class="shimmer">Zetu</span>
+                    <span class="text-gray-800">Pay</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-xl p-8 border border-orange-100">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-900 mb-3">Complete Your Payment</h1>
+                <p class="text-gray-600">Choose your preferred payment method and finalize your order.</p>
+            </div>
+
+            <!-- Order Summary Section -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">Order Summary</h2>
+                <div class="space-y-6">
+                    <!-- Order Items -->
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-4 bg-orange-50 rounded-lg">
+                            <span class="text-gray-700">Sandals × 1</span>
+                            <span class="font-medium text-gray-900">KES 2,000</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-orange-50 rounded-lg">
+                            <span class="text-gray-700">Nike Shoes × 1</span>
+                            <span class="font-medium text-gray-900">KES 4,500</span>
+                        </div>
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="space-y-4 pt-6 border-t">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Subtotal</span>
+                            <span class="font-medium text-gray-900">KES 7,840</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Shipping</span>
+                            <span class="font-medium text-gray-900">KES 500</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Tax (16%)</span>
+                            <span class="font-medium text-gray-900">KES 1,254.4</span>
+                        </div>
+                        <div class="flex justify-between text-xl font-bold pt-4 border-t">
+                            <span>Total to Pay</span>
+                            <span class="text-orange-500">KES 9,594.4</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method Section -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">Select Payment Method</h2>
+                <div class="space-y-4">
+                    <!-- M-Pesa Option -->
+                    <label class="block payment-option rounded-xl cursor-pointer">
+                        <input type="radio" name="paymentMethod" value="mpesa" class="hidden">
+                        <div class="radio-content p-6 border-2 rounded-xl flex items-center">
+                            <i class="fas fa-check-circle text-orange-500 check-icon hidden"></i>
+                            <span class="ml-3 text-gray-800 font-medium">M-Pesa</span>
+                            <div class="ml-auto flex items-center space-x-4">
+                                <span class="text-sm text-gray-500">Recommended</span>
+                                <img src="/images/mpesa-img.png" alt="M-Pesa" class="h-8">
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Airtel Money Option -->
+                    <label class="block payment-option rounded-xl cursor-pointer">
+                        <input type="radio" name="paymentMethod" value="airtel" class="hidden">
+                        <div class="radio-content p-6 border-2 rounded-xl flex items-center">
+                            <i class="fas fa-check-circle text-orange-500 check-icon hidden"></i>
+                            <span class="ml-3 text-gray-800 font-medium">Airtel Money</span>
+                            <div class="ml-auto flex items-center space-x-4">
+                                <span class="text-sm text-gray-500">Popular</span>
+                                <img src="/images/airtel-img.png" alt="Airtel Money" class="h-8">
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Pay Now Button -->
+            <button id="payNowBtn" class="w-full bg-orange-500 text-white py-4 rounded-xl text-lg font-semibold hover:bg-orange-600 transition-colors transform hover:scale-[1.02] active:scale-[0.98] duration-200 shadow-lg hover:shadow-orange-300">
+                Pay Now
+            </button>
+
+            <!-- Modals for Payment Methods -->
+            <!-- M-Pesa Modal -->
+            <div id="mpesaModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+                <div class="bg-white rounded-xl p-8 w-full max-w-md relative transform transition-all">
+                    <button id="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Enter M-Pesa Number</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                            <input id="mpesaNumber" type="tel" placeholder="254712345678" 
+                                class="w-full p-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
+                            <p class="mt-2 text-sm text-gray-500">Format: 254712345678</p>
+                        </div>
+                        <div class="flex justify-end space-x-4">
+                            <button id="cancelModal" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                Cancel
+                            </button>
+                            <button id="confirmPayment" class="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Airtel Money Modal -->
+            <div id="airtelModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+                <div class="bg-white rounded-xl p-8 w-full max-w-md relative transform transition-all">
+                    <button id="closeAirtelModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Enter Airtel Money Number</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                            <input id="airtelNumber" type="tel" placeholder="254712345678" 
+                                class="w-full p-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
+                            <p class="mt-2 text-sm text-gray-500">Format: 254712345678</p>
+                        </div>
+                        <div class="flex justify-end space-x-4">
+                            <button id="cancelAirtelModal" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                Cancel
+                            </button>
+                            <button id="confirmAirtelPayment" class="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secured by ZetuPay -->
+            <div class="mt-8 text-center">
+                <p class="text-gray-500 flex items-center justify-center">
+                    <i class="fas fa-shield-alt mr-2 text-orange-500"></i>
+                    Secured by ZetuPay
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       // Get all required elements
+const payNowBtn = document.getElementById('payNowBtn');
+const mpesaModal = document.getElementById('mpesaModal');
+const airtelModal = document.getElementById('airtelModal');
+const mpesaNumberInput = document.getElementById('mpesaNumber');
+const airtelNumberInput = document.getElementById('airtelNumber');
+
+// Modal close buttons
+const modalCloseButtons = {
+    mpesa: [
+        document.getElementById('cancelModal'),
+        document.getElementById('closeModal')
+    ],
+    airtel: [
+        document.getElementById('cancelAirtelModal'),
+        document.getElementById('closeAirtelModal')
+    ]
+};
+
+// Confirm payment buttons
+const confirmPayment = document.getElementById('confirmPayment');
+const confirmAirtelPayment = document.getElementById('confirmAirtelPayment');
+
+// Functions
+function hideAllModals() {
+    mpesaModal.classList.remove('show');
+    airtelModal.classList.remove('show');
+    document.body.style.overflow = '';
+    mpesaNumberInput.value = '';
+    airtelNumberInput.value = '';
+}
+
+function showModal(modalElement) {
+    hideAllModals();
+    modalElement.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function validatePhoneNumber(number) {
+    return /^254\d{9}$/.test(number.trim());
+}
+
+// Event Listeners
+payNowBtn.addEventListener('click', () => {
+    const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
+    
+    if (!selectedMethod) {
+        alert('Please select a payment method.');
+        return;
+    }
+
+    if (selectedMethod.value === 'mpesa') {
+        showModal(mpesaModal);
+    } else if (selectedMethod.value === 'airtel') {
+        showModal(airtelModal);
+    }
+});
+
+// Add click handlers for all close buttons
+modalCloseButtons.mpesa.forEach(btn => {
+    btn.addEventListener('click', hideAllModals);
+});
+
+modalCloseButtons.airtel.forEach(btn => {
+    btn.addEventListener('click', hideAllModals);
+});
+
+// Click outside modal to close
+[mpesaModal, airtelModal].forEach(modal => {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            hideAllModals();
+        }
+    });
+});
+
+// Handle M-Pesa payment confirmation
+confirmPayment.addEventListener('click', async () => {
+    const phoneNumber = mpesaNumberInput.value;
+    if (!validatePhoneNumber(phoneNumber)) {
+        alert('Please enter a valid M-Pesa number (Format: 254712345678)');
+        return;
+    }
+
+    try {
+        // Simulated API call
+        // Replace with actual API call in production
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        alert('M-Pesa payment request sent successfully! Check your phone for the prompt.');
+        hideAllModals();
+    } catch (error) {
+        alert('Payment processing failed. Please try again.');
+        console.error('Payment error:', error);
+    }
+});
+
+// Handle Airtel Money payment confirmation
+confirmAirtelPayment.addEventListener('click', async () => {
+    const phoneNumber = airtelNumberInput.value;
+    if (!validatePhoneNumber(phoneNumber)) {
+        alert('Please enter a valid Airtel Money number (Format: 254712345678)');
+        return;
+    }
+
+    try {
+        // Simulated API call
+        // Replace with actual API call in production
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        alert('Airtel Money payment request sent successfully! Check your phone for the prompt.');
+        hideAllModals();
+    } catch (error) {
+        alert('Payment processing failed. Please try again.');
+        console.error('Payment error:', error);
+    }
+});
+
+// Add keyboard support for modal closing
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        hideAllModals();
+    }
+});          
+    </script>
+</body>
+</html>

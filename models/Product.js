@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { Category } = require("./Category");
 
 const ProductSchema = new mongoose.Schema({
     name: {
@@ -18,16 +17,6 @@ const ProductSchema = new mongoose.Schema({
     },
     salePrice: {
        type: Number
-    },
-    parentCategory: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
-        required: true
-    },
-    childCategory: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Category',
-      required: true
     },
     mainImage: {
       type: String,
