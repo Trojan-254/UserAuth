@@ -132,14 +132,14 @@
 </section>
 
 
-    <!-- Deals Section -->
-    <section id="deals" class="py-16 bg-white">
+<!-- Deals Section -->
+<section id="deals" class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4">
         <!-- Section Title -->
-        <h2 class="text-3xl font-bold text-center mb-12">Hot Deals</h2>
+        <h2 class="text-3xl font-extrabold text-center text-gray-800 mb-12">Hot Deals</h2>
 
         <!-- Deals Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <% const deals = [
                 { 
                     title: 'Flash Sale', 
@@ -166,12 +166,12 @@
 
             <% deals.forEach(deal => { %>
                 <!-- Single Deal Card -->
-                <div class="bg-gradient-to-r <%= deal.bgGradient %> rounded-lg p-6 text-white shadow-lg hover:shadow-xl transition">
-                    <h3 class="text-2xl font-bold mb-2"><%= deal.title %></h3>
-                    <p class="text-4xl font-bold mb-4"><%= deal.discount %></p>
-                    <p class="mb-4 text-sm"><%= deal.ends %></p>
+                <div class="bg-gradient-to-r <%= deal.bgGradient %> rounded-xl p-8 text-white shadow-lg hover:shadow-2xl transform transition duration-300 ease-in-out hover:scale-105">
+                    <h3 class="text-3xl font-extrabold mb-2 text-shadow-md"><%= deal.title %></h3>
+                    <p class="text-5xl font-bold mb-4 text-shadow-md"><%= deal.discount %></p>
+                    <p class="mb-6 text-sm font-medium"><%= deal.ends %></p>
                     <button 
-                        class="bg-white text-orange-500 px-6 py-2 rounded-full hover:bg-gray-100 transition font-semibold">
+                        class="bg-white text-orange-500 px-8 py-3 rounded-full hover:bg-gray-100 transition font-semibold text-lg">
                         <%= deal.buttonLabel %>
                     </button>
                 </div>
@@ -179,6 +179,179 @@
         </div>
     </div>
 </section>
+
+    
+
+   
+         <!-- Partners Section -->
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-6 text-gray-800">Our Trusted Partners</h2>
+        <p class="text-gray-600 text-center mb-12">Collaborating with Kenya's leading brands to bring you the best solutions</p>
+        
+        <!-- Partners Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
+            
+            <!-- Safaricom -->
+            <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition duration-300">
+                <div class="w-24 h-24 flex items-center justify-center mb-4">
+                    <img src="./images/mpesa-logo.jpg" alt="Mpesa" class="w-full h-full object-contain rounded-md">
+                </div>
+                <span class="text-green-700 font-extrabold text-xl">Mpesa</span>
+                <p class="text-sm text-gray-500 text-center mt-2">Your Payment Solutions Partner</p>
+            </div>
+
+            <!-- KCB Bank -->
+            <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition duration-300">
+                <div class="w-24 h-24 flex items-center justify-center mb-4">
+                    <img src="./images/kcb-logo.jpg" alt="KCB Bank" class="w-full h-full object-contain rounded-md">
+                </div>
+                <span class="text-green-700 font-extrabold text-xl">KCB Bank</span>
+                <p class="text-sm text-gray-500 text-center mt-2">Your Trusted Financial Partner</p>
+            </div>
+
+            <!-- Airtel Money -->
+            <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition duration-300">
+                <div class="w-24 h-24 flex items-center justify-center mb-4">
+                    <img src="./images/airtel_money-logo.jpg" alt="Airtel Money" class="w-full h-full object-contain rounded-md">
+                </div>
+                <span class="text-green-700 font-extrabold text-xl">Airtel Money</span>
+                <p class="text-sm text-gray-500 text-center mt-2">Your Payment Solutions Partner</p>
+            </div>
+
+            <!-- G4S Kenya -->
+            <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition duration-300">
+                <div class="w-24 h-24 flex items-center justify-center mb-4">
+                    <img src="./images/g4s-logo.jpg" alt="G4S Kenya" class="w-full h-full object-contain rounded-md">
+                </div>
+                <span class="text-green-700 font-extrabold text-xl">G4S Kenya</span>
+                <p class="text-sm text-gray-500 text-center mt-2">Security Solutions Partner</p>
+            </div>
+
+            <!-- Kenya Airways -->
+            <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition duration-300">
+                <div class="w-24 h-24 flex items-center justify-center mb-4">
+                    <img src="./images/kenya_airways-logo.jpg" alt="Kenya Airways" class="w-full h-full object-contain rounded-md">
+                </div>
+                <span class="text-red-700 font-extrabold text-xl">Kenya Airways</span>
+                <p class="text-sm text-gray-500 text-center mt-2">Air Freight Partner</p>
+            </div>
+
+            <!-- Equity Bank -->
+            <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition duration-300">
+                <div class="w-24 h-24 flex items-center justify-center mb-4">
+                    <img src="./images/equity_bank-logo.jpg" alt="Equity Bank" class="w-full h-full object-contain rounded-md">
+                </div>
+                <span class="text-blue-700 font-extrabold text-xl">Equity Bank</span>
+                <p class="text-sm text-gray-500 text-center mt-2">Banking Partner</p>
+            </div>
+
+            <!-- Wells Fargo -->
+            <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition duration-300">
+                <div class="w-24 h-24 flex items-center justify-center mb-4">
+                    <img src="./images/wells_fargo-logo.jpg" alt="Wells Fargo" class="w-full h-full object-contain rounded-md">
+                </div>
+                <span class="text-yellow-600 font-extrabold text-xl">Wells Fargo</span>
+                <p class="text-sm text-gray-500 text-center mt-2">Security Transport Partner</p>
+            </div>
+
+            <!-- Twiga Foods -->
+            <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition duration-300">
+                <div class="w-24 h-24 flex items-center justify-center mb-4">
+                    <img src="./images/twiga-logo.png" alt="Twiga Foods" class="w-full h-full object-contain rounded-md">
+                </div>
+                <span class="text-green-500 font-extrabold text-xl">Twiga Foods</span>
+                <p class="text-sm text-gray-500 text-center mt-2">Fresh Produce Partner</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-4xl font-extrabold text-center text-gray-800 mb-8">What Our Customers Are Saying</h2>
+        <p class="text-lg text-gray-600 text-center mb-16">We’re proud to have served so many happy customers! Here's what they say about Zetucart.</p>
+
+        <!-- Testimonials Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+            
+            <!-- Testimonial 1 -->
+            <div class="bg-white p-8 rounded-xl shadow-xl transform transition duration-500 hover:scale-105 hover:shadow-2xl">
+                <div class="flex items-center space-x-4 mb-6">
+                    <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Customer" class="w-16 h-16 rounded-full object-cover">
+                    <div>
+                        <h3 class="font-semibold text-xl text-gray-800">John Doe</h3>
+                        <p class="text-gray-500">Verified Customer</p>
+                    </div>
+                </div>
+                <p class="text-gray-600 text-lg italic">"Zetucart has changed the way I shop online! The service is fast, reliable, and the delivery is always on time. I love the variety of products available. Highly recommend!"</p>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="bg-white p-8 rounded-xl shadow-xl transform transition duration-500 hover:scale-105 hover:shadow-2xl">
+                <div class="flex items-center space-x-4 mb-6">
+                    <img src="https://randomuser.me/api/portraits/women/2.jpg" alt="Customer" class="w-16 h-16 rounded-full object-cover">
+                    <div>
+                        <h3 class="font-semibold text-xl text-gray-800">Jane Smith</h3>
+                        <p class="text-gray-500">Loyal Customer</p>
+                    </div>
+                </div>
+                <p class="text-gray-600 text-lg italic">"Shopping on Zetucart is always a breeze. I love the ease of browsing through categories and the secure payment options. Definitely my go-to online store!"</p>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div class="bg-white p-8 rounded-xl shadow-xl transform transition duration-500 hover:scale-105 hover:shadow-2xl">
+                <div class="flex items-center space-x-4 mb-6">
+                    <img src="https://randomuser.me/api/portraits/men/3.jpg" alt="Customer" class="w-16 h-16 rounded-full object-cover">
+                    <div>
+                        <h3 class="font-semibold text-xl text-gray-800">Mike Johnson</h3>
+                        <p class="text-gray-500">Tech Enthusiast</p>
+                    </div>
+                </div>
+                <p class="text-gray-600 text-lg italic">"As someone who loves tech gadgets, Zetucart always has the latest products in stock. The website is user-friendly, and shipping is always quick. I’m a loyal customer!"</p>
+            </div>
+
+            <!-- Testimonial 4 -->
+            <div class="bg-white p-8 rounded-xl shadow-xl transform transition duration-500 hover:scale-105 hover:shadow-2xl">
+                <div class="flex items-center space-x-4 mb-6">
+                    <img src="https://randomuser.me/api/portraits/women/4.jpg" alt="Customer" class="w-16 h-16 rounded-full object-cover">
+                    <div>
+                        <h3 class="font-semibold text-xl text-gray-800">Emily Williams</h3>
+                        <p class="text-gray-500">Fashion Lover</p>
+                    </div>
+                </div>
+                <p class="text-gray-600 text-lg italic">"Zetucart is my favorite place to buy fashion items! The variety and quality of clothing is amazing, and I love the seamless shopping experience. I’ll be back for more!"</p>
+            </div>
+
+            <!-- Testimonial 5 -->
+            <div class="bg-white p-8 rounded-xl shadow-xl transform transition duration-500 hover:scale-105 hover:shadow-2xl">
+                <div class="flex items-center space-x-4 mb-6">
+                    <img src="https://randomuser.me/api/portraits/men/4.jpg" alt="Customer" class="w-16 h-16 rounded-full object-cover">
+                    <div>
+                        <h3 class="font-semibold text-xl text-gray-800">David Brown</h3>
+                        <p class="text-gray-500">Frequent Shopper</p>
+                    </div>
+                </div>
+                <p class="text-gray-600 text-lg italic">"I've had nothing but positive experiences with Zetucart. From the ordering process to the customer support, everything is top-notch. I recommend it to everyone!"</p>
+            </div>
+
+            <!-- Testimonial 6 -->
+            <div class="bg-white p-8 rounded-xl shadow-xl transform transition duration-500 hover:scale-105 hover:shadow-2xl">
+                <div class="flex items-center space-x-4 mb-6">
+                    <img src="https://randomuser.me/api/portraits/women/5.jpg" alt="Customer" class="w-16 h-16 rounded-full object-cover">
+                    <div>
+                        <h3 class="font-semibold text-xl text-gray-800">Sophia Lee</h3>
+                        <p class="text-gray-500">First-time Shopper</p>
+                    </div>
+                </div>
+                <p class="text-gray-600 text-lg italic">"I had a fantastic first-time shopping experience with Zetucart. The site is very easy to navigate, and I received my order in no time. Can’t wait to shop again!"</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
 
 
     <!-- Newsletter Section -->
