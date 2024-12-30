@@ -56,15 +56,16 @@ router.post("/signup", async(req, res) => {
 
       // Send verification email
       sendVerificationEmail(email, token);
-      
       console.log("A new user has been registered succesfully...");
-      // res.status(201).json({ msg: "Registration succesfull. Please check you email for verification.!" });
+
+      // Send a success page to user
       res.render("confirmation", { email });
          } catch (err) {
      console.error('Failed to register user: ', err);
      res.status(500).json({error: err.message });
    }
 });
+
 
 // Login route
 // Login route

@@ -174,9 +174,9 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    window.location.href = result.redirectUrl || '/login';
+                   window.location.href = result.redirectUrl || '/login';
                 } else {
-                    alert(result.msg || 'An error occurred during signup.');
+                   alert(result.msg || 'An error occured durin sign up');
                 }
             } catch (error) {
                 console.log(error);

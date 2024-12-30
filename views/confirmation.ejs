@@ -3,96 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Verification</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Email Verification - Zetu Cart</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-       * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .gradient-bg {
+            background: linear-gradient(135deg, #f9a826, #ff6b6b);
         }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f7f7f7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        .gradient-text {
+            background: linear-gradient(45deg, #f9a826, #ff6b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-
-        .container {
-            background: #fff;
-            padding: 40px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-        }
-        .container img {
-            width: 100px; /* Adjust based on your logo size */
-            margin-bottom: 1rem;
-        }
-
-        .message-box h1 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .message-box p {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 20px;
-        }
-
-        strong {
-            color: #007bff;
-        }
-
-        .actions {
-            margin-top: 20px;
-        }
-
-        .actions a {
-            font-size: 14px;
-            color: #007bff;
-            text-decoration: none;
-            display: block;
-            margin-top: 10px;
-        }
-
-        .actions a:hover {
-            text-decoration: underline;
-        }
-
         .back-btn {
             display: inline-block;
-            padding: 10px 20px;
-            margin-top: 20px;
-            background-color: #007bff;
+            padding: 12px 24px;
+            background-color: #f9a826;
             color: #fff;
             text-decoration: none;
-            border-radius: 4px;
+            border-radius: 50px;
+            transition: background-color 0.3s ease;
         }
-
-        /* .back-btn:hover {
-            background-color: #0056b3;
-        } */
-        
+        .back-btn:hover {
+            background-color: #ff6b6b;
+        }
+        .shadow-lg-custom {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
     </style>
-
 </head>
-<body>
-    <div class="container">
-        <img src="vametak.png" alt="Company Logo"> 
-        <div class="message-box">
-            <h1>Thank You for Registering!</h1>
-            <p>We have sent a verification email to <strong><%= email %></strong>!</p>
-            <p>Please check your inbox and click on the link to confirm your email address.</p>
-            <div class="actions">
-                <a href="mailto:support@example.com">Didn't receive the email? Contact Support</a>
+<body class="bg-gradient-to-br from-yellow-400 via-red-400 to-pink-500 min-h-screen flex justify-center items-center text-white">
+    <div class="container bg-white text-gray-900 p-10 rounded-xl shadow-lg-custom max-w-md w-full fade-in">
+        <img src="/api/placeholder/64/64" alt="Zetu Cart Logo" class="mx-auto mb-6 h-16 w-auto">
+        <div class="text-center">
+            <h1 class="text-4xl font-bold gradient-text mb-4">Thank You for Registering!</h1>
+            <p class="text-lg mb-6">We have sent a verification email to <strong><%= email %></strong>! Please check your inbox and click on the link to confirm your email address.</p>
+            <div class="space-y-4">
+                <a href="mailto:support@example.com" class="text-orange-500 hover:text-orange-600 text-sm">Didn't receive the email? Contact Support</a>
                 <a href="/" class="back-btn">Go to Homepage</a>
             </div>
         </div>
