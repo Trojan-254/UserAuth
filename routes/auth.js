@@ -14,8 +14,8 @@ dotenv.config();
 
 // sign up route
 router.post("/signup", async(req, res) => {
-   const { firstName, lastName, email, password1, password2 } = req.body;
-   if (!firstName || !lastName || !email || !password1 || !password2) {
+   const { firstName, lastName, email, password } = req.body;
+   if (!firstName || !lastName || !email || !password) {
         return res.status(400).json({ message: "All fields are required." });
     }
 
@@ -30,13 +30,9 @@ router.post("/signup", async(req, res) => {
          }
       }
 
-      // Check if password1 resembles password2
-      if (password1 !== password2) {
-          return res.status(400).json({ msg: "The first password is not same as the second password" });
-      }
       // Hash the user password
-       const hashedPassword = await bcrypt.hash(password1, 10);
-        
+       const hashedPassword = await bcrypt.hash(password, 10);
+
       // Create and save new User
        const newUser = new User({
            firstName,
