@@ -171,12 +171,12 @@
                     body: JSON.stringify(formData)
                 });
 
-                const result = await response.json();
+                const data = await response.json();
 
                 if (response.ok) {
-                   window.location.href = result.redirectUrl || '/login';
+                   window.location.href = `/auth/signup-success?email=${encodeURIComponent(data.email)}`;
                 } else {
-                   alert(result.msg || 'An error occured durin sign up');
+                   alert(data.msg || 'An error occured durin sign up');
                 }
             } catch (error) {
                 console.log(error);

@@ -59,11 +59,19 @@ router.post("/signup", async(req, res) => {
       console.log("A new user has been registered succesfully...");
 
       // Send a success page to user
-      res.render("confirmation", { email });
+      res.status(201).json({ success: true, message: 'Signup success' });
          } catch (err) {
      console.error('Failed to register user: ', err);
      res.status(500).json({error: err.message });
    }
+});
+
+router.get('/signup-success', (req, res) => {
+    const email = decodeURIComponent(req.query.email);
+    if (!email) {
+      return res.status(400).send("Email is required for confirmation");
+    }
+    res.render('confirmation', { email: email });
 });
 
 
