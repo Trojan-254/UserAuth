@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Zetu Cart</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .status-badge {
+            border-radius: 9999px;
+            padding: 4px 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-block;
+            text-transform: capitalize;
+        }
+
+        .status-pending { background-color: #f9a826; color: #fff; }
+        .status-processing { background-color: #ffc107; color: #fff; }
+        .status-shipped { background-color: #007bff; color: #fff; }
+        .status-delivered { background-color: #28a745; color: #fff; }
+        .status-cancelled { background-color: #dc3545; color: #fff; }
+
+        .payment-pending { background-color: #f9a826; color: #fff; }
+        .payment-completed { background-color: #28a745; color: #fff; }
+        .payment-failed { background-color: #dc3545; color: #fff; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen py-10">
+    <div class="container mx-auto px-4">
+        <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">My Orders</h1>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full bg-white">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="w-1/5 text-left py-3 px-4 uppercase font-semibold text-sm">Order ID</th>
+                        <th class="w-1/4 text-left py-3 px-4 uppercase font-semibold text-sm">Items</th>
+                        <th class="w-1/6 text-left py-3 px-4 uppercase font-semibold text-sm">Total</th>
+                        <th class="w-1/6 text-left py-3 px-4 uppercase font-semibold text-sm">Order Status</th>
+                        <th class="w-1/6 text-left py-3 px-4 uppercase font-semibold text-sm">Payment Status</th>
+                        <th class="w-1/5 text-left py-3 px-4 uppercase font-semibold text-sm">Placed On</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-700">
+                    <% orders.forEach(order => { %>
+                    <tr>
+                        <td class="py-3 px-4 text-sm"><%= order._id %></td>
+                        <td class="py-3 px-4 text-sm">
+                            <ul>
+                                <% order.items.forEach(item => { %>
+                                <li><%= item.quantity %> x <%= item.product.name %></li>
+                                <% }) %>
+                            </ul>
+                        </td>
+                        <td class="py-3 px-4 text-sm">Ksh <%= order.totalAmount.toFixed(2) %></td>
+                        <td class="py-3 px-4 text-sm">
+                            <span class="status-badge status-<%= order.orderStatus %>">
+                                <%= order.orderStatus %>
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-sm">
+                            <span class="status-badge payment-<%= order.paymentStatus %>">
+                                <%= order.paymentStatus %>
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-sm"><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+            <% if (orders.length === 0) { %>
+            <div class="p-6 text-center text-gray-600">No orders found.</div>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html>
