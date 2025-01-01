@@ -94,37 +94,37 @@
                 </div>
 
                    <!-- Order Summary -->
-                <div class="lg:w-96">
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <h2 class="text-xl font-semibold text-gray-900 mb-6">Order Summary</h2>
-                        
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-700">Subtotal</span>
-                                <span class="font-semibold text-gray-900">KSh 3,000</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-700">Shipping</span>
-                                <span class="font-semibold text-gray-900">KSh 500</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-700">Tax</span>
-                                <span class="font-semibold text-gray-900">KSh 300</span>
-                            </div>
-                            <hr class="border-gray-300">
-                            <div class="flex justify-between items-center">
-                                <span class="text-lg font-semibold text-gray-900">Total</span>
-                                <span class="text-lg font-semibold text-orange-500">KSh 3,800</span>
-                            </div>
-                        </div>
+<div class="lg:w-96">
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">Order Summary</h2>
+        
+        <div class="space-y-4">
+            <div class="flex justify-between items-center">
+                <span class="text-gray-700">Subtotal (<%= cart.items.reduce((acc, item) => acc + item.quantity, 0) %> items)</span>
+                <span class="font-semibold text-gray-900">KSh <%= totals.subtotal.toLocaleString() %></span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-700">Shipping</span>
+                <span class="font-semibold text-gray-900">KSh <%= totals.shipping.toLocaleString() %></span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-700">Tax</span>
+                <span class="font-semibold text-gray-900">KSh <%= totals.tax.toLocaleString() %></span>
+            </div>
+            <hr class="border-gray-300">
+            <div class="flex justify-between items-center">
+                <span class="text-lg font-semibold text-gray-900">Total</span>
+                <span class="text-lg font-semibold text-orange-500">KSh <%= totals.total.toLocaleString() %></span>
+            </div>
+        </div>
 
-                        <div class="mt-6">
-                            <button id="placeOrder" type="button" class="w-full bg-gray-800 text-white py-3 px-4 rounded-lg hover:bg-gray-900 transition-colors">
-                                Place Order
-                            </button>
-                        </div>
-                    </div>
-                </div>
+        <div class="mt-6">
+            <button id="placeOrder" type="button" class="w-full bg-gray-800 text-white py-3 px-4 rounded-lg hover:bg-gray-900 transition-colors">
+                Place Order
+            </button>
+        </div>
+    </div>
+</div>
             </div>
         </main>
     </div>

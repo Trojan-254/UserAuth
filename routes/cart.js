@@ -55,7 +55,7 @@ router.post('/add', auth, async (req, res) => {
     await cart.save();
     console.log("Cart saved successfully");
    
-   res.redirect('/cart');
+   res.status(201).json({ success: true, message: 'Added to cart succesfully'});
   } catch (error) {
     console.error("Add to cart error:", error);
     res.status(500).json({ message: error.message });

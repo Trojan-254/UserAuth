@@ -154,7 +154,7 @@
 
             if (response.ok) {
                 alert('Item added to cart successfully!');
-                window.location.href = '/cart';
+                window.location.href = '/cart/my-cart';
                 // Optionally refresh the cart count or show a nicer notification
             } else {
                 const result = await response.json();
@@ -176,6 +176,29 @@ document.getElementById('checkout').addEventListener('click', () => {
     window.location.href = '/checkout';
 });
 
+    async function addToWishlist(productId) {
+    try {
+      const response = await fetch(`/add/${productId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('token') // Include token if using JWT
+        }
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert('Product added to wishlist!');
+      } else {
+        alert(result.message || 'Error adding product to wishlist');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Something went wrong');
+    }
+  }
+
     </script>
+
 </body>
 </html>

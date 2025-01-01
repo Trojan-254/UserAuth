@@ -1,0 +1,166 @@
+<!-- views/wishlist/view.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist - Zetu Cart</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation Header -->
+    <nav class="bg-white shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center">
+                        <span class="text-2xl font-bold text-orange-500">Zetu</span>
+                        <span class="text-2xl font-bold text-gray-900">Cart</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/cart" class="text-gray-600 hover:text-gray-900">Cart</a>
+                    <a href="/wishlist" class="text-orange-500 font-medium">Wishlist</a>
+                    <a href="/account" class="text-gray-600 hover:text-gray-900">Account</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Wishlist Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">My Wishlist</h1>
+                <p class="mt-2 text-sm text-gray-600">
+                    <%= wishlist.products.length %> items saved
+                </p>
+            </div>
+            <div class="flex space-x-4">
+                <button onclick="shareWishlist()" class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                    </svg>
+                    Share Wishlist
+                </button>
+                <div class="relative">
+                    <button onclick="toggleSort()" class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
+                        </svg>
+                        Sort
+                    </button>
+                    <div id="sortMenu" class="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                        <div class="py-1">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Price: Low to High</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Price: High to Low</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Date Added</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Name</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wishlist Items -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <% if (wishlist.products && wishlist.products.length > 0) { %>
+                <% wishlist.products.forEach(item => { %>
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden relative group">
+                        <!-- Price Drop Alert -->
+                        <% if (item.priceDropAlert) { %>
+                            <div class="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-md text-sm">
+                                Price Dropped!
+                            </div>
+                        <% } %>
+                        
+                        <!-- Quick Actions -->
+                        <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="removeFromWishlist('<%= item.product._id %>')" class="p-1 bg-white rounded-full shadow-md hover:bg-gray-100">
+                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Product Image -->
+                        <div class="aspect-w-4 aspect-h-3">
+                            <img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>" class="object-cover w-full h-48">
+                        </div>
+
+                        <!-- Product Info -->
+                        <div class="p-4">
+                            <h3 class="text-lg font-medium text-gray-900"><%= item.product.name %></h3>
+                            <p class="mt-1 text-sm text-gray-500"><%= item.product.description %></p>
+                            
+                            <!-- Price Information -->
+                            <div class="mt-2">
+                                <div class="flex items-baseline space-x-2">
+                                    <span class="text-xl font-bold text-gray-900">KSH <%= item.price.toLocaleString() %></span>
+                                    <% if (item.previousPrice && item.previousPrice > item.price) { %>
+                                        <span class="text-sm text-gray-500 line-through">
+                                            KSH <%= item.previousPrice.toLocaleString() %>
+                                        </span>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                            <!-- Stock Status -->
+                            <div class="mt-2">
+                                <% if (item.inStock) { %>
+                                    <span class="text-sm text-green-600">In Stock</span>
+                                <% } else { %>
+                                    <span class="text-sm text-red-600">Out of Stock</span>
+                                <% } %>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="mt-4 space-y-2">
+                                <button onclick="addToCart('<%= item.product._id %>')" 
+                                        class="w-full px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                                        <%= !item.inStock ? 'disabled' : '' %>>
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <!-- Empty State -->
+                <div class="col-span-full text-center py-12">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <h3 class="mt-4 text-lg font-medium text-gray-900">Your wishlist is empty</h3>
+                    <p class="mt-2 text-sm text-gray-500">Browse our products and add items you love to your wishlist!</p>
+                    <a href="/products" class="mt-6 inline-block px-4 py-2 text-sm font-medium text-orange-500 border border-orange-500 rounded-md hover:bg-orange-50">
+                        Start Shopping
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        function toggleSort() {
+            const menu = document.getElementById('sortMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function shareWishlist() {
+            // Add sharing functionality
+            console.log('Share wishlist');
+        }
+
+        function removeFromWishlist(productId) {
+            // Add remove functionality
+            console.log('Remove from wishlist:', productId);
+        }
+
+        function addToCart(productId) {
+            // Add to cart functionality
+            console.log('Add to cart:', productId);
+        }
+    </script>
+</body>
+</html>

@@ -9,6 +9,7 @@ const productRoutes = require("./routes/product");
 const checkoutRoutes = require("./routes/checkout");
 const cartRoutes = require("./routes/cart");
 const orderRoutes = require("./routes/order");
+const w = require("./routes/wishlist");
 const errorHandler = require("./middleware/errorMiddleware");
 const auth = require("./middleware/authMiddleware");
 const exphbs = require('express-handlebars');
@@ -62,6 +63,7 @@ app.use("/products", productRoutes);
 app.use("/cart", cartRoutes);
 app.use("/checkout", checkoutRoutes);
 app.use("/orders", orderRoutes);
+app.use("/wishlist", w);
 app.use("/email-verification/:token", authRoutes);
 app.get('/', (req, res) => {
     res.render('landing');
