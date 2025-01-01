@@ -102,7 +102,7 @@
                     <!-- M-Pesa Option -->
                     <label class="block payment-option rounded-xl cursor-pointer">
                         <div class="radio-content p-6 border-2 rounded-xl flex items-center gap-4">
-                            <input type="radio" name="paymentMethod" value="mpesa" class="hidden">
+                            <input type="radio" name="paymentMethod" value="mpesa" class="hidden" checked>
                             <img src="/images/mpesa-img.png" alt="M-Pesa" class="h-10 w-10 object-contain">
                             <div class="flex-1">
                                 <span class="text-gray-800 font-medium block">M-Pesa</span>
@@ -133,49 +133,47 @@
             </div>
 
             <!-- Order Summary Section -->
-            <div class="md:col-span-2 bg-white rounded-xl shadow-xl p-8 border border-orange-100 h-fit">
+             <div class="md:col-span-2 bg-white rounded-xl shadow-xl p-8 border border-orange-100 h-fit">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-6">Order Summary</h2>
                 <div class="space-y-6">
-                    <!-- Order Items -->
+                    <!-- Order Items - Now using dynamic data -->
                     <div class="space-y-4">
-                        <div class="flex justify-between items-center p-4 bg-orange-50 rounded-lg">
-                            <div class="flex flex-col">
-                                <span class="text-gray-700">Sandals × 1</span>
-                                <span class="text-sm text-gray-500">Size: 42</span>
+                        <% order.items.forEach(item => { %>
+                            <div class="flex justify-between items-center p-4 bg-orange-50 rounded-lg">
+                                <div class="flex flex-col">
+                                    <span class="text-gray-700"><%= item.product.name %> × <%= item.quantity %></span>
+                                    <% if (item.size) { %>
+                                        <span class="text-sm text-gray-500">Size: <%= item.size %></span>
+                                    <% } %>
+                                </div>
+                                <span class="font-medium text-gray-900">KES <%= (item.product.price * item.quantity).toLocaleString() %></span>
                             </div>
-                            <span class="font-medium text-gray-900">KES 2,000</span>
-                        </div>
-                        <div class="flex justify-between items-center p-4 bg-orange-50 rounded-lg">
-                            <div class="flex flex-col">
-                                <span class="text-gray-700">Nike Shoes × 1</span>
-                                <span class="text-sm text-gray-500">Size: 43</span>
-                            </div>
-                            <span class="font-medium text-gray-900">KES 4,500</span>
-                        </div>
+                        <% }); %>
                     </div>
 
                     <!-- Totals -->
                     <div class="space-y-4 pt-6 border-t">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Subtotal</span>
-                            <span class="font-medium text-gray-900">KES 7,840</span>
+                            <span class="font-medium text-gray-900">KES <%= order.subtotal.toLocaleString() %></span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Shipping</span>
-                            <span class="font-medium text-gray-900">KES 500</span>
+                            <span class="font-medium text-gray-900">KES <%= order.shipping.toLocaleString() %></span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Tax (16%)</span>
-                            <span class="font-medium text-gray-900">KES 1,254.4</span>
+                            <span class="font-medium text-gray-900">KES <%= order.tax.toLocaleString() %></span>
                         </div>
                         <div class="flex justify-between text-xl font-bold pt-4 border-t">
                             <span>Total to Pay</span>
-                            <span class="text-orange-500">KES 9,594.4</span>
+                            <span class="text-orange-500">KES <%= order.totalAmount.toLocaleString() %></span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+                           
 
         <!-- Modals -->
         <!-- M-Pesa Modal -->
@@ -188,24 +186,27 @@
                     <img src="/images/mpesa-img.png" alt="M-Pesa" class="h-12 w-12 object-contain">
                     <h2 class="text-2xl font-semibold text-gray-800">M-Pesa Payment</h2>
                 </div>
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                        <input id="mpesaNumber" type="tel" placeholder="254712345678" 
-                            class="w-full p-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
-                        <p class="mt-2 text-sm text-gray-500">Format: 254712345678</p>
+                <form id="mpesaPaymentForm">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                            <input id="mpesaNumber" type="tel" placeholder="254712345678" 
+                                class="w-full p-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
+                            <p class="mt-2 text-sm text-gray-500">Format: 254712345678</p>
+                        </div>
+                        <div class="flex justify-end space-x-4">
+                            <button type="button" id="cancelModal" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" id="confirmPayment" class="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+                                Confirm Payment
+                            </button>
+                        </div>
                     </div>
-                    <div class="flex justify-end space-x-4">
-                        <button id="cancelModal" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
-                            Cancel
-                        </button>
-                        <button id="confirmPayment" class="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
-                            Confirm Payment
-                        </button>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
+    </div>
 
         <!-- Airtel Money Modal -->
         <div id="airtelModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -238,129 +239,192 @@
     </div>
 
     <script>
-       // Get all required elements
-const payNowBtn = document.getElementById('payNowBtn');
-const mpesaModal = document.getElementById('mpesaModal');
-const airtelModal = document.getElementById('airtelModal');
-const mpesaNumberInput = document.getElementById('mpesaNumber');
-const airtelNumberInput = document.getElementById('airtelNumber');
+        // Get DOM elements
+        const payNowBtn = document.getElementById('payNowBtn');
+        const mpesaModal = document.getElementById('mpesaModal');
+        const mpesaPaymentForm = document.getElementById('mpesaPaymentForm');
+        const mpesaNumberInput = document.getElementById('mpesaNumber');
+        const closeModalBtn = document.getElementById('closeModal');
+        const cancelModalBtn = document.getElementById('cancelModal');
 
-// Modal close buttons
-const modalCloseButtons = {
-    mpesa: [
-        document.getElementById('cancelModal'),
-        document.getElementById('closeModal')
-    ],
-    airtel: [
-        document.getElementById('cancelAirtelModal'),
-        document.getElementById('closeAirtelModal')
-    ]
-};
+        const paymentStatus = {
+           checkInterval: null,
+           maxAttempts: 24,
+           attempts: 0
+        };
 
-// Confirm payment buttons
-const confirmPayment = document.getElementById('confirmPayment');
-const confirmAirtelPayment = document.getElementById('confirmAirtelPayment');
+        // Store order ID from backend
+        const orderId = '<%= order._id %>';
 
-// Functions
-function hideAllModals() {
-    mpesaModal.classList.remove('show');
-    airtelModal.classList.remove('show');
-    document.body.style.overflow = '';
-    mpesaNumberInput.value = '';
-    airtelNumberInput.value = '';
-}
-
-function showModal(modalElement) {
-    hideAllModals();
-    modalElement.classList.add('show');
-    document.body.style.overflow = 'hidden';
-}
-
-function validatePhoneNumber(number) {
-    return /^254\d{9}$/.test(number.trim());
-}
-
-// Event Listeners
-payNowBtn.addEventListener('click', () => {
-    const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
-    
-    if (!selectedMethod) {
-        alert('Please select a payment method.');
-        return;
-    }
-
-    if (selectedMethod.value === 'mpesa') {
-        showModal(mpesaModal);
-    } else if (selectedMethod.value === 'airtel') {
-        showModal(airtelModal);
-    }
-});
-
-// Add click handlers for all close buttons
-modalCloseButtons.mpesa.forEach(btn => {
-    btn.addEventListener('click', hideAllModals);
-});
-
-modalCloseButtons.airtel.forEach(btn => {
-    btn.addEventListener('click', hideAllModals);
-});
-
-// Click outside modal to close
-[mpesaModal, airtelModal].forEach(modal => {
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            hideAllModals();
+        function showModal() {
+            mpesaModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
         }
-    });
+
+        function hideModal() {
+            mpesaModal.classList.remove('show');
+            document.body.style.overflow = '';
+            mpesaNumberInput.value = '';
+        }
+
+        function validatePhoneNumber(number) {
+            return /^254\d{9}$/.test(number.trim());
+        }
+
+        // Event Listeners
+        payNowBtn.addEventListener('click', showModal);
+
+        [closeModalBtn, cancelModalBtn].forEach(btn => {
+            btn.addEventListener('click', hideModal);
+        });
+
+        mpesaModal.addEventListener('click', (e) => {
+            if (e.target === mpesaModal) {
+                hideModal();
+            }
+        });
+
+        mpesaPaymentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const phoneNumber = mpesaNumberInput.value.trim();
+            if (!validatePhoneNumber(phoneNumber)) {
+                alert('Please enter a valid M-Pesa number (Format: 254712345678)');
+                return;
+            }
+            const submitButton = document.getElementById('confirmPayment');
+
+            try {
+
+                // Disable submit button and show loading state
+                submitButton.disabled = true;
+                submitButton.innerHTML = 'Processing...';
+                const response = await fetch('/api/payments/mpesa/initiate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        orderId: '<%= order._id %>,
+                        phoneNumber: phoneNumber
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                   throw new Error(data.message || 'Payment initiation failed');
+                }
+
+
+                // Show success message and start checking payment status
+                alert(data.message || 'Please check your phone for the M-Pesa prompt');
+                hideModal();
+                startPaymentStatusCheck();
+            } catch (error) {
+                alert('Payment processing failed: ' + error.message);
+                console.error('Payment error:', error);
+            } finally {
+               // Re-enable submit button and restore original text
+               submitButton.disabled = false;
+               submitButton.innerHTML = 'Confirm Payment';
+            }
+        });
+
+        // Function to check payment status
+        async function checkPaymentStatus(orderId) {
+            try {
+                const response = await fetch(`/api/payments/status/${orderId}`);
+                const data = await response.json();
+                
+                if (data.status === 'completed') {
+                    window.location.href = `/orders/${orderId}`;
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error('Error checking payment status:', error);
+                return false;
+            }
+        }
+
+        function startPaymentStatusCheck() {
+    // Clear any existing interval
+    if (paymentStatus.checkInterval) {
+        clearInterval(paymentStatus.checkInterval);
+    }
+    
+    paymentStatus.attempts = 0;
+    
+    // Check payment status every 5 seconds
+    paymentStatus.checkInterval = setInterval(async () => {
+        paymentStatus.attempts++;
+        
+        try {
+            const response = await fetch(`/api/payments/status/<%= order._id %>`);
+            const data = await response.json();
+            
+            if (data.success && data.status === 'completed') {
+                // Payment successful - redirect to order confirmation
+                clearInterval(paymentStatus.checkInterval);
+                window.location.href = `/orders/<%= order._id %>`;
+                return;
+            }
+            
+            // Stop checking after max attempts (2 minutes)
+            if (paymentStatus.attempts >= paymentStatus.maxAttempts) {
+                clearInterval(paymentStatus.checkInterval);
+                alert('Payment status check timed out. Please check your order status in your account.');
+            }
+            
+        } catch (error) {
+            console.error('Error checking payment status:', error);
+            clearInterval(paymentStatus.checkInterval);
+        }
+    }, 5000); // Check every 5 seconds
+}
+
+// Add this to validate phone numbers on input
+mpesaNumberInput.addEventListener('input', (e) => {
+    const input = e.target;
+    const value = input.value.replace(/\D/g, ''); // Remove non-digits
+    
+    // Ensure number starts with 254
+    if (!value.startsWith('254')) {
+        input.value = '254';
+    } else {
+        input.value = value;
+    }
+    
+    // Limit to correct length (254 + 9 digits)
+    if (value.length > 12) {
+        input.value = value.slice(0, 12);
+    }
 });
 
-// Handle M-Pesa payment confirmation
-confirmPayment.addEventListener('click', async () => {
-    const phoneNumber = mpesaNumberInput.value;
-    if (!validatePhoneNumber(phoneNumber)) {
-        alert('Please enter a valid M-Pesa number (Format: 254712345678)');
-        return;
-    }
+        // Function to start polling payment status
+        function startPaymentStatusCheck(orderId) {
+            const pollInterval = setInterval(async () => {
+                const isComplete = await checkPaymentStatus(orderId);
+                if (isComplete) {
+                    clearInterval(pollInterval);
+                }
+            }, 5000); // Check every 5 seconds
 
-    try {
-        // Simulated API call
-        // Replace with actual API call in production
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        alert('M-Pesa payment request sent successfully! Check your phone for the prompt.');
-        hideAllModals();
-    } catch (error) {
-        alert('Payment processing failed. Please try again.');
-        console.error('Payment error:', error);
-    }
-});
+            // Stop polling after 2 minutes
+            setTimeout(() => {
+                clearInterval(pollInterval);
+            }, 120000);
+        }
 
-// Handle Airtel Money payment confirmation
-confirmAirtelPayment.addEventListener('click', async () => {
-    const phoneNumber = airtelNumberInput.value;
-    if (!validatePhoneNumber(phoneNumber)) {
-        alert('Please enter a valid Airtel Money number (Format: 254712345678)');
-        return;
-    }
-
-    try {
-        // Simulated API call
-        // Replace with actual API call in production
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        alert('Airtel Money payment request sent successfully! Check your phone for the prompt.');
-        hideAllModals();
-    } catch (error) {
-        alert('Payment processing failed. Please try again.');
-        console.error('Payment error:', error);
-    }
-});
-
-// Add keyboard support for modal closing
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        hideAllModals();
-    }
-});          
+        // Handle escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideModal();
+            }
+        });
     </script>
+
 
 
 
