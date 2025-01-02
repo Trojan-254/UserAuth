@@ -59,6 +59,86 @@ class PaymentHandler {
     }
   }
 
+
+  // public/js/payment-handler.js
+document.getElementById('mpesaForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const phoneNumber = document.getElementById('mpesaNumber').value;
+  const submitButton = e.target.querySelector('button[type="submit"]');
+  const originalButtonText = submitButton.textContent;
+  
+  try {
+    submitButton.textContent = 'Processing...';
+    submitButton.disabled = true;
+
+    // Initiate STK Push
+    const response = await fetch('/checkout/api/payments/mpesa/initiate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId: window.orderId, phoneNumber })
+    });
+
+    const data = await response.json();
+    if (!data.success) throw new Error(data.message);
+
+    // Show waiting message
+    showMessage('Check your phone for the M-Pesa prompt', 'info');
+
+    // Start checking payment status
+    const checkoutRequestId = data.checkoutRequestID;
+    await checkPaymentStatus(checkoutRequestId);
+
+  } catch (error) {
+    showMessage(error.message, 'error');
+  } finally {
+    submitButton.textContent = originalButtonText;
+    submitButton.disabled = false;
+  }
+});
+
+async function checkPaymentStatus(checkoutRequestId) {
+  const maxAttempts = 5;
+  const delayBetweenAttempts = 5000; // 5 seconds
+  let attempts = 0;
+
+  const checkStatus = async () => {
+    try {
+      const response = await fetch(`/checkout/api/payments/mpesa/status/${checkoutRequestId}`);
+      const data = await response.json();
+
+      if (data.success) {
+        // Payment confirmed
+        showMessage('Payment successful! Redirecting...', 'success');
+        setTimeout(() => {
+          window.location.href = `/orders/${window.orderId}`;
+        }, 2000);
+        return true;
+      }
+
+      if (data.status === 'pending' && attempts < maxAttempts) {
+        attempts++;
+        await new Promise(resolve => setTimeout(resolve, delayBetweenAttempts));
+        return checkStatus();
+      }
+
+      throw new Error('Payment status check timed out. Please check your order status.');
+       } catch (error) {
+         showMessage(error.message, 'error');
+         return false;
+       }
+     };
+
+     return checkStatus();
+   }
+
+   function showMessage(message, type) {
+     // Implement your message display logic here
+     console.log(`${type}: ${message}`);
+   }
+
+
+
   async startPolling(checkoutRequestID) {
     let attempts = 0;
     const maxAttempts = 20; // 20 attempts * 3 seconds = 60 seconds total

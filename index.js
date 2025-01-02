@@ -58,7 +58,7 @@ mongoose.connect(process.env.MONGO_URL, {
 });
 
 // Routes
-app.use(auth);
+//app.use(auth);
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);
 app.use("/products", productRoutes);

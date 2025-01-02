@@ -248,4 +248,57 @@ router.post('/api/mpesa/callback', async (req, res) => {
   }
 });
 
+
+// Add this to checkout.js
+router.get('/payments/mpesa/status/:checkoutRequestId', auth, async (req, res) => {
+  try {
+    const { checkoutRequestId } = req.params;
+
+    // First check if payment is already marked as completed in our database
+    const order = await Order.findOne({
+      'mpesaDetails.checkoutRequestID': checkoutRequestId,
+      user: req.user.id
+    });
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found'
+      });
+    }
+
+    if (order.paymentStatus === 'completed') {
+      return res.json({
+        success: true,
+        status: 'completed'
+      });
+    }
+
+    // If not completed, check with M-Pesa
+    const statusResponse = await mpesa.checkTransactionStatus(checkoutRequestId);
+
+    if (statusResponse.success) {
+      // Update order status if payment is successful
+      order.paymentStatus = 'completed';
+      order.orderStatus = 'processing';
+      await order.save();
+    }
+
+    return res.json({
+      success: statusResponse.success,
+      status: statusResponse.success ? 'completed' : 'pending',
+      message: statusResponse.message
+    });
+
+  } catch (error) {
+    console.error('Payment status check error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Unable to check payment status'
+    });
+  }
+});
+
+
+
 module.exports = router;
