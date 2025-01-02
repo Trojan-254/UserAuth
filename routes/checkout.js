@@ -22,7 +22,7 @@ const validateShippingDetails = (req, res, next) => {
 // Helper functions
 const calculateOrderTotals = (cartTotal) => {
   const subtotal = cartTotal;
-  const shipping = 300;
+  const shipping = 0;
   const tax = subtotal * 0.16;
   return {
     subtotal,

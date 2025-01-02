@@ -36,6 +36,16 @@ const OrderSchema = new mongoose.Schema({
     county: String,
     postalCode: String
   },
+  mpesaDetails: {
+    checkoutRequestID: String,
+    merchantRequestID: String,
+    phoneNumber: String,
+    amount: Number,
+    mpesaReceiptNumber: String,
+    initiatedAt: Date,
+    paymentCompletedAt: Date,
+    failureReason: String
+  },
   orderStatus: {
     type: String,
     enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
@@ -45,13 +55,7 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'completed', 'failed'],
     default: 'pending'
-  },
-  mpesaDetails: {
-    checkoutRequestId: String,
-    merchantRequestID: String,
-    mpesaReceiptNumber: String,
-    phoneNumber: String
-  },
+  }
 }, { timestamps: true });
 
 // module export

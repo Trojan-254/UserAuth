@@ -150,49 +150,11 @@
         </footer>
     </div>
 
-    <script>
-        // M-Pesa Form Submission Logic
-        const mpesaForm = document.getElementById('mpesaForm');
-        const cancelPaymentButton = document.getElementById('cancelPayment');
-
-        mpesaForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const phoneNumber = document.getElementById('mpesaNumber').value.trim();
-
-            if (!/^254\d{9}$/.test(phoneNumber)) {
-                alert('Please enter a valid phone number in the format 254XXXXXXXXX.');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/payments/mpesa/initiate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        orderId: '<%= order._id %>',
-                        phoneNumber
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    alert('Check your phone for the M-Pesa prompt. Processing your payment...');
-                    // Optionally redirect or show a processing state here
-                } else {
-                    throw new Error(data.message || 'Payment initiation failed.');
-                }
-
-            } catch (error) {
-                alert('Error initiating payment: ' + error.message);
-            }
-        });
-
-        cancelPaymentButton.addEventListener('click', () => {
-            window.location.href = '/cart/my-cart'; // Redirect to cart or another appropriate page
-        });
-    </script>
+ 
+   <script>
+       // Pass the order ID to the payment handler
+       window.orderId = '<%= order._id %>';
+   </script>
+   <script src="/js/payment-handler.js"></script>
 </body>
 </html>

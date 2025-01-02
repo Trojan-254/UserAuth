@@ -10,6 +10,7 @@ const checkoutRoutes = require("./routes/checkout");
 const cartRoutes = require("./routes/cart");
 const orderRoutes = require("./routes/order");
 const w = require("./routes/wishlist");
+const mpesaRoutes = require('./routes/mpesa');
 const errorHandler = require("./middleware/errorMiddleware");
 const auth = require("./middleware/authMiddleware");
 const exphbs = require('express-handlebars');
@@ -57,16 +58,18 @@ mongoose.connect(process.env.MONGO_URL, {
 });
 
 // Routes
+app.use(auth);
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);
 app.use("/products", productRoutes);
 app.use("/cart", cartRoutes);
+app.use('/api', mpesaRoutes);
 app.use("/checkout", checkoutRoutes);
 app.use("/orders", orderRoutes);
 app.use("/wishlist", w);
 app.use("/email-verification/:token", authRoutes);
 app.get('/', (req, res) => {
-    res.render('landing');
+    res.render('landing', { isAuthenticated: req.isAuthenticated });
 });
 
 app.get("/signup", (req, res) => {
