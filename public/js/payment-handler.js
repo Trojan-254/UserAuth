@@ -1,213 +1,163 @@
-// public/js/payment-handler.js
+// payment-handler.js
 class PaymentHandler {
-  constructor() {
-    this.mpesaForm = document.getElementById('mpesaForm');
-    this.phoneInput = document.getElementById('mpesaNumber');
-    this.submitButton = this.mpesaForm.querySelector('button[type="submit"]');
-    this.cancelButton = document.getElementById('cancelPayment');
-    
-    this.initializeEventListeners();
-  }
-
-  initializeEventListeners() {
-    this.mpesaForm.addEventListener('submit', (e) => this.handleSubmit(e));
-    this.phoneInput.addEventListener('input', (e) => this.handlePhoneInput(e));
-    this.cancelButton.addEventListener('click', () => this.handleCancel());
-  }
-
-  handlePhoneInput(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    if (!value.startsWith('254')) {
-      value = '254' + value;
-    }
-    value = value.slice(0, 12);
-    e.target.value = value;
-  }
-
-  async handleSubmit(e) {
-    e.preventDefault();
-    
-    const phoneNumber = this.phoneInput.value.trim();
-    if (!/^254[17]\d{8}$/.test(phoneNumber)) {
-      this.showError('Please enter a valid M-Pesa number (254XXXXXXXXX)');
-      return;
-    }
-
-    try {
-      this.setLoading(true);
-      const response = await fetch('/api/payments/mpesa/initiate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId: window.orderId, // Set this in your EJS template
-          phoneNumber
-        })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Payment initiation failed');
-      }
-
-      this.showSuccess();
-      this.startPolling(data.checkoutRequestID);
-    } catch (error) {
-      this.showError(error.message);
-    } finally {
-      this.setLoading(false);
-    }
-  }
-
-
-  // public/js/payment-handler.js
-document.getElementById('mpesaForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  const phoneNumber = document.getElementById('mpesaNumber').value;
-  const submitButton = e.target.querySelector('button[type="submit"]');
-  const originalButtonText = submitButton.textContent;
-  
-  try {
-    submitButton.textContent = 'Processing...';
-    submitButton.disabled = true;
-
-    // Initiate STK Push
-    const response = await fetch('/checkout/api/payments/mpesa/initiate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orderId: window.orderId, phoneNumber })
-    });
-
-    const data = await response.json();
-    if (!data.success) throw new Error(data.message);
-
-    // Show waiting message
-    showMessage('Check your phone for the M-Pesa prompt', 'info');
-
-    // Start checking payment status
-    const checkoutRequestId = data.checkoutRequestID;
-    await checkPaymentStatus(checkoutRequestId);
-
-  } catch (error) {
-    showMessage(error.message, 'error');
-  } finally {
-    submitButton.textContent = originalButtonText;
-    submitButton.disabled = false;
-  }
-});
-
-async function checkPaymentStatus(checkoutRequestId) {
-  const maxAttempts = 5;
-  const delayBetweenAttempts = 5000; // 5 seconds
-  let attempts = 0;
-
-  const checkStatus = async () => {
-    try {
-      const response = await fetch(`/checkout/api/payments/mpesa/status/${checkoutRequestId}`);
-      const data = await response.json();
-
-      if (data.success) {
-        // Payment confirmed
-        showMessage('Payment successful! Redirecting...', 'success');
-        setTimeout(() => {
-          window.location.href = `/orders/${window.orderId}`;
-        }, 2000);
-        return true;
-      }
-
-      if (data.status === 'pending' && attempts < maxAttempts) {
-        attempts++;
-        await new Promise(resolve => setTimeout(resolve, delayBetweenAttempts));
-        return checkStatus();
-      }
-
-      throw new Error('Payment status check timed out. Please check your order status.');
-       } catch (error) {
-         showMessage(error.message, 'error');
-         return false;
-       }
-     };
-
-     return checkStatus();
-   }
-
-   function showMessage(message, type) {
-     // Implement your message display logic here
-     console.log(`${type}: ${message}`);
-   }
-
-
-
-  async startPolling(checkoutRequestID) {
-    let attempts = 0;
-    const maxAttempts = 20; // 20 attempts * 3 seconds = 60 seconds total
-    
-    const pollInterval = setInterval(async () => {
-      attempts++;
-      
-      try {
-        const response = await fetch(`/api/payments/mpesa/status/${checkoutRequestID}`);
-        const data = await response.json();
+    constructor() {
+        this.form = document.getElementById('mpesaForm');
+        this.submitButton = this.form.querySelector('button[type="submit"]');
+        this.cancelButton = document.getElementById('cancelPayment');
+        this.messageTimeout = null;
+        this.messageContainer = this.createMessageContainer();
         
-        if (data.status === 'completed') {
-          clearInterval(pollInterval);
-          window.location.href = `/orders/${data.orderId}?status=success`;
-        } else if (data.status === 'failed') {
-          clearInterval(pollInterval);
-          this.showError('Payment failed: ' + data.message);
-        }
-      } catch (error) {
-        console.error('Polling error:', error);
-      }
-
-      if (attempts >= maxAttempts) {
-        clearInterval(pollInterval);
-        this.showError('Payment status check timed out. Please check your order status.');
-      }
-    }, 3000);
-  }
-
-  setLoading(isLoading) {
-    this.submitButton.disabled = isLoading;
-    this.submitButton.innerHTML = isLoading ? 
-      '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...' : 
-      'Submit Payment';
-  }
-
-  showError(message) {
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mt-4';
-    errorDiv.innerHTML = `<p>${message}</p>`;
-    
-    const existing = this.mpesaForm.querySelector('.bg-red-100');
-    if (existing) existing.remove();
-    
-    this.mpesaForm.appendChild(errorDiv);
-  }
-
-  showSuccess() {
-    const successDiv = document.createElement('div');
-    successDiv.className = 'bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mt-4';
-    successDiv.innerHTML = `
-      <p class="font-bold">Payment Initiated!</p>
-      <p>Please check your phone for the M-Pesa prompt and enter your PIN to complete payment.</p>
-    `;
-    
-    const existing = this.mpesaForm.querySelector('.bg-green-100, .bg-red-100');
-    if (existing) existing.remove();
-    
-    this.mpesaForm.appendChild(successDiv);
-  }
-
-  handleCancel() {
-    if (confirm('Are you sure you want to cancel this payment?')) {
-      window.location.href = '/cart/my-cart';
+        this.initializeEventListeners();
     }
-  }
+
+    createMessageContainer() {
+        const container = document.createElement('div');
+        container.className = 'fixed top-4 right-4 max-w-sm';
+        document.body.appendChild(container);
+        return container;
+    }
+
+    showMessage(message, type = 'info') {
+        if (this.messageTimeout) {
+            clearTimeout(this.messageTimeout);
+        }
+
+        const existingMessage = this.messageContainer.querySelector('.message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+
+        const messageElement = document.createElement('div');
+        messageElement.className = `message p-4 rounded-lg shadow-lg mb-4 animate-fade-in ${
+            type === 'error' ? 'bg-red-500 text-white' :
+            type === 'success' ? 'bg-green-500 text-white' :
+            'bg-blue-500 text-white'
+        }`;
+        messageElement.textContent = message;
+
+        this.messageContainer.appendChild(messageElement);
+
+        this.messageTimeout = setTimeout(() => {
+            messageElement.remove();
+        }, 5000);
+    }
+
+    async checkPaymentStatus(checkoutRequestId) {
+        const maxAttempts = 10;
+        const delayBetweenAttempts = 6000;
+        let attempts = 0;
+
+        const checkStatus = async () => {
+            if (attempts >= maxAttempts) {
+                throw new Error('Payment status check timed out. Please check your order status.');
+            }
+
+            try {
+                const response = await fetch(`/checkout/api/payments/mpesa/status/${checkoutRequestId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to check payment status');
+                }
+
+                const data = await response.json();
+
+                if (data.success && data.status === 'completed') {
+                    this.showMessage('Payment successful! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = `/orders/${window.orderId}`;
+                    }, 2000);
+                    return true;
+                }
+
+                attempts++;
+                this.showMessage(`Checking payment status... Attempt ${attempts}/${maxAttempts}`, 'info');
+                await new Promise(resolve => setTimeout(resolve, delayBetweenAttempts));
+                return checkStatus();
+            } catch (error) {
+                this.showMessage(error.message, 'error');
+                return false;
+            }
+        };
+
+        return checkStatus();
+    }
+
+    validatePhoneNumber(phone) {
+        return /^254[17]\d{8}$/.test(phone);
+    }
+
+    async handleSubmit(e) {
+        e.preventDefault();
+        
+        const phoneNumber = document.getElementById('mpesaNumber').value.trim();
+        
+        if (!this.validatePhoneNumber(phoneNumber)) {
+            this.showMessage('Invalid phone number format. Use format: 254XXXXXXXXX', 'error');
+            return;
+        }
+
+        try {
+            this.submitButton.disabled = true;
+            this.submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+            
+            const response = await fetch('/checkout/api/payments/mpesa/initiate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    orderId: window.orderId,
+                    phoneNumber: phoneNumber
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to initiate payment');
+            }
+
+            if (!data.success) {
+                throw new Error(data.message);
+            }
+
+            this.showMessage('Please check your phone for the M-Pesa prompt', 'info');
+            await this.checkPaymentStatus(data.checkoutRequestID);
+
+        } catch (error) {
+            this.showMessage(error.message, 'error');
+        } finally {
+            this.submitButton.disabled = false;
+            this.submitButton.innerHTML = 'Submit Payment';
+        }
+    }
+
+    handleCancel() {
+        if (confirm('Are you sure you want to cancel this payment?')) {
+            window.location.href = '/order/my-orders';
+        }
+    }
+
+    handlePaymentMethodChange(e) {
+        if (e.target.value === 'mpesa') {
+            this.form.style.display = 'block';
+        } else {
+            this.form.style.display = 'none';
+            this.showMessage('Only M-Pesa payments are currently supported', 'info');
+        }
+    }
+
+    initializeEventListeners() {
+        this.form.addEventListener('submit', this.handleSubmit.bind(this));
+        this.cancelButton.addEventListener('click', this.handleCancel.bind(this));
+        
+        const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+        paymentMethods.forEach(method => {
+            method.addEventListener('change', this.handlePaymentMethodChange.bind(this));
+        });
+    }
 }
 
-// Initialize payment handler when document loads
+// Initialize the payment handler when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  new PaymentHandler();
+    new PaymentHandler();
 });

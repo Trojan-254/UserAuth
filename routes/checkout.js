@@ -250,7 +250,7 @@ router.post('/api/mpesa/callback', async (req, res) => {
 
 
 // Add this to checkout.js
-router.get('/payments/mpesa/status/:checkoutRequestId', auth, async (req, res) => {
+router.get('/api/payments/mpesa/status/:checkoutRequestId', auth, async (req, res) => {
   try {
     const { checkoutRequestId } = req.params;
 
