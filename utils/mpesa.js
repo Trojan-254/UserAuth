@@ -108,7 +108,7 @@ class MpesaAPI {
   }
   
 
-  // utils/mpesa.js - Add this new method
+  
 async checkTransactionStatus(checkoutRequestId) {
   try {
     const accessToken = await this.getAccessToken();
