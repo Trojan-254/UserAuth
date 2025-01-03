@@ -102,7 +102,7 @@ app.get("/dashboard", auth, (req, res) => {
 
 
 
-// Start the damned server
+// Start the fucking damned server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.clear();
