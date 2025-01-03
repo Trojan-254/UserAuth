@@ -68,7 +68,7 @@ MPESA_CONSUMER_SECRET=<your_consumer_secret>
 
 4. Start the development server:
 ```bash
-npm start
+npx nodemon index.js
 ```
 
 5. Visit the app:
