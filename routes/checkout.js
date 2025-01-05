@@ -176,7 +176,7 @@ router.post('/api/payments/mpesa/initiate', auth, async (req, res) => {
       });
     }
 
-    // Initiate STK push using your existing mpesa utility
+    // Initiate STK push
     const stkPushResponse = await mpesa.initiateSTKPush(
       phoneNumber,
       order.totalAmount,
@@ -210,11 +210,11 @@ router.post('/api/payments/mpesa/initiate', auth, async (req, res) => {
 });
 
 
-// Update the M-Pesa callback handler to work with the new flow
+//the M-Pesa callback handler
 router.post('/api/mpesa/callback', async (req, res) => {
   try {
     const { Body: { stkCallback } } = req.body;
-    
+
     const order = await Order.findOne({
       'mpesaDetails.checkoutRequestID': stkCallback.CheckoutRequestID
     });
@@ -267,28 +267,52 @@ router.get('/api/payments/mpesa/status/:checkoutRequestId', auth, async (req, re
       });
     }
 
+    // If payment has already been completed, return immediately
     if (order.paymentStatus === 'completed') {
       return res.json({
         success: true,
-        status: 'completed'
+        status: 'completed',
+        message: 'Payment has been completed'
       });
+    }
+
+    // If payment failed locally, return immediately
+    if (order.paymentStatus === 'failed') {
+      return res.json({
+        success: false,
+        status: 'failed',
+        message: order.mpesaDetails?.failureReason || 'Payment failed'
+      });
+
     }
 
     // If not completed, check with M-Pesa
     const statusResponse = await mpesa.checkTransactionStatus(checkoutRequestId);
-
-    if (statusResponse.success) {
+    console.log(statusResponse);
+    if (statusResponse.code === '0') {
       // Update order status if payment is successful
       order.paymentStatus = 'completed';
       order.orderStatus = 'processing';
       await order.save();
+
+      return res.json({
+        success: true,
+        status: 'completed',
+        message: 'Payment has been completed',
+        checkoutRequestId
+      });
+    } else {
+      order.paymentStatus = 'failed';
+      order.mpesaDetails.failureReason = statusResponse.message;
+      await order.save();
     }
 
     return res.json({
-      success: statusResponse.success,
-      status: statusResponse.success ? 'completed' : 'pending',
-      message: statusResponse.message
-    });
+        success: false,
+        status: 'failed',
+        message: statusResponse.message,
+        checkoutRequestId
+      });
 
   } catch (error) {
     console.error('Payment status check error:', error);

@@ -6,7 +6,7 @@ class PaymentHandler {
         this.cancelButton = document.getElementById('cancelPayment');
         this.messageTimeout = null;
         this.messageContainer = this.createMessageContainer();
-        
+        this.checkingPayment = false;
         this.initializeEventListeners();
     }
 
@@ -43,24 +43,55 @@ class PaymentHandler {
     }
 
     async checkPaymentStatus(checkoutRequestId) {
-        const maxAttempts = 10;
-        const delayBetweenAttempts = 6000;
+        const maxAttempts = 20;
+        const delayBetweenAttempts = 10000;
         let attempts = 0;
 
         const checkStatus = async () => {
             if (attempts >= maxAttempts) {
-                throw new Error('Payment status check timed out. Please check your order status.');
+                this.showMessage(
+                    'Payment verification is taking longer than expected. The payment might still be processing.',
+                    'info'
+                );
+
+                // Add retry button to message container
+                const retryButton = document.createElement('button');
+                retryButton.className = 'bg-white text-blue-500 px-4 py-2 rounded mt-2';
+                retryButton.textContent = 'Check Again';
+                retryButton.onclick = () => {
+                    attempts = 0; // Reset attempts
+                    this.checkPaymentStatus(checkoutRequestId);
+                };
+
+                const messageElement = this.messageContainer.querySelector('.message');
+                if (messageElement) {
+                    messageElement.appendChild(retryButton);
+                }
+
+                return false;
             }
 
             try {
-                const response = await fetch(`/checkout/api/payments/mpesa/status/${checkoutRequestId}`);
+                // Add timestamp to prevent caching
+                const timestamp = new Date().getTime();
+                const response = await fetch(
+                    `/checkout/api/payments/mpesa/status/${checkoutRequestId}?t=${timestamp}`,
+                    {
+                        headers: {
+                            'Cache-Control': 'no-cache',
+                            'Pragma': 'no-cache'
+                        }
+                    }
+                );
+
                 if (!response.ok) {
-                    throw new Error('Failed to check payment status');
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Network response was not ok');
                 }
 
                 const data = await response.json();
 
-                if (data.success && data.status === 'completed') {
+                if (data.status === 'completed') {
                     this.showMessage('Payment successful! Redirecting...', 'success');
                     setTimeout(() => {
                         window.location.href = `/orders/${window.orderId}`;
@@ -68,17 +99,66 @@ class PaymentHandler {
                     return true;
                 }
 
+                if (data.status === 'failed') {
+                    this.showMessage(data.message || 'Payment failed. Please try again.', 'error');
+                    return false;
+                }
+
                 attempts++;
-                this.showMessage(`Checking payment status... Attempt ${attempts}/${maxAttempts}`, 'info');
+                this.showMessage(
+                    `Verifying payment... (Attempt ${attempts}/${maxAttempts})`,
+                    'info'
+                );
                 await new Promise(resolve => setTimeout(resolve, delayBetweenAttempts));
                 return checkStatus();
+
             } catch (error) {
-                this.showMessage(error.message, 'error');
-                return false;
+                console.error('Payment status check error:', error);
+
+                // If it's a network error, show specific message
+                if (!navigator.onLine || error.name === 'NetworkError') {
+                    this.showMessage('Network connection issue. Retrying...', 'error');
+                    await new Promise(resolve => setTimeout(resolve, 5000));
+                    return checkStatus();
+                }
+
+                // For other errors, increment attempts and continue
+                attempts++;
+                await new Promise(resolve => setTimeout(resolve, delayBetweenAttempts));
+                return checkStatus();
             }
         };
 
-        return checkStatus();
+        if (this.checkingPayment) {
+            return false;
+        }
+
+        this.checkingPayment = true;
+        try {
+            return await checkStatus();
+        } finally {
+            this.checkingPayment = false;
+        }
+    }
+
+    async checkInitialPaymentStatus(orderId) {
+        try {
+            const response = await fetch(`/orders/${orderId}`);
+            const data = await response.json();
+
+            if (data.paymentStatus === 'completed') {
+                this.showMessage('Payment already completed! Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = `/orders/${orderId}`;
+                }, 2000);
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            console.error('Error checking initial payment status:', error);
+            return false;
+        }
     }
 
     validatePhoneNumber(phone) {
@@ -87,9 +167,15 @@ class PaymentHandler {
 
     async handleSubmit(e) {
         e.preventDefault();
-        
+
         const phoneNumber = document.getElementById('mpesaNumber').value.trim();
-        
+
+        // Check if payment is already completed
+        const isCompleted = await this.checkInitialPaymentStatus(window.orderId);
+        if (isCompleted) {
+            return;
+        }
+
         if (!this.validatePhoneNumber(phoneNumber)) {
             this.showMessage('Invalid phone number format. Use format: 254XXXXXXXXX', 'error');
             return;
@@ -98,7 +184,7 @@ class PaymentHandler {
         try {
             this.submitButton.disabled = true;
             this.submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
-            
+
             const response = await fetch('/checkout/api/payments/mpesa/initiate', {
                 method: 'POST',
                 headers: {
@@ -133,7 +219,7 @@ class PaymentHandler {
 
     handleCancel() {
         if (confirm('Are you sure you want to cancel this payment?')) {
-            window.location.href = '/order/my-orders';
+            window.location.href = '/orders/my-orders';
         }
     }
 
@@ -149,7 +235,7 @@ class PaymentHandler {
     initializeEventListeners() {
         this.form.addEventListener('submit', this.handleSubmit.bind(this));
         this.cancelButton.addEventListener('click', this.handleCancel.bind(this));
-        
+
         const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
         paymentMethods.forEach(method => {
             method.addEventListener('change', this.handlePaymentMethodChange.bind(this));

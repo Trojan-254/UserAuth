@@ -26,13 +26,11 @@ router.get('/my-cart', auth, async (req, res) => {
 
 // Add item to cart
 router.post('/add', auth, async (req, res) => {
-  console.log("Add to cart request body:", req.body);
   try {
     const { productId, quantity, price } = req.body;
     let cart = await Cart.findOne({ user: req.user.id });
     console.log("Existing cart:", cart); // Log existing cart
     if (!cart) {
-       console.log("Creating new cart");
        cart = new Cart({ user: req.user.id, items: [] });
     }
 
@@ -53,9 +51,10 @@ router.post('/add', auth, async (req, res) => {
 
    console.log("Cart before save:", cart); // Log cart before saving
     await cart.save();
-    console.log("Cart saved successfully");
-   
-   res.status(201).json({ success: true, message: 'Added to cart succesfully'});
+
+   const totalItems = cart.items.reduce((acc, item) => acc + item.quantity, 0);
+
+   res.status(201).json({ success: true, message: 'Added to cart succesfully', totalItems});
   } catch (error) {
     console.error("Add to cart error:", error);
     res.status(500).json({ message: error.message });

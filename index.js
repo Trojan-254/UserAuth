@@ -17,7 +17,7 @@ const exphbs = require('express-handlebars');
 const app = express();
 const cookieParser = require('cookie-parser');
 const methodOverride = require('method-override');
-
+const cors = require('cors');
 
 
 // App middlewares
@@ -28,6 +28,12 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "views")));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Allow ngrok
+app.use(cors({
+    origin: ['https://ce26-154-159-254-132.ngrok-free.app', 'other-allowed-origins'],
+    credentials: true
+}));
 
 // Error handling middleware
 app.use(errorHandler);

@@ -35,6 +35,7 @@ class MpesaAPI {
       return response.data.access_token;
     } catch (error) {
       const errorMessage = error.response?.data?.errorMessage || error.message;
+      console.log(errorMessage);
       throw new Error(`M-Pesa access token error: ${errorMessage}`);
     }
   }
@@ -65,6 +66,12 @@ class MpesaAPI {
       // Format phone number
       const formattedPhone = phoneNumber.replace(/^(0|\+254)/, '254');
       
+      // Callback url
+      const callbackUrl = new URL('/checkout/api/mpesa/callback', process.env.BASE_URL).toString();
+      if (!process.env.BASE_URL || !process.env.BASE_URL.startsWith('https://')) {
+         throw new Error('Invalid BASE_URL. Must be a valid HTTPS URL');
+      }
+
       const requestData = {
         BusinessShortCode: this.shortcode,
         Password: password,
@@ -74,7 +81,7 @@ class MpesaAPI {
         PartyA: formattedPhone,
         PartyB: this.shortcode,
         PhoneNumber: formattedPhone,
-        CallBackURL: `${process.env.BASE_URL}/api/mpesa/callback`,
+        CallBackURL: callbackUrl,
         AccountReference: `ZetuCart-${orderId}`,
         TransactionDesc: `Payment for order ${orderId}`
       };
@@ -87,7 +94,7 @@ class MpesaAPI {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
           },
-          timeout: 15000 // 15 second timeout
+          timeout: 30000 // 30 second timeout
         }
       );
 
@@ -106,42 +113,108 @@ class MpesaAPI {
       throw error;
     }
   }
-  
 
-  
-async checkTransactionStatus(checkoutRequestId) {
-  try {
-    const accessToken = await this.getAccessToken();
-    const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
-    const password = this.generatePassword(timestamp);
+  async checkTransactionStatus(checkoutRequestId) {
+    try {
+      const accessToken = await this.getAccessToken();
+      const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
+      const password = this.generatePassword(timestamp);
 
-    const requestData = {
-      BusinessShortCode: this.shortcode,
-      Password: password,
-      Timestamp: timestamp,
-      CheckoutRequestID: checkoutRequestId
-    };
+      const requestData = {
+        BusinessShortCode: this.shortcode,
+        Password: password,
+        Timestamp: timestamp,
+        CheckoutRequestID: checkoutRequestId
+      };
 
-    const response = await axios.post(
-      `${this.baseURL}/mpesa/stkpushquery/v1/query`,
-      requestData,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
-        },
-        timeout: 15000
+      const response = await axios.post(
+        `${this.baseURL}/mpesa/stkpushquery/v1/query`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 15000,
+
+          validateStatus: function (status) {
+            // Consider both 200 and 500 as valid statuses when checking transaction
+            return status === 200 || status === 500;
+          }
+        }
+      );
+
+      // Handle different response scenarios
+      if (response.status === 500 && 
+          (response.data?.errorMessage?.includes('being processed') || 
+           response.data?.errorCode === '500.001.1001')) {
+        return {
+          success: false,
+          status: 'processing',
+          message: 'Transaction is being processed',
+          isProcessing: true,
+          checkoutRequestId: checkoutRequestId
+        };
       }
-    );
 
-    return {
-      success: response.data.ResultCode === 0,
-      message: response.data.ResultDesc
-    };
-  } catch (error) {
-    throw new Error(`Payment status check failed: ${error.message}`);
+      // Check for successful response
+      if (response.data?.ResultCode === 0) {
+        return {
+          success: true,
+          status: 'completed',
+          message: response.data.ResultDesc,
+          checkoutRequestId: checkoutRequestId
+        };
+      }
+
+      // Handle other response codes
+      return {
+        success: false,
+        status: 'failed',
+        message: response.data?.ResultDesc || 'Transaction failed',
+        code: response.data?.ResultCode,
+        checkoutRequestId: checkoutRequestId
+      };
+
+    } catch (error) {
+      // Handle network or timeout errors
+      if (error.code === 'ECONNABORTED') {
+        return {
+          success: false,
+          status: 'timeout',
+          message: 'Request timed out, please try again',
+          isProcessing: true,
+          checkoutRequestId: checkoutRequestId
+        };
+      }
+
+      // Handle other errors
+      // Log detailed error information
+      console.error('M-Pesa status check error:', {
+        error: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        requestId: checkoutRequestId
+      });
+
+      // Determine if error might be temporary
+      const isTemporaryError = error.response?.status >= 500 || 
+                              error.code === 'ECONNRESET' ||
+                              error.code === 'ETIMEDOUT';
+
+      return {
+        success: false,
+        status: isTemporaryError ? 'processing' : 'failed',
+        message: isTemporaryError ? 
+          'Payment system is temporarily unavailable, please try again' : 
+          'Payment status check failed',
+        isProcessing: isTemporaryError,
+        checkoutRequestId: checkoutRequestId
+      };
+      throw new Error(`Payment status check failed: ${error.message}`);
+    }
   }
-}
+
   validatePhoneNumber(phone) {
     return /^254[17]\d{8}$/.test(phone);
   }

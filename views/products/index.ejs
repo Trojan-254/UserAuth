@@ -3,201 +3,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products | Zetu Cart</title>
+    <title>Zetu Cart | Kenyan Online Shopping</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-      .hidden {
+        @import url('https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap');
+        
+        .maasai-pattern {
+            background-image: repeating-linear-gradient(
+                45deg,
+                #ef4444 0px,
+                #ef4444 20px,
+                #fb923c 20px,
+                #fb923c 40px,
+                #000000 40px,
+                #000000 60px
+            );
+        }
+        
+        .product-card:hover .quick-actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .quick-actions {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .category-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .price-range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #ef4444;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        
+
+    .modal {
+       background-color: white;
+       padding: 1.5rem;
+       border-radius: 0.5rem;
+       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+       max-width: 400px;
+       width: 90%;
+       text-align: center;
+    }
+
+    .loading-spinner {
         display: none;
-      }
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #ef4444;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
     </style>
 </head>
-<body class="bg-gray-50">
-    <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-gradient-to-b from-orange-600 to-orange-700 text-white p-6 shadow-xl flex flex-col">
-            <div class="flex items-center mb-10">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                </svg>
-                <h2 class="text-2xl font-bold">Zetu Cart</h2>
+<body class="bg-gray-50 font-['Andika']">
+    <!-- Hero Section with Search -->
+    <div class="relative h-96 bg-gradient-to-r from-red-500 to-orange-500 overflow-hidden">
+        <div class="absolute inset-0 maasai-pattern opacity-10"></div>
+        <div class="container mx-auto px-4 h-full flex flex-col justify-center items-center relative z-10">
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 text-center">
+                Karibu to Zetu Cart
+            </h1>
+            <p class="text-white text-xl mb-8 text-center">Discover Kenya's Finest Products</p>
+            <div class="w-full max-w-2xl relative">
+                <input type="text" 
+                       placeholder="Search for local treasures..." 
+                       class="w-full pl-12 pr-4 py-4 rounded-full text-lg focus:outline-none focus:ring-2 focus:ring-red-500 shadow-lg">
+                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl"></i>
             </div>
-
-            <!-- Price Filter Section -->
-            <form action="/products" method="GET" class="space-y-6">
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Price Range</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-sm">Min Price (KES)</label>
-                            <input type="number" name="minPrice" class="w-full bg-white/10 rounded-lg p-2 mt-1">
-                        </div>
-                        <div>
-                            <label class="text-sm">Max Price (KES)</label>
-                            <input type="number" name="maxPrice" class="w-full bg-white/10 rounded-lg p-2 mt-1">
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full bg-white text-orange-600 py-2 rounded-lg hover:bg-orange-50 transition-colors">
-                    Apply Filters
-                </button>
-            </form>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-8">
-            <!-- Top Navigation -->
-            <div class="flex justify-between items-center mb-8">
-                <div class="relative max-w-md">
-                    <input type="text" placeholder="Search products..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-orange-500">
-                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                </div>
-                <div class="flex items-center space-x-6">
-                    <div class="relative">
-                        <select name="sort" class="appearance-none bg-white border border-gray-200 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:border-orange-500">
-                            <option value="">Sort By</option>
-                            <option value="price:asc">Price: Low to High</option>
-                            <option value="price:desc">Price: High to Low</option>
-                            <option value="newest">Newest First</option>
-                        </select>
-                        <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400"></i>
-                    </div>
-                </div>
-            </div>
-            <!-- Products Grid -->
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              <% products.forEach(product => { %>
-                  <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                      <div class="relative">
-                          <img src="/uploads/<%= product.mainImage %>" alt="<%= product.name %>" class="w-full h-48 object-cover">
-                          <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center hover:text-orange-500 transition-colors">
-                             <i class="far fa-heart"></i>
-                          </button>
-                      </div>
-                      <div class="p-4">
-                         <h3 class="font-semibold text-gray-800 mb-2"><%= product.name %></h3>
-                         <p class="text-gray-600 text-sm mb-4 line-clamp-2"><%= product.description %></h3>
-                         <div class="flex items-center justify-between">
-                             <div>
-                                <span class="text-lg font-bold text-gray-800">KES <%= product.price %></span>
-                                <% if (product.originalPrice) { %>
-                                    <span class="text-sm text-gray-400 line-through ml-2">KES <%= product.originalPrice %></span>
-                                <% } %>
-                             </div>
-                             <button 
-                                class="addToCartBtn p-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition-colors"
-                                data-product-id="<%= product._id %>"
-                                data-price="<%= product.price %>"
-                                  >
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
-                         </div>
-                      </div>
-                  </div>
-                  <% }) 
-              %>
-            </div>
-            <!-- Products Grid -->
-
-            <!-- Pagination -->
-            <div class="flex justify-center items-center space-x-4 mt-12">
-                <% if (currentPage > 1) { %>
-                    <a href="/products?page=<%= currentPage - 1 %>" class="px-4 py-2 rounded-lg border border-gray-200 hover:border-orange-500 transition-colors">
-                        <i class="fas fa-chevron-left mr-2"></i> Previous
-                    </a>
-                <% } %>
-                
-                <div class="flex items-center space-x-2">
-                    <% for(let i = 1; i <= totalPages; i++) { %>
-                        <a href="/products?page=<%= i %>" class="w-10 h-10 flex items-center justify-center rounded-lg <%= currentPage === i ? 'bg-orange-500 text-white' : 'border border-gray-200 hover:border-orange-500' %>">
-                            <%= i %>
-                        </a>
-                    <% } %>
-                </div>
-
-                <% if (currentPage < totalPages) { %>
-                    <a href="/products?page=<%= currentPage + 1 %>" class="px-4 py-2 rounded-lg border border-gray-200 hover:border-orange-500 transition-colors">
-                        Next <i class="fas fa-chevron-right ml-2"></i>
-                    </a>
-                <% } %>
-            </div>
-
-            <!-- Footer -->
-            <footer class="mt-12 text-center text-gray-500 text-sm">
-                <p>&copy; 2024 Zetu Cart • All Rights Reserved</p>
-            </footer>
-        </main>
+        </div>
     </div>
 
+    <!-- Category Pills -->
+    <!-- Category Pills -->
+<div class="container mx-auto px-4 -mt-8 relative z-20">
+    <div class="flex flex-wrap gap-4 justify-center">
+        <button class="category-pill bg-white px-6 py-3 rounded-full shadow-lg hover:bg-orange-500 hover:text-white transition-all duration-300">
+            <i class="fas fa-gem mr-2"></i>Home Décor
+        </button>
+        <button class="category-pill bg-white px-6 py-3 rounded-full shadow-lg hover:bg-orange-500 hover:text-white transition-all duration-300">
+            <i class="fas fa-tshirt mr-2"></i>Fashion & Textiles
+        </button>
+        <button class="category-pill bg-white px-6 py-3 rounded-full shadow-lg hover:bg-orange-500 hover:text-white transition-all duration-300">
+            <i class="fas fa-cheese mr-2"></i>Dairy Products
+        </button>
+        <button class="category-pill bg-white px-6 py-3 rounded-full shadow-lg hover:bg-orange-500 hover:text-white transition-all duration-300">
+            <i class="fas fa-paint-brush mr-2"></i>Art & Collectibles
+        </button>
+        <button class="category-pill bg-white px-6 py-3 rounded-full shadow-lg hover:bg-orange-500 hover:text-white transition-all duration-300">
+            <i class="fas fa-heart mr-2"></i>Beauty & Personal Care
+        </button>
+    </div>
+</div>
+
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <!-- Filters and Sort -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex flex-wrap gap-6 justify-between items-center">
+                <!-- Price Range -->
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-gray-700 mb-2">Price Range (KES)</label>
+                    <div class="flex gap-4 items-center">
+                        <input type="range" 
+                               class="price-range-slider flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                               min="0" max="100000" step="1000">
+                        <span class="text-gray-600 min-w-[100px]">0 - 100,000</span>
+                    </div>
+                </div>
+
+                <!-- Sort -->
+                <div class="min-w-[200px]">
+                    <select class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 appearance-none cursor-pointer hover:border-red-500 transition-colors">
+                        <option value="">Sort By: Featured</option>
+                        <option value="price:asc">Price: Low to High</option>
+                        <option value="price:desc">Price: High to Low</option>
+                        <option value="rating:desc">Highest Rated</option>
+                        <option value="newest">Newest Arrivals</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <% products.forEach(product => { %>
+            <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <div class="relative">
+                    <img src="/uploads/<%= product.mainImage %>" 
+                         alt="<%= product.name %>" 
+                         class="w-full h-64 object-cover">
+                    
+                    <!-- Quick Actions -->
+                    <div class="quick-actions absolute bottom-4 left-4 right-4 flex gap-2">
+                        <button class="flex-1 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors addToCartBtn" 
+            data-product-id="<%= product._id %>" 
+            data-price="<%= product.price %>">
+        <span class="btn-text">
+            <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
+        </span>
+        <span class="loading-spinner"></span>
+    </button>
+                        <button class="w-10 h-10 bg-white text-red-500 rounded-lg flex items-center justify-center hover:bg-red-50">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                
+           <!-- Cart Notification Modal -->
+    <div id="cartNotification">
+        <div class="modal hidden">
+            <p class="text-lg font-bold mb-4" id="notificationMessage"></p>
+            <div class="flex justify-center gap-4">
+                <button id="continueShopping" 
+                        class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 transition-colors">
+                    Continue Shopping
+                </button>
+                <button id="goToCart" 
+                        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors">
+                    View Cart
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+                <div class="p-6">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-1 bg-red-100 text-red-600 text-sm rounded-full">
+                            <i class="fas fa-map-marker-alt mr-1"></i>Nairobi
+                        </span>
+                        <div class="text-yellow-400 text-sm">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                    </div>
+
+                    <h3 class="font-bold text-gray-800 mb-2"><%= product.name %></h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2"><%= product.description %></p>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-2xl font-bold text-gray-800">KES <%= product.price %></span>
+                            <% if (product.originalPrice) { %>
+                            <span class="text-sm text-gray-400 line-through">KES <%= product.originalPrice %></span>
+                            <% } %>
+                        </div>
+                        <span class="text-sm text-green-500">
+                            <i class="fas fa-truck mr-1"></i>Free Delivery
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-12 flex justify-center gap-2">
+            <% if (currentPage > 1) { %>
+            <a href="/products?page=<%= currentPage - 1 %>" 
+               class="px-4 py-2 bg-white rounded-lg border border-gray-200 hover:border-red-500 hover:text-red-500 transition-colors">
+                <i class="fas fa-chevron-left mr-2"></i>Previous
+            </a>
+            <% } %>
+
+            <% for(let i = 1; i <= totalPages; i++) { %>
+            <a href="/products?page=<%= i %>" 
+               class="w-10 h-10 flex items-center justify-center rounded-lg <%= currentPage === i ? 'bg-red-500 text-white' : 'bg-white border border-gray-200 hover:border-red-500 hover:text-red-500' %> transition-colors">
+                <%= i %>
+            </a>
+            <% } %>
+
+            <% if (currentPage < totalPages) { %>
+            <a href="/products?page=<%= currentPage + 1 %>" 
+               class="px-4 py-2 bg-white rounded-lg border border-gray-200 hover:border-red-500 hover:text-red-500 transition-colors">
+                Next<i class="fas fa-chevron-right ml-2"></i>
+            </a>
+            <% } %>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">About Zetu Cart</h3>
+                    <p class="text-gray-400">Connecting Kenyan artisans and sellers with customers worldwide. Shop authentic Kenyan products with confidence.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-red-500">About Us</a></li>
+                        <li><a href="#" class="hover:text-red-500">Contact</a></li>
+                        <li><a href="#" class="hover:text-red-500">FAQs</a></li>
+                        <li><a href="#" class="hover:text-red-500">Seller Center</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Customer Service</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-red-500">Shipping Info</a></li>
+                        <li><a href="#" class="hover:text-red-500">Returns</a></li>
+                        <li><a href="#" class="hover:text-red-500">Order Tracking</a></li>
+                        <li><a href="#" class="hover:text-red-500">Size Guide</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Connect With Us</h3>
+                    <div class="flex gap-4 mb-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <p class="text-gray-400">
+                        <i class="fas fa-phone mr-2"></i>+254 700 000000<br>
+                        <i class="fas fa-envelope mr-2"></i>hello@zetucart.co.ke
+                    </p>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Zetu Cart • All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        // Select all "Add to Cart" buttons
-        document.querySelectorAll('.addToCartBtn').forEach(button => {
-        button.addEventListener('click', async () => {
-        const productId = button.getAttribute('data-product-id');
-        const price = button.getAttribute('data-price');
-        const quantity = 1; // Default quantity for now
-        
-        try {
-            const response = await fetch('/cart/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    productId: productId,
-                    quantity: 1,
-                    price: price 
-               })
+
+     document.querySelectorAll('.addToCartBtn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const productId = button.getAttribute('data-product-id');
+                const price = button.getAttribute('data-price');
+                const btnText = button.querySelector('.btn-text');
+                const spinner = button.querySelector('.loading-spinner');
+
+                // Show loading state
+                btnText.style.display = 'none';
+                spinner.style.display = 'inline-block';
+                button.disabled = true;
+
+                try {
+                    const response = await fetch('/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            productId,
+                            quantity: 1,
+                            price
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        const modal = document.getElementById('cartNotification');
+                        const message = document.getElementById('notificationMessage');
+
+                        // Set appropriate message based on cart items
+                        message.textContent = result.totalItems > 1
+                            ? `Item added successfully! You have ${result.totalItems} items in your cart.`
+                            : 'Item added to cart successfully!';
+
+                        // Show modal
+                        modal.classList.add('show');
+
+                        // Setup modal buttons
+                        document.getElementById('continueShopping').onclick = () => {
+                            modal.classList.remove('show');
+                        };
+
+                        document.getElementById('goToCart').onclick = () => {
+                            window.location.href = '/cart/my-cart';
+                        };
+                    } else {
+                        throw new Error(result.message || 'Failed to add item to cart');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(error.message || 'An error occurred while adding item to cart');
+                } finally {
+                    // Reset button state
+                    btnText.style.display = 'inline-block';
+                    spinner.style.display = 'none';
+                    button.disabled = false;
+                }
             });
-
-            if (response.ok) {
-                alert('Item added to cart successfully!');
-                window.location.href = '/cart/my-cart';
-                // Optionally refresh the cart count or show a nicer notification
-            } else {
-                const result = await response.json();
-                alert(result.message || 'Failed to add item to cart');
-            }
-        } catch (error) {
-            console.error('Error adding to cart:', error);
-            alert('An unexpected error occurred.');
-        }
-    });
-});
-
-// Close popup logic
-document.getElementById('continueShopping').addEventListener('click', () => {
-    document.getElementById('cartPopup').classList.add('hidden');
-});
-
-document.getElementById('checkout').addEventListener('click', () => {
-    window.location.href = '/checkout';
-});
-
-    async function addToWishlist(productId) {
-    try {
-      const response = await fetch(`/add/${productId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('token') // Include token if using JWT
-        }
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        alert('Product added to wishlist!');
-      } else {
-        alert(result.message || 'Error adding product to wishlist');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Something went wrong');
-    }
-  }
-
+        });
     </script>
 
 </body>

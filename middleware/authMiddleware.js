@@ -2,11 +2,24 @@ const jwt = require('jsonwebtoken');
 
 const auth = (req, res, next) => {
     const token = req.cookies.authToken;
-    console.log(req.header)
+
+    // Helper function to determine if request expects JSON
+    const isApiRequest = req.xhr || 
+       req.headers.accept?.includes('application/json') ||
+       req.path.startsWith('/api/');
 
     if (!token) {
         req.isAuthenticated = false;
-        return res.status(401).json({ error: 'No token, authorization denied', message: 'Please login to access this route' });
+
+        // For API requests, still return JSON
+        if (isApiRequest) {
+           return res.status(401).json({
+               error: 'No token, authorization denied'
+           });
+        }
+
+        // For regular requests, return user to login.
+        return res.redirect('/login');
     }
 
     try {
@@ -18,7 +31,15 @@ const auth = (req, res, next) => {
     } catch (err) {
         console.error('Token verification failed:', err);
         req.isAuthenticated = false;
-        res.status(401).json({ error: 'Token is not valid' });
+
+        // For API requests, return JSON error
+        if (isApiRequest) {
+           return res.status(401).json({
+             error: 'Token is not valid'
+           });
+        }
+
+        return res.redirect('/login');
     }
 };
 
