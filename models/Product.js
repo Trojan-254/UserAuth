@@ -40,7 +40,8 @@ const ProductSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
-    }
+    },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
 }, { timestamps: true });
 
 // module export

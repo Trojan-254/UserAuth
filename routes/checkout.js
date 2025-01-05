@@ -289,7 +289,7 @@ router.get('/api/payments/mpesa/status/:checkoutRequestId', auth, async (req, re
     // If not completed, check with M-Pesa
     const statusResponse = await mpesa.checkTransactionStatus(checkoutRequestId);
     console.log(statusResponse);
-    if (statusResponse.code === '0') {
+    if (statusResponse.status === 'completed') {
       // Update order status if payment is successful
       order.paymentStatus = 'completed';
       order.orderStatus = 'processing';
@@ -301,10 +301,18 @@ router.get('/api/payments/mpesa/status/:checkoutRequestId', auth, async (req, re
         message: 'Payment has been completed',
         checkoutRequestId
       });
-    } else {
-      order.paymentStatus = 'failed';
-      order.mpesaDetails.failureReason = statusResponse.message;
+    } else if (statusResponse.status === 'failed') {
+        // Only update to failed if we ever get an explicit failure
+        order.paymentStatus = 'failed';
+        order.mpesaDetails.failureReason = statusResponse.message;
       await order.save();
+
+      return res.json({
+        success: false,
+        status: 'failed',
+        message: statusResponse.message,
+        checkoutRequestId
+      });
     }
 
     return res.json({
@@ -313,6 +321,14 @@ router.get('/api/payments/mpesa/status/:checkoutRequestId', auth, async (req, re
         message: statusResponse.message,
         checkoutRequestId
       });
+
+      // For any other status, return processing
+    return res.json({
+      success: false,
+      status: 'processing',
+      message: 'Payment status is being verified',
+      checkoutRequestId
+    });
 
   } catch (error) {
     console.error('Payment status check error:', error);
