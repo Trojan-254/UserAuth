@@ -185,7 +185,7 @@ class PaymentHandler {
             this.submitButton.disabled = true;
             this.submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
 
-            const response = await fetch('/checkout/api/payments/mpesa/initiate', {
+            const response = await fetch('/api/payments/mpesa/initiate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
