@@ -1,14 +1,15 @@
 {
-  "name": "user-auth",
+  "name": "ZetuCart",
   "version": "1.0.0",
-  "description": "User authentication",
+  "description": "Zetu Cart E-commerce Application",
+  "owner": "Samwuel Simiyu",
   "main": "index.js",
   "scripts": {
     "start": "npx nodemon index.js",
     "build:css": "npx tailwindcss -i ./src/tailwind.css -o ./public/css/style.css --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "SAm",
+  "author": "Simiyu Samwuel",
   "license": "ISC",
   "devDependencies": {
     "autoprefixer": "^10.4.20",
