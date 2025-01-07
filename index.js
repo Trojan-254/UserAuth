@@ -51,7 +51,7 @@ app.set('view engine', 'ejs', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 
 // Mongodb connection
-mongoose.connect(process.env.MONGO_URL, {
+mongoose.connect(`mongodb+srv://simiyu:${process.env.DB_PASSWORD}@zetucart.1gtqj.mongodb.net/?retryWrites=true&w=majority&appName=ZetuCart`, {
     UseNewUrlParser: true,
     UseUnifiedTopology: true
 }).then(() => {
