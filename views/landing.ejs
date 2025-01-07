@@ -1,4 +1,3 @@
-<!-- views/index.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +18,12 @@
             background-clip: text;
             color: transparent;
         }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body class="font-sans">
@@ -31,29 +36,49 @@
                         <span class="text-2xl font-bold gradient-text">ZetuCart</span>
                     </a>
                 </div>
-        
-    <div class="hidden md:block">
-     <div class="ml-10 flex items-baseline space-x-4">
-        <a href="#" class="text-gray-800 hover:text-orange-500 px-3 py-2">Home</a>
-        <a href="#categories" class="text-gray-800 hover:text-orange-500 px-3 py-2">Categories</a>
-        <a href="#features" class="text-gray-800 hover:text-orange-500 px-3 py-2">Features</a>
-        <a href="#deals" class="text-gray-800 hover:text-orange-500 px-3 py-2">Deals</a>
-        <% if (isAuthenticated) { %>
-            <a href="/profile/user-profile" class="text-gray-800 hover:text-orange-500 px-3 py-2">Profile</a>
-            <a href="/auth/logout" class="text-gray-800 hover:text-orange-500 px-3 py-2">Logout</a>
-        <% } else { %>
-            <a href="/login" class="text-gray-800 hover:text-orange-500 px-3 py-2">Login</a>
-            <a href="/signup" class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-full font-medium text-center shadow-md hover:from-yellow-500 hover:to-orange-600 focus:ring-2 focus:ring-yellow-300 focus:outline-none transition duration-300 ease-in-out">
-                Sign Up
-            </a>
-        <% } %>
-    </div>
-</div>
-  
+                <div class="flex md:hidden">
+                    <button id="menu-toggle" class="text-gray-800 hover:text-orange-500 focus:outline-none">
+                        <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#" class="text-gray-800 hover:text-orange-500 px-3 py-2">Home</a>
+                        <a href="#categories" class="text-gray-800 hover:text-orange-500 px-3 py-2">Categories</a>
+                        <a href="#features" class="text-gray-800 hover:text-orange-500 px-3 py-2">Features</a>
+                        <a href="#deals" class="text-gray-800 hover:text-orange-500 px-3 py-2">Deals</a>
+                        <% if (isAuthenticated) { %>
+                            <a href="/profile/user-profile" class="text-gray-800 hover:text-orange-500 px-3 py-2">Profile</a>
+                            <a href="/auth/logout" class="text-gray-800 hover:text-orange-500 px-3 py-2">Logout</a>
+                        <% } else { %>
+                            <a href="/login" class="text-gray-800 hover:text-orange-500 px-3 py-2">Login</a>
+                            <a href="/signup" class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-full font-medium text-center shadow-md hover:from-yellow-500 hover:to-orange-600 focus:ring-2 focus:ring-yellow-300 focus:outline-none transition duration-300 ease-in-out">
+                                Sign Up
+                            </a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="#" class="block text-gray-800 hover:bg-orange-100 px-4 py-2">Home</a>
+            <a href="#categories" class="block text-gray-800 hover:bg-orange-100 px-4 py-2">Categories</a>
+            <a href="#features" class="block text-gray-800 hover:bg-orange-100 px-4 py-2">Features</a>
+            <a href="#deals" class="block text-gray-800 hover:bg-orange-100 px-4 py-2">Deals</a>
+            <% if (isAuthenticated) { %>
+                <a href="/profile/user-profile" class="block text-gray-800 hover:bg-orange-100 px-4 py-2">Profile</a>
+                <a href="/auth/logout" class="block text-gray-800 hover:bg-orange-100 px-4 py-2">Logout</a>
+            <% } else { %>
+                <a href="/login" class="block text-gray-800 hover:bg-orange-100 px-4 py-2">Login</a>
+                <a href="/signup" class="block bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-md shadow-md hover:from-yellow-500 hover:to-orange-600">
+                    Sign Up
+                </a>
+            <% } %>
+        </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-pattern pt-24 pb-12">
+    <section class="hero-pattern pt-24 pb-12 hero-section">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between">
                 <div class="md:w-1/2 mb-8 md:mb-0">
@@ -461,5 +486,13 @@
 </html>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script>
+       const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+   </script>
 </body>
 </html>
