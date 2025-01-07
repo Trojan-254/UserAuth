@@ -104,4 +104,22 @@ router.get('/payments/mpesa/status/:checkoutRequestId', auth, async (req, res) =
   }
 });
 
+// Check the transaction status
+router.get('/payments/mpesa/transaction/:checkoutRequestId', auth, async (req, res) => {
+  try {
+    const { checkoutRequestId } = req.params;
+
+    const status = await mpesa.checkTransactionStatus(checkoutRequestId);
+
+    res.json(status);
+
+  } catch (error) {
+    console.error('Transaction status check error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Unable to check transaction status'
+    });
+  }
+});
+
 module.exports = router;

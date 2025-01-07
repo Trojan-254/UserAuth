@@ -1,32 +1,40 @@
-// payment-handler.js
 class PaymentHandler {
     constructor() {
+        // Initialize DOM elements
         this.form = document.getElementById('mpesaForm');
         this.submitButton = this.form.querySelector('button[type="submit"]');
         this.cancelButton = document.getElementById('cancelPayment');
-        this.messageTimeout = null;
+        this.phoneInput = document.getElementById('mpesaNumber');
+        
+        // Initialize state
         this.messageContainer = this.createMessageContainer();
-        this.checkingPayment = false;
+        this.messageTimeout = null;
+        this.eventSource = null;
+        
+        // Bind event listeners
         this.initializeEventListeners();
     }
 
     createMessageContainer() {
         const container = document.createElement('div');
-        container.className = 'fixed top-4 right-4 max-w-sm';
+        container.className = 'fixed top-4 right-4 max-w-sm z-50';
         document.body.appendChild(container);
         return container;
     }
 
     showMessage(message, type = 'info') {
+        // Clear any existing timeout
         if (this.messageTimeout) {
             clearTimeout(this.messageTimeout);
         }
 
+        // Remove existing message if any
         const existingMessage = this.messageContainer.querySelector('.message');
         if (existingMessage) {
             existingMessage.remove();
         }
 
+        // Create new message element
         const messageElement = document.createElement('div');
         messageElement.className = `message p-4 rounded-lg shadow-lg mb-4 animate-fade-in ${
             type === 'error' ? 'bg-red-500 text-white' :
@@ -35,156 +43,82 @@ class PaymentHandler {
         }`;
         messageElement.textContent = message;
 
+        // Add message to container
         this.messageContainer.appendChild(messageElement);
 
+        // Set timeout to remove message
         this.messageTimeout = setTimeout(() => {
             messageElement.remove();
         }, 5000);
     }
 
-    async checkPaymentStatus(checkoutRequestId) {
-        const maxAttempts = 20;
-        const delayBetweenAttempts = 10000;
-        let attempts = 0;
+    setupEventSource(orderId) {
+        // Close existing connection if any
+        if (this.eventSource) {
+            this.eventSource.close();
+        }
 
-        const checkStatus = async () => {
-            if (attempts >= maxAttempts) {
-                this.showMessage(
-                    'Payment verification is taking longer than expected. The payment might still be processing.',
-                    'info'
-                );
+        // Create new EventSource connection
+        this.eventSource = new EventSource(
+            `https://zetucartcallback-eee8ec216ed4.herokuapp.com/payments/mpesa/events?orderId=${orderId}`
+        );
 
-                // Add retry button to message container
-                const retryButton = document.createElement('button');
-                retryButton.className = 'bg-white text-blue-500 px-4 py-2 rounded mt-2';
-                retryButton.textContent = 'Check Again';
-                retryButton.onclick = () => {
-                    attempts = 0; // Reset attempts
-                    this.checkPaymentStatus(checkoutRequestId);
-                };
-
-                const messageElement = this.messageContainer.querySelector('.message');
-                if (messageElement) {
-                    messageElement.appendChild(retryButton);
-                }
-
-                return false;
-            }
-
-            try {
-                // Add timestamp to prevent caching
-                const timestamp = new Date().getTime();
-                const response = await fetch(
-                    `/checkout/api/payments/mpesa/status/${checkoutRequestId}?t=${timestamp}`,
-                    {
-                        headers: {
-                            'Cache-Control': 'no-cache',
-                            'Pragma': 'no-cache'
-                        }
-                    }
-                );
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Network response was not ok');
-                }
-
-                const data = await response.json();
-
-                if (data.status === 'completed') {
-                    this.showMessage('Payment successful! Redirecting...', 'success');
-                    setTimeout(() => {
-                        window.location.href = `/orders/${window.orderId}`;
-                    }, 2000);
-                    return true;
-                }
-
-                if (data.status === 'failed') {
-                    this.showMessage(data.message || 'Payment failed. Please try again.', 'error');
-                    return false;
-                }
-
-                attempts++;
-                this.showMessage(
-                    `Verifying payment... (Attempt ${attempts}/${maxAttempts})`,
-                    'info'
-                );
-                await new Promise(resolve => setTimeout(resolve, delayBetweenAttempts));
-                return checkStatus();
-
-            } catch (error) {
-                console.error('Payment status check error:', error);
-
-                // If it's a network error, show specific message
-                if (!navigator.onLine || error.name === 'NetworkError') {
-                    this.showMessage('Network connection issue. Retrying...', 'error');
-                    await new Promise(resolve => setTimeout(resolve, 5000));
-                    return checkStatus();
-                }
-
-                // For other errors, increment attempts and continue
-                attempts++;
-                await new Promise(resolve => setTimeout(resolve, delayBetweenAttempts));
-                return checkStatus();
+        // Handle incoming messages
+        this.eventSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            
+            if (data.status === 'completed') {
+                this.showMessage('Payment successful! Redirecting...', 'success');
+                this.eventSource.close();
+                setTimeout(() => {
+                    window.location.href = `/orders/${data.orderId}`;
+                }, 2000);
+            } else if (data.status === 'failed') {
+                this.showMessage(data.message || 'Payment failed. Please try again.', 'error');
+                this.eventSource.close();
+                this.enableForm();
             }
         };
 
-        if (this.checkingPayment) {
-            return false;
-        }
-
-        this.checkingPayment = true;
-        try {
-            return await checkStatus();
-        } finally {
-            this.checkingPayment = false;
-        }
-    }
-
-    async checkInitialPaymentStatus(orderId) {
-        try {
-            const response = await fetch(`/orders/${orderId}`);
-            const data = await response.json();
-
-            if (data.paymentStatus === 'completed') {
-                this.showMessage('Payment already completed! Redirecting...', 'success');
-                setTimeout(() => {
-                    window.location.href = `/orders/${orderId}`;
-                }, 2000);
-                return true;
-            }
-
-            return false;
-        } catch (error) {
-            console.error('Error checking initial payment status:', error);
-            return false;
-        }
+        // Handle connection errors
+        this.eventSource.onerror = () => {
+            console.error('SSE connection failed');
+            this.eventSource.close();
+            this.showMessage('Connection lost. Please check your payment status in your orders.', 'error');
+        };
     }
 
     validatePhoneNumber(phone) {
         return /^254[17]\d{8}$/.test(phone);
     }
 
+    disableForm() {
+        this.submitButton.disabled = true;
+        this.submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+        this.phoneInput.disabled = true;
+    }
+
+    enableForm() {
+        this.submitButton.disabled = false;
+        this.submitButton.innerHTML = 'Submit Payment';
+        this.phoneInput.disabled = false;
+    }
+
     async handleSubmit(e) {
         e.preventDefault();
 
-        const phoneNumber = document.getElementById('mpesaNumber').value.trim();
+        const phoneNumber = this.phoneInput.value.trim();
 
-        // Check if payment is already completed
-        const isCompleted = await this.checkInitialPaymentStatus(window.orderId);
-        if (isCompleted) {
-            return;
-        }
-
+        // Validate phone number
         if (!this.validatePhoneNumber(phoneNumber)) {
             this.showMessage('Invalid phone number format. Use format: 254XXXXXXXXX', 'error');
             return;
         }
 
         try {
-            this.submitButton.disabled = true;
-            this.submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+            this.disableForm();
 
+            // Initiate payment
             const response = await fetch('/api/payments/mpesa/initiate', {
                 method: 'POST',
                 headers: {
@@ -198,27 +132,25 @@ class PaymentHandler {
 
             const data = await response.json();
 
-            if (!response.ok) {
+            if (!response.ok || !data.success) {
                 throw new Error(data.message || 'Failed to initiate payment');
             }
 
-            if (!data.success) {
-                throw new Error(data.message);
-            }
-
+            // Show success message and setup SSE
             this.showMessage('Please check your phone for the M-Pesa prompt', 'info');
-            await this.checkPaymentStatus(data.checkoutRequestID);
+            this.setupEventSource(window.orderId);
 
         } catch (error) {
             this.showMessage(error.message, 'error');
-        } finally {
-            this.submitButton.disabled = false;
-            this.submitButton.innerHTML = 'Submit Payment';
+            this.enableForm();
         }
     }
 
     handleCancel() {
         if (confirm('Are you sure you want to cancel this payment?')) {
+            if (this.eventSource) {
+                this.eventSource.close();
+            }
             window.location.href = '/orders/my-orders';
         }
     }
@@ -240,6 +172,15 @@ class PaymentHandler {
         paymentMethods.forEach(method => {
             method.addEventListener('change', this.handlePaymentMethodChange.bind(this));
         });
+    }
+
+    cleanup() {
+        if (this.eventSource) {
+            this.eventSource.close();
+        }
+        if (this.messageTimeout) {
+            clearTimeout(this.messageTimeout);
+        }
     }
 }
 

@@ -30,10 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Allow ngrok
-app.use(cors({
-    origin: ['https://a483-154-159-254-12.ngrok-free.app', 'other-allowed-origins'],
-    credentials: true
-}));
+app.use(cors());
 
 // Error handling middleware
 app.use(errorHandler);

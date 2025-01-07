@@ -14,6 +14,32 @@ router.get('/my-orders', auth, async (req, res) => {
   }
 });
 
+// Get a single order
+// Get single order
+router.get('/:id', auth, async (req, res) => {
+  try {
+    // Find the order by ID
+    const order = await Order.findById(req.params.id);
+
+    // Check if the order exists
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Check if the order belongs to the authenticated user
+    if (order.user.toString() !== req.user.id) {
+      return res.status(401).json({ message: 'Not authorized to view this order' });
+    }
+
+    // Return the order details
+    res.json(order);
+  } catch (error) {
+    console.error("Order error:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 // Cancel order
 router.put('/cancel-order/:id', auth, async (req, res) => {
   try {

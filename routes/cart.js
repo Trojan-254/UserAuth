@@ -20,7 +20,10 @@ router.get('/my-cart', auth, async (req, res) => {
     res.render('cart/view', { cart });
   } catch (error) {
     console.error("Cart error:", error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to fetch cart'
+    });
   }
 });
 
@@ -28,36 +31,48 @@ router.get('/my-cart', auth, async (req, res) => {
 router.post('/add', auth, async (req, res) => {
   try {
     const { productId, quantity, price } = req.body;
+    
+    // Validate inputs
+    if (!productId || !quantity || !price) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Missing required fields' 
+      });
+    }
+
     let cart = await Cart.findOne({ user: req.user.id });
-    console.log("Existing cart:", cart); // Log existing cart
     if (!cart) {
-       cart = new Cart({ user: req.user.id, items: [] });
+      cart = new Cart({ user: req.user.id, items: [] });
     }
 
     const existingItem = cart.items.find(item => 
-        item.product.toString() === productId
+      item.product.toString() === productId
     );
+    
     if (existingItem) {
-       console.log("Updating existing item");
-       existingItem.quantity += parseInt(quantity);
+      existingItem.quantity += parseInt(quantity);
     } else {
-      console.log("Adding new item");
       cart.items.push({
         product: productId,
         quantity: parseInt(quantity),
         price: parseFloat(price)
-     });
+      });
     }
 
-   console.log("Cart before save:", cart); // Log cart before saving
     await cart.save();
+    const totalItems = cart.items.reduce((acc, item) => acc + item.quantity, 0);
 
-   const totalItems = cart.items.reduce((acc, item) => acc + item.quantity, 0);
-
-   res.status(201).json({ success: true, message: 'Added to cart succesfully', totalItems});
+    res.status(201).json({ 
+      success: true, 
+      message: 'Added to cart successfully', 
+      totalItems
+    });
   } catch (error) {
     console.error("Add to cart error:", error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to add item to cart'
+    });
   }
 });
 
