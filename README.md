@@ -22,11 +22,13 @@ ZetuCart/
 ├── tailwind.config.js    # Tailwind CSS configuration
 ├── views/                # EJS templates for frontend rendering
 ├── public/              # Static files (CSS, JS, Images)
+├── controllers/         # Controllers(product, order, review, seller)
 ├── routes/              # Backend routes
 ├── models/              # Database schemas
 ├── middleware/          # Custom middleware functions
 ├── uploads/             # Directory for user-uploaded content
 ├── utils/               # Utility functions
+├── seedCategories/              # Seed categories code
 └── README.md            # Project documentation
 ```
 
@@ -36,7 +38,7 @@ ZetuCart/
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB
 - **Payment Integration**: M-Pesa API
-- **Hosting**: TBD
+- **Hosting**: Heroku
 
 ## 🚀 Getting Started
 
@@ -64,11 +66,20 @@ PORT=3000
 MONGODB_URI=<your_mongodb_uri>
 MPESA_CONSUMER_KEY=<your_consumer_key>
 MPESA_CONSUMER_SECRET=<your_consumer_secret>
+MONGO_URL=<your_mongodb_url>
+JWT_SECRET=<your_jwt_passkey>
+EMAIL=<your_service_email>
+PASSWORD=<your_service_email_password>
+MPESA_CALLBACK_URL=<your_callback_url>
+MPESA_BASE_URL=<mpesa_base_url>
+MPESA_PASSKEY=<your_mpesa_passkey>
+NEW_DB_PASSWORD=<your_mongo_db_password>
+MPESA_SHORTCODE=<your_mpesa_shortcode>
 ```
 
 4. Start the development server:
 ```bash
-npx nodemon index.js
+npm start
 ```
 
 5. Visit the app:
@@ -79,7 +90,7 @@ http://localhost:5000
 ## 📄 Key Pages
 
 - **Homepage**: A dynamic interface featuring categories, deals, and testimonials
-- **Categories**: Explore popular product groups
+- **Products**: Explore popular product groups
 - **Deals**: Access hot sales and bundle offers
 - **User Profiles**: Secure account management for personalized experiences
 
