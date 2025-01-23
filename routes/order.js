@@ -1,18 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
-const auth = require('../middleware/authMiddleware');
+const { auth } = require('../middleware/authMiddleware');
+const orderController = require('../controllers/orderController');
 
-// Get all orders
+//Get all orders
 router.get('/my-orders', auth, async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user.id });
+    const orders = await Order.find({ customer: req.user.id });
     res.render('order/view', { orders });
   } catch (error) {
     console.error("Order error:", error);
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // Get a single order
 // Get single order
@@ -27,9 +29,9 @@ router.get('/:id', auth, async (req, res) => {
     }
 
     // Check if the order belongs to the authenticated user
-    if (order.user.toString() !== req.user.id) {
-      return res.status(401).json({ message: 'Not authorized to view this order' });
-    }
+    // if (order.user.toString() !== req.user.id) {
+    //   return res.status(401).json({ message: 'Not authorized to view this order' });
+    // }
 
     // Return the order details
     res.json(order);

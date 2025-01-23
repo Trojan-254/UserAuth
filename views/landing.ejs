@@ -13,7 +13,7 @@
         }
 
         .gradient-text {
-            background: linear-gradient(45deg, #f9a826, #ff6b6b);
+            background: linear-gradient(45deg, #ff6600, #ff5100dc);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -50,8 +50,7 @@
 </div>
   
     </nav>
-
-    <!-- Hero Section -->
+    <!-- Hero section -->
     <section class="hero-pattern pt-24 pb-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between">
@@ -64,10 +63,10 @@
                     </p>
                     <div class="flex space-x-4">
                         <button class="bg-orange-500 text-white px-8 py-3 rounded-full hover:bg-orange-600 transition">
-                            Start Shopping
+                            Learn More
                         </button>
                         <button class="border-2 border-orange-500 text-orange-500 px-8 py-3 rounded-full hover:bg-orange-50 transition">
-                            Learn More
+                            Start Shopping
                         </button>
                     </div>
                 </div>
@@ -77,7 +76,6 @@
             </div>
         </div>
     </section>
-    
     <!-- Hamburger Menu for small screens -->
     <div class="md:hidden">
         <button id="hamburger-icon" class="text-gray-800 p-2 focus:outline-none">
@@ -130,6 +128,92 @@
         </div>
     </section>
 
+    <!-- invite section-->
+
+    <!-- Join Options Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-4xl font-bold text-center text-gray-800 mb-6">Join Our Community</h2>
+        <p class="text-lg text-gray-600 text-center mb-12">Choose your journey with ZetuCart - whether you're here to shop or sell, we've got you covered</p>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Buyer Card -->
+            <div class="group relative bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="absolute top-6 right-6 w-16 h-16 bg-orange-500/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-shopping-cart text-2xl text-orange-500"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Join as a Buyer</h3>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center text-gray-600">
+                        <i class="fas fa-chevron-right text-orange-500 mr-2"></i>
+                        Access thousands of quality products
+                    </li>
+                    <li class="flex items-center text-gray-600">
+                        <i class="fas fa-chevron-right text-orange-500 mr-2"></i>
+                        Enjoy secure payments & fast delivery
+                    </li>
+                    <li class="flex items-center text-gray-600">
+                        <i class="fas fa-chevron-right text-orange-500 mr-2"></i>
+                        Get exclusive deals & discounts
+                    </li>
+                    <li class="flex items-center text-gray-600">
+                        <i class="fas fa-chevron-right text-orange-500 mr-2"></i>
+                        Easy returns & 24/7 support
+                    </li>
+                </ul>
+                <% if (isAuthenticated) { %>
+                    <a href="/shop" class="w-full bg-orange-500 text-white py-3 px-6 rounded-full font-semibold hover:bg-orange-600 transition-colors duration-300 flex items-center justify-center group-hover:scale-105 transform">
+                        Start Shopping
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </a>
+                <% } else { %>
+                    <a href="/signup?type=buyer" class="w-full bg-yellow-500 text-white py-3 px-6 rounded-full font-semibold hover:bg-orange-600 transition-colors duration-300 flex items-center justify-center group-hover:scale-105 transform">
+                        Join as Buyer
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </a>
+                <% } %>
+            </div>
+
+            <!-- Seller Card -->
+            <div class="group relative bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="absolute top-6 right-6 w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-store text-2xl text-blue-500"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Join as a Seller</h3>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center text-gray-600">
+                        <i class="fas fa-chevron-right text-blue-500 mr-2"></i>
+                        Reach millions of potential customers
+                    </li>
+                    <li class="flex items-center text-gray-600">
+                        <i class="fas fa-chevron-right text-blue-500 mr-2"></i>
+                        Easy-to-use seller dashboard
+                    </li>
+                    <li class="flex items-center text-gray-600">
+                        <i class="fas fa-chevron-right text-blue-500 mr-2"></i>
+                        Secure & timely payments
+                    </li>
+                    <li class="flex items-center text-gray-600">
+                        <i class="fas fa-chevron-right text-blue-500 mr-2"></i>
+                        Professional growth & training
+                    </li>
+                </ul>
+                <% if (isAuthenticated) { %>
+                    <a href="/seller/dashboard" class="w-full bg-blue-500 text-white py-3 px-6 rounded-full font-semibold hover:bg-blue-600 transition-colors duration-300 flex items-center justify-center group-hover:scale-105 transform">
+                        Go to Seller Dashboard
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </a>
+                <% } else { %>
+                    <a href="/seller/register" class="w-full bg-blue-500 text-white py-3 px-6 rounded-full font-semibold hover:bg-blue-600 transition-colors duration-300 flex items-center justify-center group-hover:scale-105 transform">
+                        Join as Seller
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
     <!-- Categories Section -->
     <!-- Categories Section -->
 <section id="categories" class="py-16 bg-gray-50">
@@ -137,17 +221,17 @@
         <h2 class="text-3xl font-bold text-center mb-12">Popular Categories</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             <% const categories = [
-                { name: 'Electronics', image: './images/electronics.jpeg' },
-                { name: 'Fashion', image: './images/prod22.png' },
+                { name: 'Fashion and Textile', image: './images/prod22.png' },
                 { name: 'Home & Living', image: './images/home.jpeg' },
                 { name: 'Beauty', image: './images/beauty.jpeg' },
+                { name: 'Art and collectibles', image: './images/paintings.jpg'}
             ]; %>
             <% categories.forEach(category => { %>
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
                     <img src="<%= category.image %>" alt="<%= category.name %>" class="w-full h-48 object-cover">
                     <div class="p-4">
                         <h3 class="text-lg font-semibold mb-2"><%= category.name %></h3>
-                        <a href="/products" class="text-orange-500 hover:text-orange-600">Shop Now →</a>
+                        <a href="/products/all" class="text-orange-500 hover:text-orange-600">Shop Now →</a>
                     </div>
                 </div>
             <% }); %>

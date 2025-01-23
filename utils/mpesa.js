@@ -103,7 +103,20 @@ class MpesaAPI {
         throw new Error('Invalid STK push response');
       }
 
+      // Save M-Pesa transaction details to order
+      const order = await Order.findById(orderId);
+      order.mpesaDetails = {
+        checkoutRequestID: response.data.CheckoutRequestID,
+        merchantRequestID: response.data.MerchantRequestID,
+        phoneNumber: formattedPhone,
+        amount: amount,
+        initiatedAt: new Date()
+      };
+
+      await order.save();
+
       return response.data;
+      
     } catch (error) {
       // Handle different types of errors
       if (error.response?.data?.errorMessage) {
@@ -123,6 +136,7 @@ class MpesaAPI {
       const order = await Order.findOne({
         'mpesaDetails.checkoutRequestID': checkoutRequestId
       });
+      // console.log("Order exists: ", order);
 
       // If payment is already completed in database, return success
       if (order?.paymentStatus === 'completed') {
@@ -138,12 +152,16 @@ class MpesaAPI {
       const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
       const password = this.generatePassword(timestamp);
 
+      
+
       const requestData = {
         BusinessShortCode: this.shortcode,
         Password: password,
         Timestamp: timestamp,
         CheckoutRequestID: checkoutRequestId
       };
+
+      // console.log("Request data: ", requestData);
 
       const response = await axios.post(
         `${this.baseURL}/mpesa/stkpushquery/v1/query`,
@@ -157,6 +175,8 @@ class MpesaAPI {
           validateStatus: status => status === 200 || status === 500
         }
       );
+
+      // console.log("Response data received from checking status: ", response.data);
 
       // Handle different response scenarios
       if (response.status === 500) {
@@ -177,7 +197,7 @@ class MpesaAPI {
       }
 
       // Check for successful completion
-      if (response.data?.ResultCode === 0) {
+      if (response.data?.ResponseCode === '0') {
         // Update order status in database
         if (order) {
           order.paymentStatus = 'completed';
@@ -243,7 +263,7 @@ class MpesaAPI {
   getFailureMessage(resultCode) {
     const failureCodes = {
       1: 'Payment cancelled by user',
-      1001: 'Payment failed - insufficient funds',
+      1001: 'Payment failed - insufficient funds, Please load you account and try again',
       1002: 'Payment failed - transaction timed out',
       1003: 'Payment failed - invalid PIN',
       1004: 'Payment failed - invalid transaction',

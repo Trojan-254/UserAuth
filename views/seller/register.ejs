@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Registration - Zetu Cart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl mx-auto space-y-8">
+            <div class="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <h2 class="mt-6 text-3xl font-extrabold text-gray-900">Register as a Seller</h2>
+                <p class="mt-2 text-sm text-gray-600">
+                    Already have an account?
+                    <a href="/seller/login" class="font-medium text-orange-600 hover:text-orange-500">
+                        Sign in
+                    </a>
+                </p>
+            </div>
+
+            <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+                <div class="bg-red-50 border-l-4 border-red-500 p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <% errors.forEach(function(error) { %>
+                                <p class="text-sm text-red-700"><%= error.msg %></p>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+
+            <form class="mt-8 space-y-6" action="/seller/register" method="POST" enctype="multipart/form-data", id="registerForm">
+                <!-- Business Information -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Business Information</h3>
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div>
+                            <label for="businessName" class="block text-sm font-medium text-gray-700">Business Name*</label>
+                            <input type="text" id="businessName" name="businessName" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                                value="<%= typeof data !== 'undefined' ? data.businessName : '' %>">
+                        </div>
+
+                        <div>
+                            <label for="businessType" class="block text-sm font-medium text-gray-700">Business Type*</label>
+                            <select id="businessType" name="businessType" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm">
+                                <option value="">Select business type</option>
+                                <option value="individual" <%= typeof data !== 'undefined' && data.businessType === 'individual' ? 'selected' : '' %>>Individual</option>
+                                <option value="registered_business" <%= typeof data !== 'undefined' && data.businessType === 'registered_business' ? 'selected' : '' %>>Registered Business</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="kra_pin" class="block text-sm font-medium text-gray-700">KRA PIN*</label>
+                            <input type="text" id="kra_pin" name="kra_pin" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                                value="<%= typeof data !== 'undefined' ? data.kra_pin : '' %>">
+                        </div>
+
+                        <div id="registrationNumberField" style="display: none;">
+                            <label for="registrationNumber" class="block text-sm font-medium text-gray-700">Business Registration Number</label>
+                            <input type="text" id="registrationNumber" name="registrationNumber"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                                value="<%= typeof data !== 'undefined' ? data.registrationNumber : '' %>">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Contact Information</h3>
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email*</label>
+                            <input type="email" id="email" name="email" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                                value="<%= typeof data !== 'undefined' ? data.email : '' %>">
+                        </div>
+
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number*</label>
+                            <input type="tel" id="phone" name="phone" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                                value="<%= typeof data !== 'undefined' ? data.phone : '' %>">
+                        </div>
+
+                        <div>
+                            <label for="whatsapp" class="block text-sm font-medium text-gray-700">WhatsApp Number</label>
+                            <input type="tel" id="whatsapp" name="whatsapp"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                                value="<%= typeof data !== 'undefined' ? data.whatsapp : '' %>">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location Information -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Business Location</h3>
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div>
+                            <label for="address" class="block text-sm font-medium text-gray-700">Physical Address*</label>
+                            <input type="text" id="address" name="address" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                                value="<%= typeof data !== 'undefined' ? data.address : '' %>">
+                        </div>
+
+                        <div>
+                            <label for="city" class="block text-sm font-medium text-gray-700">City/Town*</label>
+                            <input type="text" id="city" name="city" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                                value="<%= typeof data !== 'undefined' ? data.city : '' %>">
+                        </div>
+
+                        <div>
+                            <label for="county" class="block text-sm font-medium text-gray-700">County*</label>
+                            <select id="county" name="county" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm">
+                                <option value="">Select county</option>
+                                <option value="nairobi">Nairobi</option>
+                                <option value="mombasa">Mombasa</option>
+                                <option value="kisumu">Kisumu</option>
+                                <option value="kisumu">Kakamega</option>
+                                <option value="kisumu">Eldoret</option>
+                                <!-- Add more counties -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+               <!-- Password -->
+<div class="bg-white p-6 rounded-lg shadow">
+    <h3 class="text-lg font-medium text-gray-900 mb-4">Security</h3>
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Password Field -->
+        <div>
+            <label for="password" class="block text-sm font-medium text-gray-700">Password*</label>
+            <div class="relative">
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                    minlength="6"
+                    placeholder="Enter your password"
+                >
+                <button 
+                    type="button" 
+                    id="togglePassword" 
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm text-gray-500 focus:outline-none"
+                >
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+            <p class="mt-1 text-sm text-gray-500">
+                Password must be at least 6 characters and include a mix of letters, numbers, and symbols.
+            </p>
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div>
+            <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password*</label>
+            <div class="relative">
+                <input 
+                    type="password" 
+                    id="confirmPassword" 
+                    name="confirmPassword" 
+                    required
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                    minlength="6"
+                    placeholder="Re-enter your password"
+                >
+                <button 
+                    type="button" 
+                    id="toggleConfirmPassword" 
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm text-gray-500 focus:outline-none"
+                >
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+                <!-- Terms and Conditions -->
+                <div class="flex items-center">
+                    <input type="checkbox" id="terms" name="terms" required
+                        class="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded">
+                    <label for="terms" class="ml-2 block text-sm text-gray-900">
+                        I agree to the
+                        <a href="/terms" class="text-orange-600 hover:text-orange-500">Terms and Conditions</a>
+                        and
+                        <a href="/privacy" class="text-orange-600 hover:text-orange-500">Privacy Policy</a>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit"
+                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                        Register as Seller
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+         document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordField = document.getElementById('password');
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+        this.innerHTML = passwordField.type === 'password' ? 
+            '<i class="fas fa-eye"></i>' : 
+            '<i class="fas fa-eye-slash"></i>';
+    });
+
+    document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+        const confirmPasswordField = document.getElementById('confirmPassword');
+        const type = confirmPasswordField.type === 'password' ? 'text' : 'password';
+        confirmPasswordField.type = type;
+        this.innerHTML = confirmPasswordField.type === 'password' ? 
+            '<i class="fas fa-eye"></i>' : 
+            '<i class="fas fa-eye-slash"></i>';
+    });
+        // Show/hide registration number field based on business type
+        document.getElementById('businessType').addEventListener('change', function() {
+            const registrationNumberField = document.getElementById('registrationNumberField');
+            if (this.value === 'registered_business') {
+                registrationNumberField.style.display = 'block';
+            } else {
+                registrationNumberField.style.display = 'none';
+            }
+        });
+
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Passwords do not match!');
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = {
+            businessName: document.getElementById('businessName').value,
+            businessType: document.getElementById('businessType').value,
+            kra_pin: document.getElementById('kra_pin').value,
+            registrationNumber: document.getElementById('registrationNumber').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            whatsapp: document.getElementById('whatsapp').value,
+            address: document.getElementById('address').value,
+            city: document.getElementById('city').value,
+            county: document.getElementById('county').value,
+            password: document.getElementById('password').value,
+            confirmPassword: document.getElementById('confirmPassword').value,
+            terms: document.getElementById('terms').checked
+        }
+
+        try {
+            const response = await fetch('/seller/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+            console.log(data);
+
+            if (data.success === true) {
+                alert('Registration successful!');
+                window.location.href = '/seller/auth/register-success/';
+            } else {
+                alert('An error occurred. Please try again. later');
+            }
+        } catch (error) {
+            // console.error(error);
+            console.log(error);
+            alert('An error occurred. Please try again.');
+        }
+        })
+    </script>
+</body>
+</html>

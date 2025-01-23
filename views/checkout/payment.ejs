@@ -125,14 +125,14 @@
                     <div class="mt-6 space-y-2 border-t pt-4">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Subtotal</span>
-                            <span class="font-bold text-gray-900">KES <%= order.subtotal %></span>
+                            <span class="font-bold text-gray-900">KES <%= order.payment.amount %></span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Shipping</span>
-                            <span class="font-bold text-gray-900">KES <%= order.shipping %></span>
+                            <span class="font-bold text-gray-900">KES <%= order.shipping.cost %></span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-600">Tax (16%)</span>
+                            <span class="text-gray-600">VAT included</span>
                             <span class="font-bold text-gray-900">KES <%= order.tax %></span>
                         </div>
                         <div class="flex justify-between text-lg border-t pt-4">

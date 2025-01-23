@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn More About ZetuCart</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-text {
+            background: linear-gradient(45deg, #f9a826, #ff6b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+    </style>
+</head>
+<body class="font-sans">
+    <!-- Navigation with right-aligned hamburger -->
+    <nav class="bg-white shadow-lg fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center">
+                    <span class="text-2xl font-bold gradient-text">ZetuCart</span>
+                </a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="/" class="text-gray-800 hover:text-orange-500 px-3 py-2">Home</a>
+                    <a href="#our-story" class="text-gray-800 hover:text-orange-500 px-3 py-2">Our Story</a>
+                    <a href="#mission" class="text-gray-800 hover:text-orange-500 px-3 py-2">Mission</a>
+                    <a href="#impact" class="text-gray-800 hover:text-orange-500 px-3 py-2">Impact</a>
+                </div>
+                
+                <!-- Hamburger Menu Button -->
+                <div class="md:hidden">
+                    <button id="hamburger-button" class="text-gray-800 hover:text-orange-500 focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="/" class="block px-3 py-2 text-gray-800 hover:text-orange-500">Home</a>
+                <a href="#our-story" class="block px-3 py-2 text-gray-800 hover:text-orange-500">Our Story</a>
+                <a href="#mission" class="block px-3 py-2 text-gray-800 hover:text-orange-500">Mission</a>
+                <a href="#impact" class="block px-3 py-2 text-gray-800 hover:text-orange-500">Impact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-24 pb-12 bg-orange-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                    Revolutionizing <span class="gradient-text">E-commerce in Kenya</span>
+                </h1>
+                <p class="text-gray-600 text-lg mb-8 max-w-3xl mx-auto">
+                    Discover how ZetuCart is transforming the online shopping experience for millions of Kenyans through innovation, reliability, and customer-centric services.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Story Section -->
+    <section id="our-story" class="py-16">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-6">Our Story</h2>
+                    <p class="text-gray-600 mb-4">
+                        Founded in 2023, ZetuCart emerged from a vision to create a seamless online shopping experience for Kenyans. We recognized the challenges faced by both consumers and sellers in the digital marketplace and set out to build a platform that would bridge these gaps.
+                    </p>
+                    <p class="text-gray-600">
+                        Starting with just a handful of trusted sellers, we've grown to become one of Kenya's most trusted e-commerce platforms, serving thousands of customers daily and partnering with hundreds of verified vendors across the country.
+                    </p>
+                </div>
+                <div class="relative">
+                    <img src="/api/placeholder/600/400" alt="ZetuCart Journey" class="rounded-lg shadow-xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section id="mission" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Our Mission & Values</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-handshake text-2xl text-orange-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Trust & Reliability</h3>
+                    <p class="text-gray-600">Building lasting relationships through transparent operations and consistent delivery of quality products.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-innovation text-2xl text-orange-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Innovation</h3>
+                    <p class="text-gray-600">Continuously improving our platform to provide cutting-edge solutions for modern e-commerce needs.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-users text-2xl text-orange-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Community Impact</h3>
+                    <p class="text-gray-600">Empowering local businesses and creating opportunities for economic growth across Kenya.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Section -->
+    <section id="impact" class="py-16">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Our Impact</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-4xl font-bold text-orange-500 mb-2">50K+</div>
+                    <p class="text-gray-600">Active Users</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-orange-500 mb-2">500+</div>
+                    <p class="text-gray-600">Verified Vendors</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-orange-500 mb-2">47</div>
+                    <p class="text-gray-600">Counties Served</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-orange-500 mb-2">98%</div>
+                    <p class="text-gray-600">Customer Satisfaction</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const hamburgerButton = document.getElementById('hamburger-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburgerButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

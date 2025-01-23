@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zetucart Seller Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gradient-to-b from-orange-600 to-orange-700 text-white p-6 shadow-xl flex flex-col">
+      <div class="flex items-center mb-10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <h2 class="text-2xl font-bold">Seller Portal</h2>
+      </div>
+
+      <nav class="space-y-2 flex-1">
+        <a href="/seller/dashboard" class="flex items-center p-3 rounded-lg bg-orange-500 hover:bg-orange-400 transition-colors duration-200">
+          <i class="fas fa-chart-line w-5 mr-3"></i>
+          Dashboard
+        </a>
+        <a href="/api/seller/products" class="flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+          <i class="fas fa-box w-5 mr-3"></i>
+          Products
+        </a>
+        <a href="/order/seller/orders" class="flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+          <i class="fas fa-shopping-bag w-5 mr-3"></i>
+          Orders
+        </a>
+        <a href="/seller/inventory" class="flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+          <i class="fas fa-warehouse w-5 mr-3"></i>
+          Inventory
+        </a>
+        <a href="/seller/customers" class="flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+          <i class="fas fa-users w-5 mr-3"></i>
+          Customers
+        </a>
+        <a href="/seller/analytics" class="flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+          <i class="fas fa-chart-bar w-5 mr-3"></i>
+          Analytics
+        </a>
+        <a href="/seller/reviews" class="flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+          <i class="fas fa-star w-5 mr-3"></i>
+          Reviews
+        </a>
+        <a href="/seller/settings" class="flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+          <i class="fas fa-cog w-5 mr-3"></i>
+          Settings
+        </a>
+      </nav>
+
+      <div class="mt-auto">
+        <div class="p-4 bg-orange-500 rounded-lg mb-4">
+          <p class="text-sm mb-2">Verification Status</p>
+          <div class="flex items-center">
+            <% if (seller.verificationStatus === 'verified') { %>
+              <span class="bg-green-500 px-2 py-1 rounded text-xs">Verified</span>
+            <% } else { %>
+              <span class="bg-yellow-500 px-2 py-1 rounded text-xs">Pending</span>
+            <% } %>
+          </div>
+        </div>
+        <form action="/seller/auth/logout" method="POST">
+          <button type="submit" class="w-full flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+            <i class="fas fa-sign-out-alt w-5 mr-3"></i>
+            Logout
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8">
+      <!-- Top Navigation Bar -->
+      <nav class="bg-white p-4 rounded-xl shadow-sm mb-8 flex justify-between items-center">
+        <div class="flex items-center">
+          <div class="relative">
+            <input type="text" placeholder="Search orders, products..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-orange-500">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="/seller/notifications" class="relative">
+            <i class="fas fa-bell text-gray-600 text-xl"></i>
+            <span class="absolute -top-2 -right-2 bg-orange-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">5</span>
+          </a>
+          <div class="flex items-center space-x-2">
+            <img src="/api/placeholder/32/32" alt="Profile" class="w-8 h-8 rounded-full">
+            <span class="text-gray-700"><%= seller.businessName %></span>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-gray-500 text-sm">Today's Orders</h3>
+            <i class="fas fa-shopping-bag text-orange-500"></i>
+          </div>
+          <p class="text-2xl font-semibold"><%= todayOrders %></p>
+          <p class="text-green-500 text-sm mt-2">↑ 8% from yesterday</p>
+        </div>
+        
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-gray-500 text-sm">Revenue (Today)</h3>
+            <i class="fas fa-money-bill-wave text-orange-500"></i>
+          </div>
+          <p class="text-2xl font-semibold">KES <%= todayRevenue.toLocaleString() %></p>
+          <p class="text-red-500 text-sm mt-2">↓ 3% from yesterday</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-gray-500 text-sm">Low Stock Items</h3>
+            <i class="fas fa-exclamation-triangle text-orange-500"></i>
+          </div>
+          <p class="text-2xl font-semibold"><%= lowStockCount %></p>
+          <p class="text-orange-500 text-sm mt-2">Needs attention</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-gray-500 text-sm">Rating</h3>
+            <i class="fas fa-star text-orange-500"></i>
+          </div>
+          <p class="text-2xl font-semibold"><%= seller.rating.average.toFixed(1) %></p>
+          <p class="text-gray-500 text-sm mt-2"><%= seller.rating.count %> reviews</p>
+        </div>
+      </div>
+
+      <!-- Recent Orders and Performance -->
+      <div class="grid lg:grid-cols-3 gap-6 mb-8">
+        <!-- Recent Orders -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold">Recent Orders</h2>
+            <a href="/seller/orders" class="text-orange-500 hover:text-orange-600">View All</a>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="border-b">
+                <tr class="text-left text-gray-500">
+                  <th class="pb-4">Order ID</th>
+                  <th class="pb-4">Customer</th>
+                  <th class="pb-4">Total</th>
+                  <th class="pb-4">Status</th>
+                  <th class="pb-4">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y">
+                <% recentOrders.forEach(function(order) { %>
+                <tr class="text-gray-700">
+                  <td class="py-4">#<%= order.orderNumber %></td>
+                  <td><%= order.customerName %></td>
+                  <td>KES <%= order.totalAmount.toLocaleString() %></td>
+                  <td>
+                    <span class="px-2 py-1 bg-<%= order.status === 'delivered' ? 'green' : 'blue' %>-100 text-<%= order.status === 'delivered' ? 'green' : 'blue' %>-700 rounded-full text-sm">
+                      <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                    </span>
+                  </td>
+                  <td><a href="/seller/orders/<%= order._id %>" class="text-orange-500 hover:text-orange-600">Process</a></td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <h2 class="text-xl font-semibold mb-6">Performance Metrics</h2>
+          <div class="space-y-6">
+            <div>
+              <div class="flex justify-between mb-2">
+                <span class="text-gray-500">Order Completion Rate</span>
+                <span class="text-gray-700">95%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-500 h-2 rounded-full" style="width: 95%"></div>
+              </div>
+            </div>
+            
+            <div>
+              <div class="flex justify-between mb-2">
+                <span class="text-gray-500">On-Time Delivery</span>
+                <span class="text-gray-700">88%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-500 h-2 rounded-full" style="width: 88%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between mb-2">
+                <span class="text-gray-500">Customer Satisfaction</span>
+                <span class="text-gray-700">92%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-orange-500 h-2 rounded-full" style="width: 92%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activities and Inventory Alerts -->
+      <div class="grid lg:grid-cols-2 gap-6">
+        <!-- Recent Activities -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <h2 class="text-xl font-semibold mb-6">Recent Activities</h2>
+          <div class="space-y-4">
+            <% activities.forEach(function(activity) { %>
+            <div class="flex items-start space-x-4">
+              <div class="bg-orange-100 rounded-full p-2">
+                <i class="fas fa-<%= activity.icon %> text-orange-500"></i>
+              </div>
+              <div>
+                <p class="text-gray-700"><%= activity.message %></p>
+                <p class="text-gray-500 text-sm"><%= activity.time %></p>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+
+        <!-- Inventory Alerts -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <h2 class="text-xl font-semibold mb-6">Inventory Alerts</h2>
+          <div class="space-y-4">
+            <% lowStockItems.forEach(function(item) { %>
+            <div class="flex items-center justify-between p-4 border rounded-lg">
+              <div class="flex items-center space-x-4">
+                <img src="/api/placeholder/48/48" alt="<%= item.name %>" class="w-12 h-12 rounded-lg object-cover">
+                <div>
+                  <h3 class="font-medium"><%= item.name %></h3>
+                  <p class="text-red-500 text-sm">Only <%= item.stock %> left</p>
+                </div>
+              </div>
+              <a href="/seller/products/<%= item._id %>/edit" class="text-orange-500 hover:text-orange-600">Restock</a>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="mt-12 text-center text-gray-500 text-sm">
+        <p>&copy; 2025 Zetu Cart • Seller Portal</p>
+        <div class="mt-2">
+          <a href="/seller/help" class="hover:text-orange-500">Help Center</a> • 
+          <a href="/seller/terms" class="hover:text-orange-500">Terms for Sellers</a> • 
+          <a href="/seller/support" class="hover:text-orange-500">Seller Support</a>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+</body>
+</html>

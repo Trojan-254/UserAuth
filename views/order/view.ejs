@@ -45,9 +45,8 @@
                 <!-- Navigation Links -->
                 <div class="hidden md:block">
                     <div class="flex items-center space-x-8">
-                        <a href="/" class="text-gray-600 hover:text-gray-900">Home</a>
-                        <a href="/products" class="text-gray-600 hover:text-gray-900">Shop</a>
-                        <a href="/categories" class="text-gray-600 hover:text-gray-900">Categories</a>
+                        <a href="/dashboard" class="text-gray-600 hover:text-gray-900">Home</a>
+                        <a href="/products/all" class="text-gray-600 hover:text-gray-900">Shop</a>
                         <a href="/my-orders" class="text-blue-600 font-medium">My Orders</a>
                     </div>
                 </div>
@@ -62,11 +61,11 @@
                     </button>
 
                     <!-- Cart Button -->
-                    <a href="/cart" class="text-gray-600 hover:text-gray-900 relative">
+                    <a href="/cart/my-cart" class="text-gray-600 hover:text-gray-900 relative">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
-                        <span class="absolute -top-1 -right-1 bg-blue-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">3</span>
+                        <!-- <span class="absolute -top-1 -right-1 bg-blue-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">3</span> -->
                     </a>
 
                     <!-- User Menu -->
@@ -228,12 +227,12 @@
                                 <div>
                                     <h4 class="text-sm font-medium text-gray-900 mb-2">Shipping Details</h4>
                                     <div class="text-sm text-gray-600">
-                                        <p><%= order.shippingAddress.firstName %> <%= order.shippingAddress.lastName %></p>
-                                        <p><%= order.shippingAddress.phone %></p>
-                                        <p><%= order.shippingAddress.email %></p>
-                                        <p><%= order.shippingAddress.address %></p>
-                                        <p><%= order.shippingAddress.city %>, <%= order.shippingAddress.county %></p>
-                                        <p><%= order.shippingAddress.postalCode %></p>
+                                        <p><%= order.shipping.customerShippingDetails.firstName %> <%= order.shipping.customerShippingDetails.lastName %></p>
+                                        <p><%= order.shipping.customerShippingDetails.phone %></p>
+                                        <p><%= order.shipping.customerShippingDetails.email %></p>
+                                        <p><%= order.address %></p>
+                                        <p><%= order.shipping.address.city %>, <%= order.shipping.address.county %></p>
+                                        
                                     </div>
                                 </div>
 

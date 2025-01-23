@@ -25,6 +25,31 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        .product-card {
+        transform: translateY(0);
+        transition: all 0.3s ease;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-4px);
+    }
+    
+    .loading-spinner {
+        display: none;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #ffffff;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
         
         .quick-actions {
             opacity: 0;
@@ -105,13 +130,13 @@
         </button>
 
         <!-- Dynamic Category Pills -->
-        <% categories.forEach(cat => { %>
-        <button 
-            class="category-pill bg-white px-6 py-3 rounded-full shadow-lg hover:bg-orange-500 hover:text-white transition-all duration-300"
-            onclick="filterByCategory('<%= cat.name %>')">
-            <i class="fas fa-tag mr-2"></i><%= cat.name %>
-        </button>
-        <% }) %>
+        <% categories.forEach(function(cat) { %>
+            <button 
+                class="category-pill bg-white px-6 py-3 rounded-full shadow-lg hover:bg-orange-500 hover:text-white transition-all duration-300"
+                onclick="filterByCategory('<%= cat.name %>')">
+                <i class="<%= cat.icon %> mr-2"></i><%= cat.name %>
+            </button>
+        <% }); %>
     </div>
 </div>
 
@@ -145,82 +170,89 @@
             </div>
         </div>
 
-        <!-- Products Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            <% products.forEach(product => { %>
-            <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                <div class="relative">
-                    <img src="/uploads/<%= product.mainImage %>" 
-                         alt="<%= product.name %>" 
-                         class="w-full h-64 object-cover">
-                    
-                    <!-- Quick Actions -->
-                    <div class="quick-actions absolute bottom-4 left-4 right-4 flex gap-2">
-                        <button class="flex-1 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors addToCartBtn" 
-            data-product-id="<%= product._id %>" 
-            data-price="<%= product.price %>">
-        <span class="btn-text">
-            <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
-        </span>
-        <span class="loading-spinner"></span>
-    </button>
-                        <button class="w-10 h-10 bg-white text-red-500 rounded-lg flex items-center justify-center hover:bg-red-50">
-                            <i class="far fa-heart"></i>
-                        </button>
-                    </div>
+       <!-- Product Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+    <% products.forEach(product => { %>
+    <a href="/products/<%= product._id %>" class="block">
+        <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 relative group">
+            <!-- Product Image -->
+            <div class="relative aspect-square overflow-hidden">
+                <img src="<%= product.mainImage %>" 
+                     alt="<%= product.name %>" 
+                     class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300">
+                
+                <!-- Sale Badge -->
+                <% if (product.salePrice && product.salePrice < product.price) { %>
+                <div class="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                    Sale
                 </div>
-                
-                
-           <!-- Cart Notification Modal -->
-    <div id="cartNotification">
-        <div class="modal hidden">
-            <p class="text-lg font-bold mb-4" id="notificationMessage"></p>
-            <div class="flex justify-center gap-4">
-                <button id="continueShopping" 
-                        class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 transition-colors">
-                    Continue Shopping
-                </button>
-                <button id="goToCart" 
-                        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors">
-                    View Cart
-                </button>
-            </div>
-        </div>
-    </div>
+                <% } %>
 
-
-                <div class="p-6">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2 py-1 bg-red-100 text-red-600 text-sm rounded-full">
-                            <i class="fas fa-map-marker-alt mr-1"></i>Nairobi
+                <!-- Quick Action Buttons -->
+                <div class="quick-actions absolute bottom-4 left-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <button onclick="event.preventDefault(); cartHandler.addToCart(this)" 
+                            data-product-id="<%= product._id %>" 
+                            data-price="<%= product.salePrice || product.price %>"
+                            class="flex-1 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors">
+                        <span class="btn-text">
+                            <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
                         </span>
-                        <div class="text-yellow-400 text-sm">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="far fa-star"></i>
-                        </div>
-                    </div>
+                        <span class="loading-spinner"></span>
+                    </button>
+                    <button onclick="event.preventDefault(); toggleWishlist('<%= product._id %>')" 
+                            class="w-10 h-10 bg-white text-red-500 rounded-lg flex items-center justify-center hover:bg-red-50">
+                        <i class="<%= product.isInWishlist ? 'fas' : 'far' %> fa-heart"></i>
+                    </button>
+                </div>
+            </div>
 
-                    <h3 class="font-bold text-gray-800 mb-2"><%= product.name %></h3>
-                    <p class="text-gray-600 text-sm mb-4 line-clamp-2"><%= product.description %></p>
-
-                    <div class="flex items-center justify-between">
-                        <div class="flex flex-col">
-                            <span class="text-2xl font-bold text-gray-800">KES <%= product.price %></span>
-                            <% if (product.originalPrice) { %>
-                            <span class="text-sm text-gray-400 line-through">KES <%= product.originalPrice %></span>
+            <!-- Product Details -->
+            <div class="p-4">
+                <!-- Location & Rating -->
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm text-gray-600">
+                        <i class="fas fa-map-marker-alt mr-1"></i>
+                        <%= product.seller?.location.city || 'Location not available' %>
+                    </span>
+                    <div class="flex items-center">
+                        <div class="flex text-yellow-400">
+                            <% for(let i = 1; i <= 5; i++) { %>
+                                <i class="<%= i <= ((product.ratings && product.ratings.average) || 0) ? 'fas' : 'far' %> fa-star text-sm"></i>
                             <% } %>
                         </div>
-                        <span class="text-sm text-green-500">
-                            <i class="fas fa-truck mr-1"></i>Free Delivery
-                        </span>
+                        <span class="text-xs text-gray-500 ml-1">(<%= (product.ratings && product.ratings.count) || 0 %>)</span>
                     </div>
                 </div>
+        
+                <!-- Product Name -->
+                <h3 class="font-semibold text-gray-800 mb-1 line-clamp-1"><%= product.name %></h3>
+        
+                <!-- Description -->
+                <p class="text-sm text-gray-600 mb-2 line-clamp-2"><%= product.description %></p>
+        
+                <!-- Price -->
+                <div class="flex items-baseline gap-2">
+                    <span class="text-lg font-bold text-gray-900">
+                        KES <%= product.salePrice?.toLocaleString() || product.price.toLocaleString() %>
+                    </span>
+                    <% if (product.salePrice && product.salePrice < product.price) { %>
+                    <span class="text-sm text-gray-400 line-through">
+                        KES <%= product.price.toLocaleString() %>
+                    </span>
+                    <% } %>
+                </div>
+        
+                <!-- Free Delivery Badge -->
+                <div class="mt-2 flex items-center">
+                    <span class="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">
+                        <i class="fas fa-truck mr-1"></i> Free Delivery
+                    </span>
+                </div>
             </div>
-            <% }) %>
         </div>
+    </a>
+    <% }); %>
+</div>
 
         <!-- Pagination -->
         <div class="mt-12 flex justify-center gap-2">
@@ -253,7 +285,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <div>
                     <h3 class="text-xl font-bold mb-4">About Zetu Cart</h3>
-                    <p class="text-gray-400">Connecting Kenyan artisans and sellers with customers worldwide. Shop authentic Kenyan products with confidence.</p>
+                    <p class="text-gray-400">Connecting Kenyan artisans and sellers with customers countrywide. Shop authentic Kenyan products with confidence.</p>
                 </div>
                 <div>
                     <h3 class="text-xl font-bold mb-4">Quick Links</h3>
@@ -287,18 +319,40 @@
                         </a>
                     </div>
                     <p class="text-gray-400">
-                        <i class="fas fa-phone mr-2"></i>+254 700 000000<br>
+                        <i class="fas fa-phone mr-2"></i>+254 712827803<br>
                         <i class="fas fa-envelope mr-2"></i>hello@zetucart.co.ke
                     </p>
                 </div>
             </div>
             <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2024 Zetu Cart • All Rights Reserved</p>
+                <p>&copy; 2025 Zetu Cart • All Rights Reserved</p>
             </div>
         </div>
     </footer>
 
     <script>
+        async function toggleWishlist(productId) {
+    try {
+        const response = await fetch('/wishlist/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productId })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Toggle heart icon
+            const heartIcon = event.currentTarget.querySelector('i');
+            heartIcon.classList.toggle('far');
+            heartIcon.classList.toggle('fas');
+        }
+    } catch (error) {
+        console.error('Error toggling wishlist:', error);
+    }
+}
 
 const cartHandler = {
   addToCart: async function(button) {
@@ -325,6 +379,12 @@ const cartHandler = {
       });
 
       const result = await response.json();
+      if (result.success === true) {
+        console.log("Operation add to cart was a success");
+        window.location.href = '/cart/my-cart';
+
+      }
+      console.log('Response received', result);
 
       if (!response.ok) {
         throw new Error(result.message || 'Server error');
@@ -337,7 +397,6 @@ const cartHandler = {
         throw new Error(result.message || 'Failed to add item to cart');
       }
     } catch (error) {
-      console.error('Error:', error);
       this.showError(error.message || 'An error occurred while adding item to cart');
     } finally {
       this.setLoadingState(button, false);

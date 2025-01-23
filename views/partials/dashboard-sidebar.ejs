@@ -1,0 +1,42 @@
+<aside class="w-64 bg-gradient-to-b from-orange-600 to-orange-700 text-white p-6 shadow-xl flex flex-col">
+    <div class="flex items-center mb-10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <h2 class="text-2xl font-bold">Zetu Cart</h2>
+    </div>
+
+    <nav class="space-y-2 flex-1">
+        <a href="/dashboard" class="flex items-center p-3 rounded-lg <%= path === '/dashboard' ? 'bg-orange-500' : 'hover:bg-orange-500' %> transition-colors duration-200">
+            <i class="fas fa-home w-5 mr-3"></i>
+            Dashboard
+        </a>
+        <a href="/orders/my-orders" class="flex items-center p-3 rounded-lg <%= path === '/orders/my-orders' ? 'bg-orange-500' : 'hover:bg-orange-500' %> transition-colors duration-200">
+            <i class="fas fa-shopping-bag w-5 mr-3"></i>
+            My Orders
+        </a>
+        <a href="/wishlist" class="flex items-center p-3 rounded-lg <%= path === '/wishlist' ? 'bg-orange-500' : 'hover:bg-orange-500' %> transition-colors duration-200">
+            <i class="fas fa-heart w-5 mr-3"></i>
+            Wishlist
+        </a>
+        <a href="/profile" class="flex items-center p-3 rounded-lg <%= path === '/profile' ? 'bg-orange-500' : 'hover:bg-orange-500' %> transition-colors duration-200">
+            <i class="fas fa-user w-5 mr-3"></i>
+            Profile
+        </a>
+        <a href="/addresses" class="flex items-center p-3 rounded-lg <%= path === '/addresses' ? 'bg-orange-500' : 'hover:bg-orange-500' %> transition-colors duration-200">
+            <i class="fas fa-map-marker-alt w-5 mr-3"></i>
+            Addresses
+        </a>
+        <a href="/settings" class="flex items-center p-3 rounded-lg <%= path === '/settings' ? 'bg-orange-500' : 'hover:bg-orange-500' %> transition-colors duration-200">
+            <i class="fas fa-cog w-5 mr-3"></i>
+            Settings
+        </a>
+    </nav>
+
+    <form action="/auth/logout" method="POST" class="mt-auto">
+        <button type="submit" class="w-full flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+            <i class="fas fa-sign-out-alt w-5 mr-3"></i>
+            Logout
+        </button>
+    </form>
+</aside>

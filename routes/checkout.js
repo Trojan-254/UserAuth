@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/authMiddleware');
+const { auth } = require('../middleware/authMiddleware');
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 const mpesa = require('../utils/mpesa');
+const { Product } = require('../models/Product');
 
 // Validation middleware
 const validateShippingDetails = (req, res, next) => {
@@ -19,6 +20,36 @@ const validateShippingDetails = (req, res, next) => {
   next();
 };
 
+const validateOrder = async (req, res, next) => {
+  try {
+    const cart = await Cart.findOne({ user: req.user.id })
+      .populate('items.product');
+    
+    if (!cart?.items?.length) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cart is empty'
+      });
+    }
+
+    // Verify all products are still available
+    for (const item of cart.items) {
+      const product = await Product.findById(item.product._id);
+      if (!product || product.stock < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `${product ? product.name : 'Product'} is out of stock`
+        });
+      }
+    }
+
+    req.cart = cart;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Helper functions
 const calculateOrderTotals = (cartTotal) => {
   const subtotal = cartTotal;
@@ -32,18 +63,50 @@ const calculateOrderTotals = (cartTotal) => {
   };
 };
 
-const createOrderFromCart = (userId, cart, shippingDetails, totals) => {
+const createOrderFromCart = (config) => {
+  const {
+    customer,
+    cart,
+    shippingDetails,
+    totals,
+    seller,
+    orderNumber
+  } = config;
+
   return new Order({
-    user: userId,
-    items: cart.items,
-    shippingAddress: shippingDetails,
+    orderNumber,
+    customer,
+    seller,
+    items: cart.items.map(item => ({
+      product: item.product._id,
+      quantity: item.quantity,
+      price: item.price,
+      status: 'pending'
+    })),
     totalAmount: totals.total,
-    subtotal: totals.subtotal,
-    tax: totals.tax,
-    shipping: totals.shipping,
-    orderStatus: 'pending',
-    paymentStatus: 'pending',
-    createdAt: new Date()
+    shipping: {
+      address: {
+        street: shippingDetails.address,
+        city: shippingDetails.city,
+        county: shippingDetails.county
+      },
+      customerShippingDetails: {
+        firstName: shippingDetails.firstName,
+        lastName: shippingDetails.lastName,
+        phone: shippingDetails.phone,
+        email: shippingDetails.email
+      },
+      cost: totals.shipping
+    },
+    commission: {
+      percentage: 10, //get this from seller settings
+      amount: totals.total * 0.1
+    },
+    payment: {
+      method: 'mpesa', 
+      status: 'pending',
+      amount: totals.total
+    }
   });
 };
 
@@ -69,51 +132,28 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Process shipping and create order
-router.post('/process', [auth, validateShippingDetails], async (req, res) => {
+router.post('/process', [auth, validateShippingDetails, validateOrder], async (req, res) => {
   try {
-    const cart = await Cart.findOne({ user: req.user.id })
-      .populate('items.product')
-      .lean();
-
-    if (!cart?.items?.length) {
-      return res.status(400).json({
-        success: false,
-        message: 'Cart is empty'
-      });
-    }
-
-    // Verify products are still in stock
-    const outOfStock = cart.items.find(item => 
-      item.quantity > item.product.stockQuantity
-    );
-
-    if (outOfStock) {
-      return res.status(400).json({
-        success: false,
-        message: `${outOfStock.product.name} is out of stock`
-      });
-    }
-
-    const totals = calculateOrderTotals(cart.totalAmount);
-    const order = createOrderFromCart(
-      req.user.id,
-      cart,
-      req.body,
-      totals
-    );
+    const totals = calculateOrderTotals(req.cart.totalAmount);
+    const order = createOrderFromCart({
+      customer: req.user.id,
+      seller: req.cart.items[0].product.seller,
+      cart: req.cart,
+      shippingDetails: req.body,
+      totals: totals,
+      orderNumber: 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
+    });
 
     await order.save();
 
-    // Generate payment URL
-    const zetuPayURL = `/checkout/zetupay/payment/${order._id}`;
-    
-    // Clear cart after successful order creation
+    // Clear the cart
     await Cart.findOneAndDelete({ user: req.user.id });
 
+    // Redirect to payment page
     res.json({
       success: true,
       orderId: order._id,
-      redirectUrl: zetuPayURL
+      redirectUrl: `/checkout/zetupay/payment/${order._id}`
     });
   } catch (error) {
     console.error('Order processing error:', error);
@@ -126,15 +166,19 @@ router.post('/process', [auth, validateShippingDetails], async (req, res) => {
 
 // ZetuPay payment page
 router.get('/zetupay/payment/:orderId', auth, async (req, res) => {
+  // console.log('Order ID: ', req.params.orderId);
   try {
     const order = await Order.findOne({
       _id: req.params.orderId,
-      user: req.user.id
+      customer: req.user.id
     }).populate('items.product');
+
+    // console.log("Order is being extracted");
+    // console.log("Order: ", order);
     
     if (!order) {
       req.flash('error', 'Order not found');
-      return res.redirect('/orders');
+      return res.redirect('/orders/my-orders');
     }
 
     if (order.paymentStatus === 'completed') {
@@ -150,194 +194,7 @@ router.get('/zetupay/payment/:orderId', auth, async (req, res) => {
   }
 });
 
-// Initiate M-Pesa payment
-router.post('/api/payments/mpesa/initiate', auth, async (req, res) => {
-  try {
-    const { orderId, phoneNumber } = req.body;
 
-    // Validate phone number format
-    if (!mpesa.validatePhoneNumber(phoneNumber)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid phone number format. Use format: 254XXXXXXXXX'
-      });
-    }
-
-    const order = await Order.findOne({
-      _id: orderId,
-      user: req.user.id,
-      paymentStatus: 'pending'
-    });
-
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: 'Order not found or already paid'
-      });
-    }
-
-    // Initiate STK push
-    const stkPushResponse = await mpesa.initiateSTKPush(
-      phoneNumber,
-      order.totalAmount,
-      order._id
-    );
-
-    // Update order with M-Pesa transaction details
-    order.mpesaDetails = {
-      checkoutRequestID: stkPushResponse.CheckoutRequestID,
-      merchantRequestID: stkPushResponse.MerchantRequestID,
-      phoneNumber: phoneNumber,
-      amount: order.totalAmount,
-      initiatedAt: new Date()
-    };
-
-    await order.save();
-
-    res.json({
-      success: true,
-      message: 'Check your phone for the M-Pesa prompt',
-      checkoutRequestID: stkPushResponse.CheckoutRequestID
-    });
-
-  } catch (error) {
-    console.error('M-Pesa payment initiation error:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Unable to initiate M-Pesa payment'
-    });
-  }
-});
-
-
-//the M-Pesa callback handler
-router.post('/api/mpesa/callback', async (req, res) => {
-  try {
-    const { Body: { stkCallback } } = req.body;
-
-    const order = await Order.findOne({
-      'mpesaDetails.checkoutRequestID': stkCallback.CheckoutRequestID
-    });
-
-    if (!order) {
-      console.error('Order not found for CheckoutRequestID:', stkCallback.CheckoutRequestID);
-      return res.status(404).json({ success: false });
-    }
-
-    if (stkCallback.ResultCode === 0) {
-      // Payment successful
-      const mpesaReceipt = stkCallback.CallbackMetadata.Item.find(
-        item => item.Name === 'MpesaReceiptNumber'
-      )?.Value;
-
-      order.paymentStatus = 'completed';
-      order.orderStatus = 'processing';
-      order.mpesaDetails.mpesaReceiptNumber = mpesaReceipt;
-      order.mpesaDetails.paymentCompletedAt = new Date();
-    } else {
-      // Payment failed
-      order.paymentStatus = 'failed';
-      order.mpesaDetails.failureReason = stkCallback.ResultDesc;
-    }
-
-    await order.save();
-    res.json({ success: true });
-  } catch (error) {
-    console.error('M-Pesa callback error:', error);
-    res.status(500).json({ success: false });
-  }
-});
-
-
-
-router.get('/api/payments/mpesa/status/:checkoutRequestId', auth, async (req, res) => {
-  try {
-    const { checkoutRequestId } = req.params;
-
-    // First check if payment is already marked as completed in our database
-    const order = await Order.findOne({
-      'mpesaDetails.checkoutRequestID': checkoutRequestId,
-      user: req.user.id
-    });
-
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: 'Order not found'
-      });
-    }
-
-    // If payment has already been completed, return immediately
-    if (order.paymentStatus === 'completed') {
-      return res.json({
-        success: true,
-        status: 'completed',
-        message: 'Payment has been completed'
-      });
-    }
-
-    // If payment failed locally, return immediately
-    if (order.paymentStatus === 'failed') {
-      return res.json({
-        success: false,
-        status: 'failed',
-        message: order.mpesaDetails?.failureReason || 'Payment failed'
-      });
-
-    }
-
-    // If not completed, check with M-Pesa
-    const statusResponse = await mpesa.checkTransactionStatus(checkoutRequestId);
-    console.log(statusResponse);
-    if (statusResponse.status === 'completed') {
-      // Update order status if payment is successful
-      order.paymentStatus = 'completed';
-      order.orderStatus = 'processing';
-      await order.save();
-
-      return res.json({
-        success: true,
-        status: 'completed',
-        message: 'Payment has been completed',
-        checkoutRequestId
-      });
-    } else if (statusResponse.status === 'failed') {
-        // Only update to failed if we ever get an explicit failure
-        order.paymentStatus = 'failed';
-        order.mpesaDetails.failureReason = statusResponse.message;
-      await order.save();
-
-      return res.json({
-        success: false,
-        status: 'failed',
-        message: statusResponse.message,
-        checkoutRequestId
-      });
-    }
-
-    return res.json({
-        success: false,
-        status: 'failed',
-        message: statusResponse.message,
-        checkoutRequestId
-      });
-
-      // For any other status, return processing
-    return res.json({
-      success: false,
-      status: 'processing',
-      message: 'Payment status is being verified',
-      checkoutRequestId
-    });
-
-  } catch (error) {
-    console.error('Payment status check error:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Unable to check payment status'
-    });
-  }
-});
 
 
 

@@ -1,17 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const { Product } = require('../models/Product');
-const auth = require('../middleware/authMiddleware');
+const { auth } = require('../middleware/authMiddleware');
 const Cart = require('../models/Cart');
 
 // Get user Cart
 router.get('/my-cart', auth, async (req, res) => {
   try {
-    console.log("User data", req.user);
+    // console.log("User data", req.user);
     let cart = await Cart.findOne({ user: req.user.id })
       .populate('items.product');
 
-    console.log("Cart found: ", cart);
+    // console.log("Cart found: ", cart);
     if (!cart) {
       console.log("No cart found, creating new cart", req.user.id);
       cart = new Cart({ user: req.user.id, items: [] });
@@ -31,6 +31,7 @@ router.get('/my-cart', auth, async (req, res) => {
 router.post('/add', auth, async (req, res) => {
   try {
     const { productId, quantity, price } = req.body;
+    // console.log("Add to cart: ", req.body);
     
     // Validate inputs
     if (!productId || !quantity || !price) {
@@ -41,6 +42,7 @@ router.post('/add', auth, async (req, res) => {
     }
 
     let cart = await Cart.findOne({ user: req.user.id });
+    // console.log("Cart found: ", cart);
     if (!cart) {
       cart = new Cart({ user: req.user.id, items: [] });
     }
@@ -60,6 +62,7 @@ router.post('/add', auth, async (req, res) => {
     }
 
     await cart.save();
+    // console.log("Cart saved: ", cart);
     const totalItems = cart.items.reduce((acc, item) => acc + item.quantity, 0);
 
     res.status(201).json({ 

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Category = require('./models/Category'); // Adjust the path to your Category model
 
 // Connect to MongoDB
-mongoose.connect('', {
+mongoose.connect('mongodb+srv://zetuapplication:<db_password>@zetucart.h2ate.mongodb.net/?retryWrites=true&w=majority&appName=zetucart', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })

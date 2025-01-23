@@ -189,6 +189,7 @@
             // Collect form data
             const formData = new FormData(checkoutForm);
             const data = Object.fromEntries(formData.entries());
+            console.log('Order data:', data);
 
             // Send the data to the backend
             const response = await fetch('/checkout/process', {
@@ -196,8 +197,9 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-
+            
             const result = await response.json();
+            console.log('Order response:', result);
 
             if (response.ok) {
                 alert('Order placed successfully! Redirecting to payment...');

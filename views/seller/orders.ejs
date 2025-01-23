@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders - Zetucart Seller Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+  <!-- Mobile Menu Button -->
+  <button id="mobile-menu-button" class="lg:hidden fixed top-4 left-4 z-50 bg-orange-600 text-white p-2 rounded-lg">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed lg:static w-64 -translate-x-full lg:translate-x-0 transition-transform duration-300 bg-gradient-to-b from-orange-600 to-orange-700 text-white p-6 shadow-xl flex flex-col h-screen z-40">
+      <div class="flex items-center mb-10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <h2 class="text-2xl font-bold">Seller Portal</h2>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="space-y-2 flex-1">
+        <a href="/seller/dashboard" class="flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+          <i class="fas fa-chart-line w-5 mr-3"></i>
+          Dashboard
+        </a>
+        <a href="/api/seller/products" class="flex items-center p-3 rounded-lg hover:bg-orange-500 transition-colors duration-200">
+          <i class="fas fa-box w-5 mr-3"></i>
+          Products
+        </a>
+        <a href="/seller/orders" class="flex items-center p-3 rounded-lg bg-orange-500 transition-colors duration-200">
+          <i class="fas fa-shopping-bag w-5 mr-3"></i>
+          Orders
+        </a>
+        <!-- Rest of navigation links same as dashboard -->
+      </nav>
+
+      <!-- Verification Status and Logout same as dashboard -->
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 lg:p-8 lg:ml-64">
+      <!-- Top Navigation Bar -->
+      <nav class="bg-white p-4 rounded-xl shadow-sm mb-8 flex justify-between items-center">
+        <div class="flex items-center">
+          <div class="relative">
+            <input type="text" placeholder="Search orders..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-orange-500">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="hidden sm:flex space-x-2">
+            <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <i class="fas fa-filter mr-2"></i>Filter
+            </button>
+            <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <i class="fas fa-download mr-2"></i>Export
+            </button>
+          </div>
+          <div class="flex items-center space-x-2">
+            <img src="/api/placeholder/32/32" alt="Profile" class="w-8 h-8 rounded-full">
+            <span class="text-gray-700 hidden sm:inline"><%= seller.businessName %></span>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Order Statistics -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white p-4 rounded-xl shadow-sm">
+          <div class="flex items-center justify-between">
+            <h3 class="text-gray-500">New Orders</h3>
+            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Today</span>
+          </div>
+          <p class="text-2xl font-semibold mt-2"><%= stats.newOrders %></p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm">
+          <div class="flex items-center justify-between">
+            <h3 class="text-gray-500">Processing</h3>
+            <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs">Active</span>
+          </div>
+          <p class="text-2xl font-semibold mt-2"><%= stats.processingOrders %></p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm">
+          <div class="flex items-center justify-between">
+            <h3 class="text-gray-500">Delivered</h3>
+            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">This Week</span>
+          </div>
+          <p class="text-2xl font-semibold mt-2"><%= stats.deliveredOrders %></p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm">
+          <div class="flex items-center justify-between">
+            <h3 class="text-gray-500">Returns</h3>
+            <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Pending</span>
+          </div>
+          <p class="text-2xl font-semibold mt-2"><%= stats.returnOrders %></p>
+        </div>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="p-4 border-b">
+          <h2 class="text-xl font-semibold">All Orders</h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr class="text-left text-gray-500">
+                <th class="p-4">Order ID</th>
+                <th class="p-4">Customer</th>
+                <th class="p-4">Products</th>
+                <th class="p-4">Total</th>
+                <th class="p-4">Status</th>
+                <th class="p-4">Date</th>
+                <th class="p-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              <% orders.forEach(function(order) { %>
+                <tr class="hover:bg-gray-50">
+                  <td class="p-4">#<%= order.orderNumber %></td>
+                  <td class="p-4">
+                    <div class="flex items-center space-x-3">
+                      <img src="/api/placeholder/32/32" alt="Customer" class="w-8 h-8 rounded-full">
+                      <div>
+                        <p class="font-medium"><%= order.customerName %></p>
+                        <p class="text-sm text-gray-500"><%= order.customerPhone %></p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="p-4"><%= order.itemCount %> items</td>
+                  <td class="p-4">KES <%= order.totalAmount.toLocaleString() %></td>
+                  <td class="p-4">
+                    <span class="px-2 py-1 rounded-full text-sm
+                      <% if (order.status === 'delivered') { %>
+                        bg-green-100 text-green-800
+                      <% } else if (order.status === 'processing') { %>
+                        bg-blue-100 text-blue-800
+                      <% } else if (order.status === 'cancelled') { %>
+                        bg-red-100 text-red-800
+                      <% } else { %>
+                        bg-orange-100 text-orange-800
+                      <% } %>
+                    ">
+                      <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                    </span>
+                  </td>
+                  <td class="p-4 text-gray-500"><%= order.date %></td>
+                  <td class="p-4">
+                    <div class="flex space-x-2">
+                      <button class="text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                      <button class="text-green-600 hover:text-green-800">
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button class="text-red-600 hover:text-red-800">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="p-4 border-t flex items-center justify-between">
+          <p class="text-gray-500">Showing 1 to 10 of <%= pagination.totalOrders %> orders</p>
+          <div class="flex space-x-2">
+            <button class="px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50">Previous</button>
+            <button class="px-4 py-2 border rounded-lg hover:bg-gray-50">Next</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const sidebar = document.getElementById('sidebar');
+    
+    mobileMenuButton.addEventListener('click', () => {
+      sidebar.classList.toggle('-translate-x-full');
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth < 1024 && 
+          !sidebar.contains(e.target) && 
+          !mobileMenuButton.contains(e.target)) {
+        sidebar.classList.add('-translate-x-full');
+      }
+    });
+  </script>
+</body>
+</html>

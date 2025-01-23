@@ -9,7 +9,7 @@ class PaymentHandler {
         // Initialize state
         this.messageContainer = this.createMessageContainer();
         this.messageTimeout = null;
-        this.eventSource = null;
+        this.pollingInterval = null;
         
         // Bind event listeners
         this.initializeEventListeners();
@@ -52,40 +52,83 @@ class PaymentHandler {
         }, 5000);
     }
 
-    setupEventSource(orderId) {
-        // Close existing connection if any
-        if (this.eventSource) {
-            this.eventSource.close();
-        }
-
-        // Create new EventSource connection
-        this.eventSource = new EventSource(
-            `https://zetucartcallback-eee8ec216ed4.herokuapp.com/payments/mpesa/events?orderId=${orderId}`
-        );
-
-        // Handle incoming messages
-        this.eventSource.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            
-            if (data.status === 'completed') {
-                this.showMessage('Payment successful! Redirecting...', 'success');
-                this.eventSource.close();
-                setTimeout(() => {
-                    window.location.href = `/orders/${data.orderId}`;
-                }, 2000);
-            } else if (data.status === 'failed') {
-                this.showMessage(data.message || 'Payment failed. Please try again.', 'error');
-                this.eventSource.close();
+    async checkPaymentStatus(checkoutRequestId) {
+        try {
+            const response = await fetch(`/api/payments/mpesa/status/${checkoutRequestId}`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+      
+            if (!response.ok) {
+                throw new Error('Failed to check payment status');
+            }
+      
+            const data = await response.json();
+            console.log('data received:', data);
+      
+            // Handle different status cases
+            switch (data.status) {
+                case 'completed':
+                    this.stopPolling();
+                    this.showMessage('Payment successful! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/orders/my-orders';
+                    }, 2000);
+                    break;
+      
+                case 'failed':
+                    this.stopPolling();
+                    this.showMessage(data.message || 'Payment failed. Please try again.', 'error');
+                    this.enableForm();
+                    break;
+      
+                case 'processing':
+                    // Continue polling
+                    this.showMessage('Payment is being processed...', 'info');
+                    break;
+      
+                default:
+                    this.stopPolling();
+                    this.showMessage('Unknown payment status. Please check your orders.', 'error');
+                    this.enableForm();
+            }
+        } catch (error) {
+            console.error('Payment status check failed:', error);
+            // Don't stop polling for temporary errors
+            if (error.message !== 'Failed to fetch') {
+                this.stopPolling();
+                this.showMessage('Error checking payment status. Please check your orders.', 'error');
                 this.enableForm();
             }
-        };
+        }
+    }
 
-        // Handle connection errors
-        this.eventSource.onerror = () => {
-            console.error('SSE connection failed');
-            this.eventSource.close();
-            this.showMessage('Connection lost. Please check your payment status in your orders.', 'error');
-        };
+    startPolling(checkoutRequestId) {
+        let attempts = 0;
+        const maxAttempts = 24; // 2 minutes (24 * 5 seconds)
+
+        // Check immediately
+        this.checkPaymentStatus(checkoutRequestId);
+
+        // Poll every 5 seconds
+        this.pollingInterval = setInterval(() => {
+            attempts++;
+            if (attempts > maxAttempts) {
+                this.stopPolling();
+                this.showMessage('Payment timed out. Please check your orders.', 'error');
+                this.enableForm();
+                return;
+            }
+            this.checkPaymentStatus(checkoutRequestId);
+        }, 5000);
+    }
+
+    stopPolling() {
+        if (this.pollingInterval) {
+            clearInterval(this.pollingInterval);
+            this.pollingInterval = null;
+        }
     }
 
     validatePhoneNumber(phone) {
@@ -108,6 +151,7 @@ class PaymentHandler {
         e.preventDefault();
 
         const phoneNumber = this.phoneInput.value.trim();
+        const orderId = window.orderId; // Assuming orderId is set on window object
 
         // Validate phone number
         if (!this.validatePhoneNumber(phoneNumber)) {
@@ -125,20 +169,23 @@ class PaymentHandler {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    orderId: window.orderId,
-                    phoneNumber: phoneNumber
+                    orderId,
+                    phoneNumber
                 })
             });
+            console.log(response);
+
 
             const data = await response.json();
+            console.log(data);
 
             if (!response.ok || !data.success) {
                 throw new Error(data.message || 'Failed to initiate payment');
             }
 
-            // Show success message and setup SSE
+            // Show success message and start polling
             this.showMessage('Please check your phone for the M-Pesa prompt', 'info');
-            this.setupEventSource(window.orderId);
+            this.startPolling(data.checkoutRequestID);
 
         } catch (error) {
             this.showMessage(error.message, 'error');
@@ -148,9 +195,7 @@ class PaymentHandler {
 
     handleCancel() {
         if (confirm('Are you sure you want to cancel this payment?')) {
-            if (this.eventSource) {
-                this.eventSource.close();
-            }
+            this.stopPolling();
             window.location.href = '/orders/my-orders';
         }
     }
@@ -175,9 +220,7 @@ class PaymentHandler {
     }
 
     cleanup() {
-        if (this.eventSource) {
-            this.eventSource.close();
-        }
+        this.stopPolling();
         if (this.messageTimeout) {
             clearTimeout(this.messageTimeout);
         }
