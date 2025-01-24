@@ -100,6 +100,7 @@ app.use("/seller/auth", sellerAuthRoutes);
 app.use ("/api/seller", sellerRoutes);
 app.use('/order/seller', sellerOrdersRoutes);
 app.use("/seller/dashboard", sellerDashboardRoutes);
+
 app.get('/', (req, res) => {
     res.render('landing', { isAuthenticated: req.isAuthenticated });
 });
@@ -165,7 +166,7 @@ app.listen(PORT, () => {
     ┃                                                           ┃
     ┃                                                           ┃
     ┃               🚀🚀  Zetu Cart Server is Live!   🚀🚀      ┃
-    ┃                           RUTO MUST GO                    ┃
+    ┃                                                           ┃
     ┃                                                           ┃
     ┃ --------------------------------------------------------- ┃
     ┃ 🌐        Listening on: http://localhost:${PORT}             ┃

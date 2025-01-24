@@ -15,8 +15,11 @@ const auth = (req, res, next) => {
         // For API requests, still return JSON
         if (isApiRequest) {
            return res.status(401).json({
-               error: 'No token, authorization denied'
+                success: false,
+               error: 'No token, authorization denied',
+               redirectUrl: '/login'
            });
+
         }
 
         // For regular requests, return user to login

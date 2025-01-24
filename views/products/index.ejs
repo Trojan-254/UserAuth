@@ -384,17 +384,24 @@ const cartHandler = {
         window.location.href = '/cart/my-cart';
 
       }
+    
       console.log('Response received', result);
 
-      if (!response.ok) {
-        throw new Error(result.message || 'Server error');
+      if (result.success === false && result.redirectUrl) {
+        console.log("Operation add to cart was a failure");
+        window.location.href = result.redirectUrl;
+        return;
       }
+
+    //   if (!response.ok) {
+    //     // throw new Error(result.message || 'Server error', response.status);
+    //   }
 
       if (result.success) {
         this.showNotification(result.totalItems);
         this.updateCartCount(result.totalItems);
       } else {
-        throw new Error(result.message || 'Failed to add item to cart');
+        throw new Error(result.message || 'Failed to add item to cart, You may need to login');
       }
     } catch (error) {
       this.showError(error.message || 'An error occurred while adding item to cart');
