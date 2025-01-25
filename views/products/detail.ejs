@@ -48,13 +48,23 @@
         .zoom-image {
             transition: transform 0.3s ease;
         }
+        .loading-spinner {
+        display: none;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #ffffff;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
     </style>
 </head>
 <body class="bg-gray-50 font-['Andika']">
     <!-- Breadcrumb -->
     <nav class="container mx-auto px-4 py-4">
         <ol class="flex items-center space-x-2 text-sm text-gray-600">
-            <li><a href="/" class="hover:text-red-500">Home</a></li>
+            <li><a href="/product/all" class="hover:text-red-500">Home</a></li>
             <li><i class="fas fa-chevron-right text-xs"></i></li>
             <li><a href="/category/<%= product.category._id %>" class="hover:text-red-500"><%= product.category.name %></a></li>
             <li><i class="fas fa-chevron-right text-xs"></i></li>
@@ -70,7 +80,7 @@
                 <!-- Main Image with Zoom -->
                 <div class="relative overflow-hidden rounded-2xl bg-white zoom-container" style="height: 500px;">
                     <img id="mainImage" 
-                         src="<%= product.mainImage %>" 
+                         src="/uploads/<%= product.mainImage %>" 
                          alt="<%= product.name %>"
                          class="w-full h-full object-contain zoom-image">
                 </div>
@@ -78,7 +88,7 @@
                 <!-- Thumbnail Gallery -->
                 <div class="flex space-x-4 overflow-x-auto custom-scrollbar pb-2">
                     <div class="image-gallery-thumb active shrink-0 w-24 h-24 rounded-lg overflow-hidden cursor-pointer">
-                        <img src="<%= product.mainImage %>" 
+                        <img src="/uploads/<%= product.mainImage %>" 
                              alt="Main view"
                              class="w-full h-full object-cover"
                              onclick="updateMainImage(this.src)">
@@ -146,9 +156,16 @@
                                    class="w-16 text-center border-x border-gray-300 py-2">
                             <button class="px-4 py-2 text-gray-600 hover:text-red-500" onclick="updateQuantity(1)">+</button>
                         </div>
-                        <button onclick="addToCart('<%= product._id %>')"
-                                class="flex-1 bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-600 transition-colors">
-                            <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
+                        <button onclick="event.preventDefault(); cartHandler.addToCart(this)"
+                            data-product-id ="<%= product._id %>"
+                            data-price="<%= product.salePrice || product.price %>"
+                            class="flex-1 bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-600 transition-colors">
+    
+                            <span class="btn-text">
+                                <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
+                            </span>
+                            <span class="loading-spinner"></span>
+
                         </button>
                         <button onclick="toggleWishlist('<%= product._id %>')"
                                 class="w-12 h-12 flex items-center justify-center border border-gray-300 rounded-lg hover:border-red-500 hover:text-red-500">
@@ -385,6 +402,111 @@
     </div>
 
     <script>
+
+const cartHandler = {
+  addToCart: async function(button) {
+    const productId = button.getAttribute('data-product-id');
+    const price = button.getAttribute('data-price');
+    const btnText = button.querySelector('.btn-text');
+    const spinner = button.querySelector('.loading-spinner');
+
+    try {
+      // Show loading state
+      this.setLoadingState(button, true);
+
+      const response = await fetch('/cart/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          productId,
+          quantity: 1,
+          price
+        })
+      });
+
+      const result = await response.json();
+      if (result.success === true) {
+        console.log("Operation add to cart was a success");
+        window.location.href = '/cart/my-cart';
+
+      }
+    
+      console.log('Response received', result);
+
+      if (result.success === false && result.redirectUrl) {
+        console.log("Operation add to cart was a failure");
+        window.location.href = result.redirectUrl;
+        return;
+      }
+
+    //   if (!response.ok) {
+    //     // throw new Error(result.message || 'Server error', response.status);
+    //   }
+
+      if (result.success) {
+        this.showNotification(result.totalItems);
+        this.updateCartCount(result.totalItems);
+      } else {
+        throw new Error(result.message || 'Failed to add item to cart, You may need to login');
+      }
+    } catch (error) {
+      this.showError(error.message || 'An error occurred while adding item to cart');
+    } finally {
+      this.setLoadingState(button, false);
+    }
+  },
+
+  setLoadingState: function(button, isLoading) {
+    const btnText = button.querySelector('.btn-text');
+    const spinner = button.querySelector('.loading-spinner');
+    
+    btnText.style.display = isLoading ? 'none' : 'inline-block';
+    spinner.style.display = isLoading ? 'inline-block' : 'none';
+    button.disabled = isLoading;
+  },
+
+  showNotification: function(totalItems) {
+    const modal = document.getElementById('cartNotification');
+    const message = document.getElementById('notificationMessage');
+    
+    message.textContent = totalItems > 1
+      ? `Item added successfully! You have ${totalItems} items in your cart.`
+      : 'Item added to cart successfully!';
+    
+    modal.querySelector('.modal').classList.remove('hidden');
+    
+    // Setup modal buttons
+    document.getElementById('continueShopping').onclick = () => {
+      modal.querySelector('.modal').classList.add('hidden');
+    };
+
+    document.getElementById('goToCart').onclick = () => {
+      window.location.href = '/cart/my-cart';
+    };
+  },
+
+  showError: function(message) {
+    // You can implement a more sophisticated error notification here
+    alert(message);
+  },
+
+  updateCartCount: function(count) {
+    // Update cart count in the UI if you have a cart counter
+    const cartCounter = document.querySelector('.cart-count');
+    if (cartCounter) {
+      cartCounter.textContent = count;
+    }
+  }
+};
+
+// Event Listeners
+document.querySelectorAll('.addToCartBtn').forEach(button => {
+  button.addEventListener('click', () => cartHandler.addToCart(button));
+});
+
         // Image Gallery
         function updateMainImage(src) {
             document.getElementById('mainImage').src = src;
