@@ -26,7 +26,7 @@ class MpesaAPI {
         `${this.baseURL}/oauth/v1/generate?grant_type=client_credentials`,
         {
           headers: { Authorization: `Basic ${auth}` },
-          timeout: 10000 // 10 second timeout
+          timeout: 100000 // 10 second timeout
         }
       );
       

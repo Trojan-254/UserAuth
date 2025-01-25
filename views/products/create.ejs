@@ -350,7 +350,7 @@
                         this.showToast('Product created successfully!', 'success');
                         // Redirect to dashboard after a short delay
                         setTimeout(() => {
-                            window.location.href = '/seller/dashboard';
+                            window.location.href = '/api/seller/products';
                         }, 1500);
                     } else {
                         throw new Error(result.message || 'Failed to create product');

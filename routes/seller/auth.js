@@ -10,7 +10,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-// Configure nodemailer
+// nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -26,8 +26,124 @@ const sendVerificationEmail = (email, token) => {
   const mailOptions = {
     from: process.env.EMAIL,
     to: email,
-    subject: 'Please verify your email address',
-    html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email address</p>`
+    subject: 'ZetuCart - Verify Your Email Address',
+    html: `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Verify Your Email</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@600&display=swap" rel="stylesheet">
+                    <style>
+                        .email-container {
+                            max-width: 600px;
+                            margin: 0 auto;
+                            font-family: 'Lato', 'Arial', sans-serif;
+                            line-height: 1.6;
+                            color: #333333;
+                        }
+                        .header {
+                            background: linear-gradient(135deg, #FF6B35 0%, #FFB563 100%);
+                            padding: 24px;
+                            text-align: center;
+                            border-radius: 8px 8px 0 0;
+                        }
+                        .logo {
+                            color: white;
+                            font-family: 'Poppins', sans-serif;
+                            font-size: 28px;
+                            font-weight: 600;
+                            letter-spacing: 1px;
+                        }
+                        .content {
+                            padding: 32px 24px;
+                            background-color: #ffffff;
+                            border-left: 1px solid #FFE1D0;
+                            border-right: 1px solid #FFE1D0;
+                        }
+                        .content h2 {
+                            font-family: 'Poppins', sans-serif;
+                            color: #FF6B35;
+                            margin-bottom: 24px;
+                        }
+                        .button {
+                            display: inline-block;
+                            padding: 14px 28px;
+                            background: linear-gradient(to right, #FF6B35, #FFB563);
+                            color: white;
+                            text-decoration: none;
+                            border-radius: 50px;
+                            margin: 24px 0;
+                            font-weight: bold;
+                            font-family: 'Poppins', sans-serif;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
+                            font-size: 14px;
+                            box-shadow: 0 4px 6px rgba(255, 107, 53, 0.2);
+                        }
+                        .footer {
+                            padding: 24px;
+                            text-align: center;
+                            font-size: 14px;
+                            color: #666666;
+                            background-color: #FFF9F5;
+                            border-radius: 0 0 8px 8px;
+                            border: 1px solid #FFE1D0;
+                        }
+                        .verification-code {
+                            background-color: #FFF9F5;
+                            padding: 16px;
+                            border-radius: 8px;
+                            font-family: monospace;
+                            margin: 16px 0;
+                            border: 1px dashed #FFB563;
+                            color: #FF6B35;
+                        }
+                        .decorative-pattern {
+                            height: 4px;
+                            background: repeating-linear-gradient(
+                                45deg,
+                                #FF6B35,
+                                #FF6B35 10px,
+                                #FFB563 10px,
+                                #FFB563 20px
+                            );
+                            margin: 20px 0;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="email-container">
+                        <div class="header">
+                            <div class="logo">ZetuCart</div>
+                        </div>
+                        <div class="content">
+                            <div class="decorative-pattern"></div>
+                            <h2>Verify Your Email Address</h2>
+                            <p>Hello there,</p>
+                            <p>Thank you for creating a ZetuCart account. To ensure the security of your account and activate all features, please verify your email address by clicking the button below:</p>
+                            
+                            <center><a href="${verificationUrl}" class="button">Verify Email Address</a></center>
+                            
+                            <p>If the button doesn't work, you can copy and paste this link into your browser:</p>
+                            <div class="verification-code">
+                                ${verificationUrl}
+                            </div>
+                            
+                            <p>This verification link will expire in 24 hours for security reasons.</p>
+                            
+                            <p>If you didn't create a ZetuCart account, please ignore this email or contact our support team if you have concerns.</p>
+                            <div class="decorative-pattern"></div>
+                        </div>
+                        <div class="footer">
+                            <p>© ${new Date().getFullYear()} ZetuCart. All rights reserved.</p>
+                            <p>This is an automated message, please do not reply to this email.</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+          `,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -91,7 +207,7 @@ router.post('/register', registerValidation, async (req, res) => {
           const hashedPassword = await bcrypt.hash(password, salt);
       
           // Create new seller
-          seller = new Seller({
+          newSeller = new Seller({
             businessName,
             businessType,
             kra_pin,
@@ -109,15 +225,16 @@ router.post('/register', registerValidation, async (req, res) => {
           });
       
           // await seller.save();
+          const sellerId = newSeller._id;
       
           // Create JWT token
           const token = jwt.sign(
-            { seller: { id: seller.id } },
+            { seller: { id: sellerId } },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
           );
       
-          // Set token in cookie
+          // Set token in cookie 
           res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -125,14 +242,20 @@ router.post('/register', registerValidation, async (req, res) => {
           });
 
           // Set token in seller model
-          seller.verificationToken = token;
-          await seller.save();
+          newSeller.verificationToken = token;
+          await newSeller.save();
 
           // Send verification email
           sendVerificationEmail(email, token);
-          console.log('Verification email sent to:', email);
+          // console.log('Verification email sent to:', email);
+
       
-          res.status(201).json({ success: true, message: 'Seller created successfully' });
+          res.status(201).json({
+              success: true,
+              message: 'Signup success',
+              email: email 
+          });
+          // res.render('seller/register-success', { email }); 
     } catch (error) {
         console.error(error);
         res.status(500).render('seller/register', {
@@ -142,14 +265,15 @@ router.post('/register', registerValidation, async (req, res) => {
     }
 });
 
+// Seller registration success route
 router.get('/register-success', (req, res) => {
-    const email = decodeURIComponent(req.query.email);
-    if (!email) {
-      return res.status(400).send('Email is required');
-    }
-    res.render('confirmation', { email });
+  const email = decodeURIComponent(req.query.email);
+  console.log('Email received:', email); 
+  if (!email) {
+     return res.status(400).send("Email is required");
   }
-);
+  res.render('seller/register-success', { email: email });
+});
 
 // Seller email verification router
 router.get('/verify-email/:token', async (req, res) => {
@@ -164,10 +288,12 @@ router.get('/verify-email/:token', async (req, res) => {
 
     seller.verificationStatus = 'verified';
     seller.emailVerified = true;
-    seller.verificationToken = undefined;
+    seller.verificationToken = undefined; 
     await seller.save();
+    console.log('Seller', seller);
+    res.render('seller/confirmation-redirect', { businessName: seller.businessName });
 
-    res.status(200).json({ message: 'Email verified successfully' });
+    // res.status(200).json({ message: 'Email verified successfully' });
   } catch (error) {
     if (err.name === 'JsonWebTokenError') {
       return res.status(400).send("Invalid token format");

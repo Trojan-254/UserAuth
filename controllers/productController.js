@@ -4,6 +4,7 @@ const  Category  = require('../models/Category');
 const multer = require('multer');
 const mongoose = require('mongoose');
 const Review = require('../models/Review');
+const Seller = require('../models/Seller');
 
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
@@ -176,6 +177,8 @@ const productController = {
     // Get all products for a seller
     getSellerProducts: async (req, res) => {
         try {
+            const seller = await Seller.findById(req.seller.id).select('businessName');
+            console.log('Seller:', seller);
             const { page = 1, limit = 10, status, category } = req.query;
             const query = { seller: req.seller.id };
 
@@ -188,6 +191,8 @@ const productController = {
                 .limit(limit * 1)
                 .skip((page - 1) * limit);
 
+            // console.log('Products:', products);
+
             const total = await Product.countDocuments(query);
 
             // res.json({
@@ -196,7 +201,15 @@ const productController = {
             //     currentPage: page,
             //     total
             // });
-            res.render('seller/products');
+            res.render('seller/products', {
+                seller: seller.businessName,    
+                products,
+                totalPages: Math.ceil(total / limit),
+                currentPage: page,
+                total,
+                query: req.query,
+                categories: await Category.find().lean()
+            });
         } catch (error) {
             console.error('Get products error:', error);
             res.status(500).json({

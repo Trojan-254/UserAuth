@@ -184,7 +184,7 @@ const handleLogin = async (event) => {
         console.log('Login response:', data);
         
         if (data.statusCode === 200) {
-            window.location.href = data.redirectUrl || '/seller/dashboard';
+            window.location.href = data.redirectUrl || '/api/seller/products';
         } else {
             alert(data.message || 'An error occurred during login.');
         }

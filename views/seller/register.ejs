@@ -283,11 +283,12 @@
             });
 
             const data = await response.json();
-            console.log(data);
+            console.log("Response data:", data); // Debugging
 
-            if (data.success === true) {
-                alert('Registration successful!');
-                window.location.href = '/seller/auth/register-success/';
+            if (response.ok) {
+                // alert('Registration successful!');
+                // console.log(`Redirecting to: /seller/auth/register-success?email=${data.email}`);
+                window.location.href = `/seller/auth/register-success?email=${encodeURIComponent(data.email)}`;
             } else {
                 alert('An error occurred. Please try again. later');
             }
