@@ -89,18 +89,12 @@
     <div class="container bg-white text-gray-900 p-10 rounded-xl shadow-lg-custom max-w-md w-full fade-in">
         <img src="/public/images/zetu-logo.jpeg" alt="Vametech Logo" class="mx-auto mb-6 h-16 w-auto">
         <div class="text-center">
-            <h1 class="text-3xl font-bold gradient-text mb-4">🎉 Congrats <%= firstName %>, Your email has been successfully registered! 🎉</h1>
+            <h1 class="text-3xl font-bold gradient-text mb-4">🎉 Congrats...Your email has been successfully registered! 🎉</h1>
             <p class="text-lg mb-6">Redirecting you to the log in page...</p>
             <div class="loader"></div>
         </div>
     </div>
-    <div class="confetti-container">
-        <div class="confetti">
-            <% for (let i = 0; i < 50; i++) { %>
-                <i style="animation-delay: <%= Math.random() * 5 %>s;"></i>
-            <% } %>
-        </div>
-    </div>
+    
     <script>
         setTimeout(() => {
             window.location.href = '/login';

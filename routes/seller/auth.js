@@ -21,7 +21,7 @@ const transporter = nodemailer.createTransport({
 
 // Send verification email
 const sendVerificationEmail = (email, token) => {
-  const verificationUrl = `http://localhost:5000/seller/auth/verify-email/${token}`;
+  const verificationUrl = `https://zetucartmain-e896aac1d742.herokuapp.com//seller/auth/verify-email/${token}`;
 
   const mailOptions = {
     from: process.env.EMAIL,
