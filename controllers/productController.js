@@ -48,7 +48,7 @@ const productController = {
     // Create a new product
     createProduct: async (req, res) => {
         try {
-            console.log('Creating product:', req.body);
+            // console.log('Creating product:', req.body);
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
@@ -71,10 +71,10 @@ const productController = {
                 return res.status(400).json({ error: 'SKU already exists' });
             }
 
-            console.log(req.body);
+            // console.log(req.body);
             let category;
             const categoryInput = req.body.category;
-            console.log('Category input:', categoryInput);
+            // console.log('Category input:', categoryInput);
 
             // Check if categoryInput is an ObjectId
             if (mongoose.Types.ObjectId.isValid(categoryInput)) {
@@ -88,6 +88,19 @@ const productController = {
                 return res.status(400).json({ error: 'Category not found' });
             }
 
+            // Handle specifications
+            const specifications = Array.isArray(req.body.specifications) 
+    ? req.body.specifications.map(spec => ({
+        name: spec.title,
+        value: spec.description
+    }))
+    : req.body.specifications 
+        ? JSON.parse(req.body.specifications).map(spec => ({
+            name: spec.title,
+            value: spec.description
+        }))
+        : [];
+
             // Get seller from authenticated user
             const sellerId = req.seller.id;
             console.log('Seller ID:', sellerId);
@@ -100,7 +113,8 @@ const productController = {
                 seller: sellerId,
                 inventory: {
                     sku: sku
-                }
+                },
+                specifications: specifications
             });
 
             await product.save();
@@ -313,6 +327,14 @@ const productController = {
                 'inventory', 'isActive'
             ];
 
+            // Handle specifications transformation
+            if (updates.specifications) {
+                updates.specifications = updates.specifications.map(spec => ({
+                    name: spec.title,
+                    value: spec.description
+                }));
+            }
+
             // Filter out non-allowed updates
             const filteredUpdates = Object.keys(updates)
                 .filter(key => allowedUpdates.includes(key))
@@ -349,6 +371,7 @@ const productController = {
     // Delete a product
     deleteProduct: async (req, res) => {
         try {
+            console.log('Deleting product:', req.params.id);
             const product = await Product.findOneAndDelete({
                 _id: req.params.id,
                 seller: req.seller.id
@@ -364,6 +387,7 @@ const productController = {
                 message: 'Product deleted successfully',
                 product
             });
+            // console.log('Product deleted:', product);
         } catch (error) {
             console.error('Delete product error:', error);
             res.status(500).json({

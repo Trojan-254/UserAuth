@@ -403,12 +403,12 @@
                        accept="image/*"
                        required
                        class="block w-full text-sm text-gray-500
-                              file:mr-4 file:py-2 file:px-4
+                               file:mr-4 file:py-2 file:px-4
                               file:rounded-full file:border-0
                               file:text-sm file:font-semibold
                               file:bg-red-50 file:text-red-700
                               hover:file:bg-red-100"
-                        onChange="previewImage(this, 'mainImagePreview')">
+                        onChange="productForm.previewImage(event)">
             </label>
             <p class="text-xs text-gray-500 mt-1">Click to upload an image or drag and drop</p>
             <p class="text-xs text-gray-500 mt-1">PNG, JPG up to 5MB</p>
@@ -439,18 +439,22 @@
     <p class="text-xs text-gray-500 mt-1">Up to 4 additional images</p>
     <span class="error-message" id="additionalImagesError"></span>
 </div>
+
+<div class="flex justify-end space-x-4">
+  <button type="button" onclick="closeModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+    Cancel
+  </button>
+
+ <!-- Submit Button -->
+ <button type="submit" 
+ class="bg-red-500 text-white px-8 py-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transform transition-transform duration-150 hover:scale-105 flex items-center space-x-2">
+<span id="submitText" class="font-semibold">Save Product</span>
+<i class="fas fa-arrow-right"></i>
+<div id="submitSpinner" class="loading-spinner"></div>
+</button>
 </form>
 
-              <div class="flex justify-end space-x-4">
-                <button type="button" onclick="closeModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                  Cancel
-                </button>
-                <button type="submit" 
-                class="bg-red-500 text-white px-8 py-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transform transition-transform duration-150 hover:scale-105 flex items-center space-x-2">
-            <span id="submitText" class="font-semibold">Create Product</span>
-            <i class="fas fa-arrow-right"></i>
-            <div id="submitSpinner" class="loading-spinner"></div>
-        </button>
+        
               </div>
             </form>
           </div>
@@ -496,40 +500,120 @@
   <script>
 
 const productForm = {
-            init() {
-                this.form = document.getElementById('productForm');
-                this.mainImageInput = document.getElementById('mainImage');
-                this.additionalImagesInput = document.getElementById('additionalImages');
-                this.mainImagePreview = document.getElementById('mainImagePreview');
-                this.removeMainImageBtn = document.getElementById('removeMainImage');
-                this.additionalImagesPreview = document.getElementById('additionalImagesPreview');
-                this.submitBtn = this.form.querySelector('button[type="submit"]');
-                this.submitText = document.getElementById('submitText');
-                this.submitSpinner = document.getElementById('submitSpinner');
-                
-                this.setupEventListeners();
-            },
-    
-            setupEventListeners() {
-                this.form.addEventListener('submit', this.handleSubmit.bind(this));
-                this.mainImageInput.addEventListener('change', this.handleMainImageChange.bind(this));
-                this.additionalImagesInput.addEventListener('change', this.handleAdditionalImagesChange.bind(this));
-                this.removeMainImageBtn.addEventListener('click', this.handleRemoveMainImage.bind(this));
-            },
+  init() {
+        this.form = document.getElementById('productForm');
+        this.mainImageInput = document.getElementById('imageUpload');
+        this.additionalImagesInput = document.getElementById('additionalImages');
+        this.mainImagePreview = document.getElementById('mainImagePreview');
+        this.removeMainImageBtn = document.getElementById('removeMainImage');
+        this.additionalImagesPreview = document.getElementById('additionalImagesPreview');
+        this.specificationsContainer = document.getElementById('specificationsContainer');
+        this.submitBtn = this.form.querySelector('button[type="submit"]');
+        this.submitText = document.getElementById('submitText');
+        this.submitSpinner = document.getElementById('submitSpinner');
+        
+        this.setupEventListeners();
+    },
+
+    setupEventListeners() {
+        if (this.form) {
+            this.form.addEventListener('submit', this.handleSubmit.bind(this));
+        }
+
+        if (this.mainImageInput) {
+            this.mainImageInput.addEventListener('change', this.previewImage.bind(this));
+        }
+
+        if (this.additionalImagesInput) {
+            this.additionalImagesInput.addEventListener('change', this.handleAdditionalImagesChange.bind(this));
+        }
+
+        if (this.removeMainImageBtn) {
+            this.removeMainImageBtn.addEventListener('click', this.handleRemoveMainImage.bind(this));
+        }
+    },
+
+
+    previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                this.showToast('Image size should not exceed 5MB', 'error');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.mainImagePreview.src = e.target.result;
+                this.removeMainImageBtn.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+    },
+
+    handleAdditionalImagesChange(event) {
+        this.additionalImagesPreview.innerHTML = '';
+        Array.from(event.target.files).forEach((file, index) => {
+            if (index < 4) {
+                if (file.size > 5 * 1024 * 1024) {
+                    this.showToast(`Image ${file.name} exceeds 5MB limit`, 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('image-preview', 'rounded-lg', 'border');
+                    this.additionalImagesPreview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    },
+
+    handleRemoveMainImage() {
+        this.mainImageInput.value = '';
+        this.mainImagePreview.src = '/api/placeholder/150/150';
+        this.removeMainImageBtn.classList.add('hidden');
+    },        
     
             async handleSubmit(event) {
                 event.preventDefault();
                 
                 if (!this.validateForm()) {
+                    console.error('Form validation failed', this.form);
                     return;
                 }
+
+                // Manually collect specifications
+    const specificationInputs = document.querySelectorAll('.specification-item');
+    const specifications = [];
+    
+    specificationInputs.forEach(item => {
+        const titleInput = item.querySelector('input[name="specifications[][title]"]');
+        const descInput = item.querySelector('input[name="specifications[][description]"]');
+        
+        if (titleInput && descInput) {
+            specifications.push({
+                title: titleInput.value.trim(),
+                description: descInput.value.trim()
+            });
+        }
+    });
     
                 this.setLoadingState(true);
     
                 try {
                     const formData = new FormData(this.form);
+                    formData.append('specifications', JSON.stringify(specifications));
                     console.log('Form data:', formData);
                     
+                    for (let [key, value] of formData.entries()) {
+                        console.log(`${key}: ${value}`);
+                    }
+
                     const response = await fetch('/products/create-new', {
                         method: 'POST',
                         body: formData
@@ -540,6 +624,7 @@ const productForm = {
     
                     if (response.ok) {
                         this.showToast('Product created successfully!', 'success');
+                        alert('Product created successfully!');
                         // Redirect to dashboard after a short delay
                         setTimeout(() => {
                             window.location.href = '/api/seller/products';
@@ -617,6 +702,27 @@ const productForm = {
                     document.getElementById('descriptionError').style.display = 'block';
                     isValid = false;
                 }
+
+                const specifications = document.querySelectorAll('.specification-item');
+specifications.forEach((spec, index) => {
+  const title = spec.querySelector('input[name="specifications[][title]"]').value.trim();
+  const description = spec.querySelector('input[name="specifications[][description]"]').value.trim();
+
+  if (title && !description) {
+    this.showToast(`Specification ${index + 1} is missing a description`, 'error');
+    isValid = false;
+  }
+
+  if (!title && description) {
+    this.showToast(`Specification ${index + 1} is missing a title`, 'error');
+    isValid = false;
+  }
+});
+
+if (specifications.length > 10) {
+  this.showToast('Maximum of 10 specifications allowed.', 'error');
+  isValid = false;
+}
     
                 // Validate Main Image
                 // if (!this.mainImageInput.files.length) {
@@ -728,12 +834,29 @@ const productForm = {
     }
 
     function deleteProduct() {
-      const productId = document.getElementById('deleteModal').getAttribute('data-product-id');
-      // Here you would typically make an API call to delete the product
-      console.log('Deleting product:', productId);
-      closeDeleteModal();
-      // Refresh the page or update the UI
-    }
+    const productId = document.getElementById('deleteModal').getAttribute('data-product-id');
+    
+    fetch(`/products/${productId}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to delete product');
+        }
+        return response.json();
+    })
+    .then(data => {
+        closeDeleteModal();
+        showToast('Product deleted successfully', 'success');
+        alert('Product deleted successfully');
+        // Optionally, remove the product from the UI
+        document.querySelector(`[data-product-id="${productId}"]`).remove();
+    })
+    .catch(error => {
+        console.error('Delete error:', error);
+        showToast('Error deleting product', 'error');
+    });
+}
 
     function quickEdit(productId) {
       // Implement quick edit functionality
