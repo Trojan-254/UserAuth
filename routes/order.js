@@ -7,6 +7,7 @@ const orderController = require('../controllers/orderController');
 //Get all orders
 router.get('/my-orders', auth, async (req, res) => {
   try {
+    console.log("User ID:", req.user.id);
     const orders = await Order.find({ customer: req.user.id });
     res.render('order/view', { orders });
   } catch (error) {
