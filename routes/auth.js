@@ -13,8 +13,6 @@ dotenv.config();
 // Configure nodemailer
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
    service: 'gmail',
    auth: { 
       user: process.env.EMAIL,
@@ -22,7 +20,7 @@ const transporter = nodemailer.createTransport({
    },
 });
 
-const sendVerificationEmail = async (email, token, username = '') => {
+const sendVerificationEmail = async (email, token, firstName = '') => {
     try {
         const verificationUrl = `https://zetucartmain-e896aac1d742.herokuapp.com/auth/email-verification/${token}`;
         
@@ -127,7 +125,7 @@ const sendVerificationEmail = async (email, token, username = '') => {
                         <div class="content">
                             <div class="decorative-pattern"></div>
                             <h2>Verify Your Email Address</h2>
-                            <p>Hello ${username || 'there'},</p>
+                            <p>Hello ${firstName || 'there'},</p>
                             <p>Thank you for creating a ZetuCart account. To ensure the security of your account and activate all features, please verify your email address by clicking the button below:</p>
                             
                             <center><a href="${verificationUrl}" class="button">Verify Email Address</a></center>
@@ -207,7 +205,7 @@ router.post("/signup", async(req, res) => {
       await newUser.save();
 
       // Send verification email
-      sendVerificationEmail(email, token);
+      sendVerificationEmail(email, token, firstName);
       console.log("A new user has been registered successfully...");
 
       // Send a success page to user
