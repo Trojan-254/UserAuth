@@ -8,4 +8,4 @@ const { auth, verifySeller }  = require('../../middleware/authMiddleware');
 // Get seller dashboard
 router.get('/', verifySeller, sellerAnalyticsController.getDashboard);
 
-module.exports = router;
+module.exports = router;  

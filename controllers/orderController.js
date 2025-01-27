@@ -100,18 +100,30 @@ exports.getOrders = catchAsync(async (req, res) => {
   });
 });
 
-// Get single order details
+// Get single order details for processing
 exports.getOrderDetails = catchAsync(async (req, res, next) => {
+  
+  const orderId = req.params.orderId;
+  const sellerId = req.params.sellerId;
+
   const order = await Order.findOne({
-    _id: req.params.orderId,
-    seller: req.seller._id
-  }).populate('customer', 'name phone email address');
+    _id: orderId,
+    seller: sellerId
+  }).populate('customer', 'name phone email address')
+    .populate('items.product', 'name price mainImage');
+  
+  console.log(order);
+  order.items.forEach(item => {
+    console.log(item.product.name);  // Access product name
+    console.log(item.product.price); // Access product price
+  });
+  
   
   if (!order) {
     return next(new AppError('Order not found', 404));
   }
   
-  res.render('seller/order-details', {
+  res.render('seller/process-order', {
     seller: req.seller,
     order
   });
@@ -119,36 +131,41 @@ exports.getOrderDetails = catchAsync(async (req, res, next) => {
 
 // Update order status
 exports.updateOrderStatus = catchAsync(async (req, res, next) => {
-  const { status } = req.body;
-  const allowedStatuses = ['processing', 'shipped', 'delivered', 'cancelled'];
-  
-  if (!allowedStatuses.includes(status)) {
-    return next(new AppError('Invalid status', 400));
+  try{
+    console.log('Updating order status', req.params);
+    const { status, trackingNumber } = req.body;
+    const allowedStatuses = ['processing', 'shipped', 'delivered', 'cancelled'];
+    
+    if (!allowedStatuses.includes(status)) {
+      return next(new AppError('Invalid status', 400));
+    }
+    
+    const order = await Order.findOneAndUpdate(
+      {
+        _id: req.params.orderId,
+      },
+      {
+        orderStatus: status,
+        trackingNumber,
+        statusUpdatedAt: Date.now()
+      },
+      { new: true }
+    );
+    
+    if (!order) {
+      return next(new AppError('Order not found', 404));
+    }
+    
+    // Send notification to customer about status update
+    // await notifyCustomer(order);
+    
+    res.status(200).json({
+      status: 'success',
+      data: { order }
+    });
+  } catch (error) {
+    console.log(error);
   }
-  
-  const order = await Order.findOneAndUpdate(
-    {
-      _id: req.params.orderId,
-      seller: req.seller._id
-    },
-    {
-      status,
-      statusUpdatedAt: Date.now()
-    },
-    { new: true }
-  );
-  
-  if (!order) {
-    return next(new AppError('Order not found', 404));
-  }
-  
-  // Send notification to customer about status update
-  // await notifyCustomer(order);
-  
-  res.status(200).json({
-    status: 'success',
-    data: { order }
-  });
 });
 
 // Export orders
@@ -181,9 +198,14 @@ exports.exportOrders = catchAsync(async (req, res) => {
 
 // Middleware to check if seller owns the order
 exports.checkOrderOwnership = catchAsync(async (req, res, next) => {
+
+
+  const orderId = req.params.orderId;
+  const sellerId = req.params.sellerId;
+
   const order = await Order.findOne({
-    _id: req.params.orderId,
-    seller: req.seller._id
+    _id: orderId,
+    seller: sellerId
   });
   
   if (!order) {

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Process Order | Zetucart Seller</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+  <div class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <!-- Order Header -->
+      <div class="border-b pb-6 mb-6">
+        <div class="flex justify-between items-center">
+          <h1 class="text-2xl font-semibold">Order #<%= order.orderNumber %></h1>
+          <span class="px-4 py-2 rounded-full text-sm
+            <% if (order.status === 'pending') { %>bg-yellow-100 text-yellow-700
+            <% } else if (order.status === 'processing') { %>bg-blue-100 text-blue-700
+            <% } else if (order.status === 'shipped') { %>bg-purple-100 text-purple-700
+            <% } else if (order.status === 'delivered') { %>bg-green-100 text-green-700
+            <% } else if (order.status === 'cancelled') { %>bg-red-100 text-red-700<% } %>">
+          </span>
+        </div>
+        <p class="text-gray-500 mt-2">Order placed on <%= new Date(order.createdAt).toLocaleDateString() %></p>
+      </div>
+
+      <!-- Customer Details -->
+      <div class="grid md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <h2 class="text-lg font-semibold mb-4">Customer Details</h2>
+          <div class="space-y-2">
+            <p><strong>FirstName:</strong> <%= order.shipping.customerShippingDetails.firstName %></p>
+            <p><strong>Lastname:</strong> <%= order.shipping.customerShippingDetails.lastName %></p>
+            <p><strong>Email:</strong> <%= order.shipping.customerShippingDetails.email %></p>
+            <p><strong>Phone:</strong> <%= order.shipping.customerShippingDetails.phone %></p>
+          </div>
+        </div>
+        <div>
+          <h2 class="text-lg font-semibold mb-4">Shipping Address</h2>
+          <div class="space-y-2">
+            <p><%= order.shipping.address.street %></p>
+            <p><%= order.shipping.address.city %></p>
+            <p><%= order.shipping.address.county %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Items -->
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold mb-4">Order Items</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-gray-50 text-left">
+                <th class="py-3 px-4">Product</th>
+                <th class="py-3 px-4">Quantity</th>
+                <th class="py-3 px-4">Price</th>
+                <th class="py-3 px-4">Total</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              <% order.items.forEach(function(item) { %>
+                <tr>
+                  <td class="py-4 px-4">
+                    <div class="flex items-center space-x-4">
+                      <img src="/uploads/<%= item.product.mainImage %>" alt="<%= item.product.name %>" class="w-12 h-12 rounded-lg object-cover">
+                      <div>
+                        <p class="font-medium"><%= item.product.name %></p>
+                        <p class="text-sm text-gray-500">SKU: <%= item.sku %></p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4"><%= item.quantity %></td>
+                  <td class="py-4 px-4">KES <%= item.price.toLocaleString() %></td>
+                  <td class="py-4 px-4">KES <%= (item.price * item.quantity).toLocaleString() %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+            <tfoot class="border-t">
+             
+              <tr>
+                <td colspan="3" class="py-4 px-4 text-right"><strong>Shipping:</strong></td>
+                <td class="py-4 px-4">KES <%= order.cost %></td>
+              </tr>
+              <tr>
+                <td colspan="3" class="py-4 px-4 text-right"><strong>Total:</strong></td>
+                <td class="py-4 px-4 font-bold">KES <%= order.totalAmount %></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- Order Processing Form -->
+      <div class="border-t pt-6">
+        <h2 class="text-lg font-semibold mb-4">Update Order Status</h2>
+        <form action="/seller/orders/<%= order._id %>/update" method="POST" class="space-y-4">
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-2">Status</label>
+              <select name="status" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-orange-500">
+                <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                <option value="processing" <%= order.status === 'processing' ? 'selected' : '' %>>Processing</option>
+                <option value="shipped" <%= order.status === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Tracking Number</label>
+              <input type="text" name="trackingNumber" value="<%= order.trackingNumber %>" 
+                     class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-orange-500">
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium mb-2">Notes</label>
+            <textarea name="notes" rows="3" 
+                      class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-orange-500"><%= order.notes %></textarea>
+          </div>
+
+          <div class="flex justify-end space-x-4">
+            <button type="button" onclick="history.back()" 
+                    class="px-4 py-2 border rounded-lg hover:bg-gray-50">
+              Cancel
+            </button>
+            <button type="submit" 
+                    class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
+              Update Order
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.querySelector("form");
+      
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault(); // Prevent the form from submitting normally
+        
+        // Extract the orderId from the URL
+        const orderId = "<%= order._id %>";
+        console.log(orderId)
+        
+        // Get the status and other form data
+        const status = document.querySelector("[name='status']").value;
+        const trackingNumber = document.querySelector("[name='trackingNumber']").value;
+        const notes = document.querySelector("[name='notes']").value;
+  
+        // Prepare data to send to the server
+        const requestData = {
+          status,
+          trackingNumber,
+          notes
+        };
+
+        console.log('request data to be sent to server',requestData);
+        
+        try {
+          // Send a PATCH request to update the order status
+          const response = await fetch(`/order/seller/orders/${orderId}/status`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem("token")}` // If you're using JWT authentication
+            },
+            body: JSON.stringify(requestData)
+          });
+  
+          const data = await response.json();
+  
+          if (!response.ok) {
+            throw new Error(data.message || 'Error updating order');
+          }
+  
+          // Handle successful response
+          alert('Order status updated successfully!');
+          window.location.href = '/seller/dashboard'
+  
+        } catch (error) {
+          // Handle error
+          alert('Error: ' + error.message);
+        }
+      });
+    });
+  </script>
+  
+</body>
+</html>

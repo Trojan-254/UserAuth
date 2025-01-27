@@ -5,9 +5,9 @@ const { verifySeller, auth } = require('../../middleware/authMiddleware');
 //routes
 router.get('/orders', verifySeller, orderController.getOrders);
 router.get('/orders/export', verifySeller, orderController.exportOrders);
-router.get('/orders/:orderId', verifySeller, orderController.checkOrderOwnership, orderController.getOrderDetails);
-router.patch('/orders/:orderId/status', verifySeller, orderController.checkOrderOwnership, orderController.updateOrderStatus);
-
+router.get('/orders/:sellerId/:orderId', verifySeller, orderController.checkOrderOwnership, orderController.getOrderDetails);
+router.patch('/orders/:orderId/status', verifySeller, orderController.updateOrderStatus);
+ 
 //USER ROUTES
 router.get('/my-orders', auth, async (req, res) => {
     try {
@@ -66,5 +66,7 @@ router.get('/my-orders', auth, async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   });
+
+// Seller update order status
 
 module.exports = router;

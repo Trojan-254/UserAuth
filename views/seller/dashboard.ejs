@@ -160,11 +160,11 @@
                   <td><%= order.customerName %></td>
                   <td>KES <%= order.totalAmount.toLocaleString() %></td>
                   <td>
-                    <span class="px-2 py-1 bg-<%= order.status === 'delivered' ? 'green' : 'blue' %>-100 text-<%= order.status === 'delivered' ? 'green' : 'blue' %>-700 rounded-full text-sm">
-                      <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                    <span class="px-2 py-1 bg-<%= order.orderStatus === 'delivered' ? 'green' : 'blue' %>-100 text-<%= order.status === 'delivered' ? 'green' : 'blue' %>-700 rounded-full text-sm">
+                      <%= order.orderStatus.charAt(0).toUpperCase() + order.status.slice(1) %>
                     </span>
                   </td>
-                  <td><a href="/seller/orders/<%= order._id %>" class="text-orange-500 hover:text-orange-600">Process</a></td>
+                  <td><a href="/order/seller/orders/<%= seller._id %>/<%= order._id %>" class="text-orange-500 hover:text-orange-600">Process</a></td>
                 </tr>
                 <% }); %>
               </tbody>

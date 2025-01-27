@@ -21,7 +21,7 @@ const sellerAnalyticsController = {
                 seller: req.seller.id,
                 createdAt: { $gte: today }
             });
-    
+     
             // Calculate today's revenue
             const todayRevenue = await Order.aggregate([
                 {
@@ -41,14 +41,21 @@ const sellerAnalyticsController = {
             // Fetch low stock items
             const lowStockItems = await Product.find({
                 seller: req.seller.id,
-                stock: { $lte: 10 }  // Assuming items with 10 or fewer units are considered low stock
+                stock: { $lte: 10 }
             }).limit(5);
     
-            // Fetch recent orders
+            // Fetch recent orders with necessary fields
             const recentOrders = await Order.find({ seller: req.seller.id })
+                .select('orderNumber customerName totalAmount orderStatus _id createdAt')
                 .sort({ createdAt: -1 })
                 .limit(5)
-                .populate('customer', 'name');
+                .lean()  // Convert to plain JavaScript objects
+                .then(orders => orders.map(order => ({
+                    ...order,
+                    status: order.orderStatus || 'pending',  // Provide default status if undefined
+                    customerName: order.customerName || 'Customer',  // Provide default customer name
+                    totalAmount: order.totalAmount || 0  // Provide default amount
+                })));
     
             // Mock activities for demonstration
             const activities = [
@@ -85,7 +92,6 @@ const sellerAnalyticsController = {
             res.status(500).send('Server error occurred');
         }
     }
-}
-
+};
 
 module.exports = sellerAnalyticsController;
