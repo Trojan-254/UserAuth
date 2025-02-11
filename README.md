@@ -3,6 +3,8 @@
 
 Welcome to ZetuCart, Kenya's premier ecommerce platform. We offer a seamless online shopping experience with top-notch products, exclusive deals, and fast delivery.
 
+## Live link: https://zetucartmain-e896aac1d742.herokuapp.com/
+
 ## 🌟 Features
 
 - **User-Friendly Interface**: Intuitive navigation for a seamless shopping experience
